@@ -4,6 +4,7 @@
     class: MCStitcher
     config: FLAF/config/Processors/stitching_DY_amcatnlo_Vpt_NpNLO_allFlavors.yaml
     stages: [ AnaTuple, AnaTupleMerge ]
+    verbose: 1
     dependency_level:
       AnaTuple: file
       AnaTupleMerge: process
@@ -13,6 +14,17 @@
     module: FLAF.Processors.MCStitching
     class: MCStitcher
     config: FLAF/config/Processors/stitching_DY_amcatnlo_Vpt_NpNLO.yaml
+    stages: [ AnaTuple, AnaTupleMerge ]
+    dependency_level:
+      AnaTuple: file
+      AnaTupleMerge: process
+
+.ext_processor: &ext_processor
+  - name: Stitcher
+    verbose: 1
+    module: FLAF.Processors.MCStitching
+    class: MCStitcher
+    useDatasetCrossSection: True
     stages: [ AnaTuple, AnaTupleMerge ]
     dependency_level:
       AnaTuple: file

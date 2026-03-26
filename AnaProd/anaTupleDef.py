@@ -1,8 +1,7 @@
 import AnaProd.baseline as AnaBaseline
 import FLAF.Common.BaselineSelection as CommonBaseline
 from Corrections.Corrections import Corrections
-from FLAF.Common.Utilities import *
-from AnaProd.observables import *
+from AnaProd.observables import GetObservablesCols
 
 lepton_legs = ["mu1", "mu2"]
 offline_legs = ["mu1", "mu2"]
@@ -48,13 +47,9 @@ def addAllVariables(
             var_expr,
             var_type=None,
             var_cond=None,
-            check_leg_type=True,
             default=0,
         ):
             cond = var_cond
-            # if check_leg_type:
-            #     type_cond = f"HttCandidate.leg_type[{leg_idx}] != Leg::none"
-            #     cond = f"{type_cond} && ({cond})" if cond else type_cond
             define_expr = (
                 f"static_cast<{var_type}>({var_expr})" if var_type else var_expr
             )
@@ -62,7 +57,7 @@ def addAllVariables(
                 define_expr = f"{cond} ? ({define_expr}) : {default}"
             dfw.DefineAndAppend(f"mu{leg_idx+1}_{var_name}", define_expr)
 
-        LegVar("legType", f"Leg::mu", check_leg_type=False)
+        LegVar("legType", "Leg::mu")
 
         Muon_observables = GetObservablesCols(
             "Muon", isData, global_params["nano_version"]

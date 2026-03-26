@@ -151,10 +151,28 @@ TT:
   name: "t $\\bar{t}$"
   color: "kGreen-3"  # eliminates need for plot.yaml
   color_mplhep: darkblue  # turquoise
-  datasets:
+  sub_processes:
     - TTto2L2Nu
     - TTtoLNu2Q
     - TTto4Q
+
+TTto2L2Nu:
+  processors: *ext_processor
+  datasets:
+    - TTto2L2Nu
+    - TTto2L2Nu_ext1
+
+TTtoLNu2Q:
+  processors: *ext_processor
+  datasets:
+    - TTtoLNu2Q
+    - TTtoLNu2Q_ext1
+
+TTto4Q:
+  processors: *ext_processor
+  datasets:
+    - TTto4Q
+    - TTto4Q_ext1
 
 TT_Inclusive:
   name: "t#bar{t} Inclusive"
