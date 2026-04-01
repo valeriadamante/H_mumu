@@ -163,7 +163,7 @@ def GetWeight(
         "weight_base",
     ]
     # quick fix for DY weights. In future should pass the full dataset and process info to DefineWeightForHistograms
-    if process_name.startswith("DY"):
+    if process_name.startswith("DY") and f"105" not in process_name:
         weights_to_apply.extend(
             [
                 "weight_EWKCorr_VptCentral",
