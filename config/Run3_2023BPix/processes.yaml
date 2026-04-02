@@ -134,8 +134,14 @@ DYto2Mu_MLL105To160:
   name: "DY"
   color: "kAzure+7"
   color_mplhep: lightskyblue
-  sub_processes:
+  datasets:
     - DYto2Mu_MLL_105to160_amcatnloFXFX
+
+DYto2Mu_MLL105To160_FlashSim:
+  name: "DY"
+  color: "kAzure+7"
+  color_mplhep: lightskyblue
+  datasets: [ ]
 ############## TT ##############
 TT:
   name: "t $\\bar{t}$"
@@ -198,18 +204,23 @@ EWK_2Mu2J_MLL_105to160_pythia:
   color_mplhep: darkmagenta
   datasets:
     - EWK_2Mu2J_MLL_105to160_pythia
+
+EWK_2Mu2J_MLL_105to160_pythia_Flashsim:
+  name: "EWK"
+  color: kMagenta+3
+  color_mplhep: darkmagenta
+  datasets: [ ]
+
 ############## Other single H  ##############
 H_mainBckg:
   name: "Single H"
   color: kPink
   color_mplhep: aqua
   datasets:
-    - GluGluHto2Tau_UncorrelatedDecay_Filtered
     - GluGluHto2Tau_UncorrelatedDecay_UnFiltered
     - GluGluHto2B_M125
     - VBFHto2B_M125
     - VBFHto2Tau_UncorrelatedDecay_UnFiltered
-    - VBFHto2Tau_UncorrelatedDecay_Filtered
     - GluGluHto2Wto2L2Nu_M125
 
 ############## VV ##############
