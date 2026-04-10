@@ -27,7 +27,8 @@ def addAllVariables(
     dataset_cfg,
 ):
     #### baseline cuts (lepton selection + Jet Veto Map definition / application)
-    dfw.Apply(AnaBaseline.LeptonsSelection)
+    # dfw.Apply(AnaBaseline.LeptonsSelection)
+    dfw.Apply(AnaBaseline.LeptonsSelection_dev)
     dfw.Apply(Corrections.getGlobal().jet.getEnergyResolution)
     dfw.Apply(Corrections.getGlobal().btag.getWPid, "Jet")
     dfw.Apply(Corrections.getGlobal().JetVetoMap.GetJetVetoMap)

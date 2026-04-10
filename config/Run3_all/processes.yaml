@@ -173,19 +173,16 @@ TTto2L2Nu:
   processors: *ext_processor
   datasets:
     - TTto2L2Nu
-    - TTto2L2Nu_ext1
 
 TTtoLNu2Q:
   processors: *ext_processor
   datasets:
     - TTtoLNu2Q
-    - TTtoLNu2Q_ext1
 
 TTto4Q:
   processors: *ext_processor
   datasets:
     - TTto4Q
-    - TTto4Q_ext1
 
 TT_Inclusive:
   name: "t#bar{t} Inclusive"
@@ -199,14 +196,14 @@ TT_Inclusive:
 W:
   name: "W"
   color: "kGreen"  # eliminates need for plot.yaml
-  color_mplhep: yellow
+  color_mplhep: turquoise
   datasets:
     - WtoLNu_amcatnloFXFX
 
 W_NJets:
   name: "W $\\rightarrow \\ell \\nu$+ jets"
   color: "kGreen"  # eliminates need for plot.yaml
-  color_mplhep: yellow
+  color_mplhep: turquoise
   datasets:
     - WtoLNu_0J_amcatnloFXFX
     - WtoLNu_1J_amcatnloFXFX
@@ -452,55 +449,14 @@ TTH_inclusive:
 ############### Data ##############
 
 
-Data_Full:
-  name: "Data"
-  datasets:
-    - EGamma_Run2022C
-    - EGamma_Run2022D
-    - Muon_Run2022C
-    - Muon_Run2022D
-    - SingleMuon_Run2022C
-    - DoubleMuon_Run2022C
-    - MuonEG_Run2022C
-    - MuonEG_Run2022D
-
-Data_EGamma:
-  name: "Data EGamma"
-  datasets:
-    - EGamma_Run2022C
-    - EGamma_Run2022D
-
-Data_Muon:
-  name: "Data Muon"
-  datasets:
-    - SingleMuon_Run2022C
-    - Muon_Run2022C
-    - Muon_Run2022D
-
-Data_MuonEG:
-  name: "Data MuonEG"
-  datasets:
-    - MuonEG_Run2022C
-
 Other:
   name: "Other"
   color: kGray+1
   color_mplhep: slateblue
   datasets: [ ]
 
-custom_CI_background:
-  name: "CI -- Background"
-  color: "kGreen-3"
-  datasets:
-    - EWK_2L2J_madgraph_herwig
-
-custom_CI_signal:
-  name: "CI -- signals"
-  color: "kAzure+10"
-  datasets:
-    - GluGluHto2Mu
-
-custom_CI_data:
-  name: "CI -- data"
-  datasets:
-    - Muon_Run2022D
+Data_Muon:
+  name: "Data"
+  color: kBlack
+  color_mplhep: black
+  datasets: []

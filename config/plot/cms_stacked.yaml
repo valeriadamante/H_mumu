@@ -62,7 +62,7 @@ legend_mplhep:
   fill_color: white
   fill_style: 0
   border_size: 0
-  text_size: 0.18
+  text_size: 0.13
   font: 42
 
 cms_label:

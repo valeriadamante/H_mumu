@@ -1,0 +1,40 @@
+norm:
+  PileUp_Lumi_MC:
+    expression: weight_base_pu{scale}_rel  * final_weight
+    name: CMS_pileup_{}
+  MuonID_SF_Iso_ID:
+    expression: weight_mu1_MuonID_SF_{muIso_WP_for_SF}PFIso_{muID_WP_for_SF}ID{scale}_rel * weight_mu2_MuonID_SF_{muIso_WP_for_SF}PFIso_{muID_WP_for_SF}ID{scale}_rel * final_weight
+    name: CMS_eff_m_id_iso_{}
+  MuonID_SF_ID:
+    expression: weight_mu1_MuonID_SF_{muID_WP_for_SF}ID_Trk{scale}_rel * weight_mu2_MuonID_SF_{muID_WP_for_SF}ID_Trk{scale}_rel * final_weight
+    name: CMS_eff_m_id_{}
+  HLT_singleMu:
+    expression: weight_TrgSF_singleMu_IsoMu24{scale}_rel * final_weight
+    name: CMS_trig_singleMu_{}
+  # DYWeight:
+  #   expression: weight_DYw_DYWeight{scale}_rel * final_weight
+  #   name: CMS_dyweight_{}
+  EWKCorr_Vpt:
+    expression: weight_EWKCorr_Vpt{scale}_rel * final_weight
+    processes:
+      - DY_M_10to50
+      - DYto2E_M_50
+      - DYto2Mu_M_50
+      - DYto2Tau_M_50
+    name: CMS_Vpt_{}
+  EWKCorr_ewcorr:
+    expression: weight_EWKCorr_ewcorr{scale}_rel * final_weight
+    processes:
+      - DY_M_10to50
+      - DYto2E_M_50
+      - DYto2Mu_M_50
+      - DYto2Tau_M_50
+    name: CMS_ewkCorr_{}
+
+shape:
+  JES_Total:
+    name: CMS_scale_j_{}
+  JER:
+    name: CMS_res_j_{}
+  ScaRe:
+    name: CMS_ScaRe_mu_{}

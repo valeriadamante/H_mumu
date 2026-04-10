@@ -2,7 +2,10 @@ BaseModel:
   name: "Base Model"
   backgrounds:
     - DY
-    - DYto2Mu_MLL105To160
+    # - DYto2L
+    # - DYto2L_jet_binned
+    # - DYto2L_PtBinned
+    # - DYto2Mu_MLL105To160
     # - DYto2Mu_MLL105To160_FlashSim # no files available
     - TT
     - VV
@@ -45,6 +48,18 @@ OnlyData:
   data:
     - Data_Muon
 
+WPStudiesModelPlusData:
+  name: "WP studies model + data"
+  backgrounds:
+    - DY
+    - TT
+    - W_NJets
+    - EWK
+  signals:
+    - VBFHto2Mu_M125_powheg
+    - GluGluHto2Mu
+  data:
+    - Data_Muon
 
 WPStudiesModel:
   name: "Base Model"

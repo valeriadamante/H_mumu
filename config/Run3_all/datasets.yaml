@@ -1,0 +1,102 @@
+#### DY samples ####
+DYto2Mu_MLL_105to160_amcatnloFXFX:
+  crossSection: DYto2Mu_MLL_105to160_amcatnloFXFX
+  crossSectionStitch: DYto2Mu_MLL_105to160_amcatnloFXFX
+  generator: amcatnlo
+
+# to be added - currently no NanoAOD available: /DYJetsToMuMu_H2ErratumFix_TuneCP5_13p6TeV-powhegMiNNLO-pythia8-photos/Run3Summer23MiniAODv4-PUAVE1_130X_mcRun3_2023_realistic_v15-v2/MINIAODSIM
+
+##### EWK Samples #####
+
+EWK_2L2J_madgraph_herwig:
+  crossSection: EWK_2L2J_MLL50_MJJ120
+  generator: madgraph
+
+EWK_2Mu2J_MLL_105to160_herwig:
+  crossSection: EWK_2Mu2J_MLL105to160_MJJ120
+  generator: madgraph
+
+
+EWK_2Mu2J_MLL_105to160_pythia:
+  crossSection: EWK_2Mu2J_MLL105to160_MJJ120
+  generator: madgraph
+
+
+#### TTLNu-EWK Samples ####
+TTLNu-EWK_amcatnlo:
+  crossSection: TTLNu_EWK
+  generator: amcatnlo
+
+### Other EWK samples ###
+
+
+WZto3LNu-2Jets_EWK_QCD:
+  crossSection: WZto3LNu_2Jets_EWK_QCD
+  generator: madgraph
+
+
+WmWmJJ_EWK:
+  crossSection: WmWmJJ_EWK
+  generator: powheg
+
+
+### Higgs samples ###
+GluGluHto2Mu:
+  crossSection: GluGluHto2Mu
+  generator: powheg
+
+
+GluGluHto2Mu_MiNNLO:
+  crossSection: GluGluHto2Mu
+  generator: powheg
+
+
+
+VBFHto2Mu_M125_powheg:
+  crossSection: VBFHto2Mu
+  generator: powheg
+
+VBFHto2Mu_m125_powheg:
+  crossSection: VBFHto2Mu
+  generator: powheg
+
+VBFHto2Mu_m125_tuneCP5Up_amcatnlo:
+  crossSection: VBFHto2Mu
+  generator: amcatnlo
+
+VBFHto2Mu_m125_tuneCP5Down_amcatnlo:
+  crossSection: VBFHto2Mu
+  generator: amcatnlo
+
+VBFHto2Mu_M120_amcatnlo:
+  crossSection: VBFHto2Mu
+  generator: amcatnlo
+
+VBFHto2Mu_m125_amcatnlo:
+  crossSection: VBFHto2Mu
+  generator: amcatnlo
+
+VBFHto2Mu_M130_amcatnlo:
+  crossSection: VBFHto2Mu
+  generator: amcatnlo
+
+ZH_Hto2Mu:
+  crossSection: ZH_Hto2Mu_ZtoAll
+  generator: powheg
+
+
+WminusH_Hto2Mu:
+  crossSection: WminusH_Hto2Mu_WtoAll
+  generator: powheg
+
+
+WplusH_Hto2Mu:
+  crossSection: WplusH_Hto2Mu_WtoAll
+  generator: powheg
+
+
+TTH_Hto2Mu:
+  crossSection: TTH_Hto2Mu
+  generator: powheg
+
+

@@ -225,6 +225,11 @@ class DataFrameBuilderForHistograms(DataFrameBuilderBase):
         singleMuTh = self.config["singleMu_th"][self.period]
         WP_to_use = self.config["WP_to_use"]
         mu_pt_for_selection = self.config["mu_pt_for_selection"]
+        for mu_idx in [1,2]:
+            if f"mu{mu_idx}_genPartIdx" not in self.df.GetColumnNames():
+                self.df = self.df.Define(f"mu{mu_idx}_genPartIdx", "100")
+            if f"mu{mu_idx}_gen_kind" not in self.df.GetColumnNames():
+                self.df = self.df.Define(f"mu{mu_idx}_gen_kind", "2")
 
         for category_to_def in self.config["category_definition"].keys():
             category_name = category_to_def
