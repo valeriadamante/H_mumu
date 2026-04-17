@@ -36,7 +36,13 @@ def createKeyFilterDict(global_params, period):
     filter_str = ""
     channels_to_consider = global_params["channels_to_consider"]
     # sign_regions_to_consider = global_params["MuMuMassRegions"]
-    categories = global_params["categories"]
+    categories = []
+
+    if isinstance(global_params["categories"], list) and global_params["categories"]:
+        categories = list(global_params["categories"].keys())
+    else:
+        categories = list(global_params["category_definition"].keys())
+    print(f"saving categories: {categories}")
 
     ### add custom categories eventually:
     custom_categories = []
@@ -274,11 +280,12 @@ def PrepareDFBuilder(dfBuilder):
     dfBuilder.df = GetMuMuP4Observables(dfBuilder.df)
     if (
         "muScaRe" in dfBuilder.corrections.to_apply
-        and dfBuilder.config["corrections"]["muScaRe"]["stage"] == "HistTuple"
+        and (dfBuilder.config["corrections"]["muScaRe"]["stage"] == "HistTuple" or "m_mumu_resolution" in dfBuilder.config["variables"])
     ):
         dfBuilder.df = dfBuilder.corrections.muScaRe.getP4VariationsForLegs(
             dfBuilder.df
         )
+        print(dfBuilder.df.GetColumnNames())
 
     dfBuilder.df = GetAllMuMuCorrectedPtRelatedObservables(
         dfBuilder.df, suff=dfBuilder.config["mu_pt_for_definitions"]

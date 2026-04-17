@@ -1,92 +1,88 @@
-import ROOT
-import sys
+#!/usr/bin/env python3
+import argparse
 import os
+import sys
 import yaml
 import importlib
 
+import ROOT
 
-from drawer_functions import *
-from HelpersForHistograms import *
-
+if __name__ == "__main__":
+    sys.path.append(os.environ["ANALYSIS_PATH"])
 import FLAF.Common.Utilities as Utilities
 from FLAF.Common.Setup import Setup
 
+from Analysis.plotting_tools.drawer_functions import plot_histogram_from_config
 
-if __name__ == "__main__":
-    import argparse
 
-    parser = argparse.ArgumentParser(description="Plot a specific contribution for one or different regions.")
-    parser.add_argument('--outFile', required=True, help="Output file name for the plot (e.g., my_plot)")
-    parser.add_argument('--inFile', required=True, type=str, help="Input ROOT file containing histograms")
-    parser.add_argument('--period', required=True, type=str, default='Run3_2022', help="Run era")
-    parser.add_argument('--var', required=True, type=str, default='m_mumu', help="Variable to plot")
-    parser.add_argument('--channel', required=False, type=str, default='muMu', help="Analysis channel")
-    parser.add_argument('--region', required=False, type=str, default='OS_Iso', help="region (QCD, Mass..)")
-    parser.add_argument('--subregion', required=False, type=str, default=None, help="subregion")
-    parser.add_argument('--category', required=False, type=str, default='inclusive', help="Analysis category (res1/2b, boosted, ggH/VBF,..)")
-    parser.add_argument('--wantLogY', action='store_true', help="Apply log scale to y-axis")
-    parser.add_argument('--wantLogX', action='store_true', help="Apply log scale to y-axis")
+def parse_args():
+    parser = argparse.ArgumentParser(description="Plot histograms from ROOT files")
+    parser.add_argument('--outFile', required=True, help="Output file name (e.g., my_plot)")
+    parser.add_argument('--inFile', required=True, help="Input ROOT file")
+    parser.add_argument('--period', required=True, default='Run3_2022', help="Run era")
+    parser.add_argument('--var', required=True, default='m_mumu', help="Variable to plot")
+    parser.add_argument('--channel', default='muMu', help="Analysis channel")
+    parser.add_argument('--region', default='OS_Iso', help="Region")
+    parser.add_argument('--category', default='inclusive', help="Category")
+    parser.add_argument('--subregion', default=None, help="Subregion")
+    parser.add_argument('--wantLogY', action='store_true', help="Log Y axis")
+    parser.add_argument('--wantLogX', action='store_true', help="Log X axis")
     parser.add_argument('--wantData', action='store_true', help="Include data")
-    parser.add_argument('--wantRatio', action='store_true', help="Include data")
-    parser.add_argument('--wantSignal', action='store_true', help="Include data")
-    parser.add_argument('--contribution', required=False, type=str, help="Specific contribution to plot (e.g., 'DY,TT').", default="all")
-    parser.add_argument('--pre_path', required=False, type=str, help="specific path for histograms", default=None) # when paths are different
-    parser.add_argument('--rebin', action='store_true', help="Enable rebinning based on histogram configuration")
-    parser.add_argument('--compare_list', required=False, type=str, help="comma-separated subcategory to compare")
-    parser.add_argument('--ref_region', required=False, type=str, help="reg for ratio when comparing")
-    parser.add_argument('--stack', action='store_true', help="Plot contributions stack.")
+    parser.add_argument('--wantRatio', action='store_true', help="Include ratio")
+    parser.add_argument('--wantSignal', action='store_true', help="Include signals")
+    parser.add_argument('--contribution', default='all', help="Specific contributions (comma-separated)")
+    parser.add_argument('--pre_path', default=None, help="Custom histogram path")
+    parser.add_argument('--rebin', action='store_true', help="Enable rebinning")
+    parser.add_argument('--compare_list', default=None, help="Comma-separated regions to compare")
+    parser.add_argument('--ref_region', default=None, help="Reference region for ratio")
+    parser.add_argument('--stack', action='store_true', help="Stack MC contributions")
+    return parser.parse_args()
 
 
-    args = parser.parse_args()
+def main():
+    args = parse_args()
 
     setup = Setup.getGlobal(
-        os.environ["ANALYSIS_PATH"], args.period, None, custom_model_selection="WPStudiesModelPlusData" #custom_model_selection="BaseModel"
+        os.environ["ANALYSIS_PATH"],
+        args.period,
+        None,
+        custom_model_selection="WPStudiesModelPlusData"
     )
 
-    analysis_import = setup.global_params["analysis_import"]
-    analysis = importlib.import_module(f"{analysis_import}")
+    analysis = importlib.import_module(f"{setup.global_params['analysis_import']}")
 
-    phys_model_cfg_dict = setup.phys_model
-    global_cfg_dict = setup.global_params
-    hist_cfg_dict = setup.hists
-    unc_cfg_dict = setup.weights_config
-    proc_plotting_info_dict = {
+    phys_model_dict = {
+        'signals': setup.phys_model.processes("signals"),
+        'backgrounds': setup.phys_model.processes("backgrounds"),
+        'data': setup.phys_model.processes("data"),
+    }
+
+    processes_dict = {
         proc_name: {
             "color_mplhep": proc_cfg.get("color_mplhep", "gray"),
-            "scale":proc_cfg.get("scale",1.0),
+            "scale": proc_cfg.get("scale", 1.0),
         }
         for proc_name, proc_cfg in setup.parent_processes.items()
     }
-    page_cfg = os.path.join(os.environ["ANALYSIS_PATH"], f'config', f'plot',f"cms_stacked.yaml")
-    with open(page_cfg, 'r') as f:
-        page_cfg_dict = yaml.safe_load(f)
-    page_cfg_custom = os.path.join(os.environ["ANALYSIS_PATH"], f'config', f'plot',f"{args.period}.yaml")
-    with open(page_cfg_custom, 'r') as f:
-        page_cfg_custom_dict = yaml.safe_load(f)
-    phys_model_dict = {
-        'signals':phys_model_cfg_dict.processes("signals"),
-        'backgrounds':phys_model_cfg_dict.processes("backgrounds"),
-        'data':phys_model_cfg_dict.processes("data"),
-        'data_obs':phys_model_cfg_dict.processes("data_obs")
-    }
-    signals = phys_model_dict['signals']
-    backgrounds = phys_model_dict['backgrounds']
 
-    all_contributions = backgrounds
-    if args.wantSignal:
-        all_contributions+=signals
-    if args.wantData:
-        all_contributions+=phys_model_dict['data']
-    if args.contribution != 'all':
-        all_contributions = args.contribution.split(",")
-    # print(f"all_contributions = {all_contributions}")
-    hists_to_plot = {}
-    var_entry = findBinEntry(hist_cfg_dict,args.var)
+    page_cfg = os.path.join(os.environ["ANALYSIS_PATH"], 'config', 'plot', "cms_stacked.yaml")
+    with open(page_cfg, 'r') as f: page_cfg_dict = yaml.safe_load(f)
 
-    rebin_condition = args.rebin and "x_rebin" in hist_cfg_dict[var_entry].keys()
+    page_cfg_custom_path = os.path.join(os.environ["ANALYSIS_PATH"], 'config', 'plot', f"{args.period}.yaml")
+    with open(page_cfg_custom_path, 'r') as f: page_cfg_custom_dict = yaml.safe_load(f)
+
+    from Analysis.plotting_tools.HelpersForHistograms import findBinEntry, findNewBins, getNewBins, RebinHisto, get_histograms_from_dir
+
+    all_contributions = phys_model_dict['backgrounds']
+    if args.wantSignal: all_contributions += phys_model_dict['signals']
+    if args.wantData: all_contributions += phys_model_dict['data']
+    if args.contribution != 'all': all_contributions = args.contribution.split(",")
+
+    var_entry = findBinEntry(setup.hists, args.var)
+
     new_bins = None
-    if rebin_condition:
-        bins_to_compute = findNewBins(hist_cfg_dict, var_entry, channel=args.channel, category=args.category, region=args.region)
+    if args.rebin and "x_rebin" in setup.hists[var_entry]:
+        bins_to_compute = findNewBins(setup.hists, var_entry, channel=args.channel, category=args.category, region=args.region)
         new_bins = getNewBins(bins_to_compute)
 
     inFile_root = ROOT.TFile.Open(args.inFile, "READ")
@@ -96,86 +92,52 @@ if __name__ == "__main__":
 
     hists_to_plot_binned = {}
     for path, hist_dict in hists_to_plot.items():
-        if path not in hists_to_plot_binned:
-            hists_to_plot_binned[path] = {}
-
+        hists_to_plot_binned.setdefault(path, {})
         for hist_key, hist in hist_dict.items():
-            if rebin_condition:
-                new_hist = RebinHisto(hist, new_bins, hist_key, wantOverflow=False, verbose=False)
-                hists_to_plot_binned[path][hist_key] = new_hist
+            if new_bins:
+                hists_to_plot_binned[path][hist_key] = RebinHisto(hist, new_bins, hist_key, wantOverflow=False)
             else:
                 hists_to_plot_binned[path][hist_key] = hist
-    pre_path = f"{args.channel}/{args.region}/{args.category}" if args.pre_path is None else args.pre_path # patch for current bbtt shapes
-    if args.subregion:
-        pre_path += f"/{args.subregion}"
-    regions_to_compare = args.compare_list.split(",") if args.compare_list else []
 
-    if regions_to_compare:
-        comparison_paths = [f"{pre_path}/{reg}" for reg in regions_to_compare] # structure has the sub-regions to compare as final folders containing the histos: e.g. channel-region-category-subregion(s)
-        # print("DEBUG: Comparison paths:", comparison_paths)
+    pre_path = f"{args.channel}/{args.region}/{args.category}"
+    if args.pre_path: pre_path = args.pre_path
+    if args.subregion: pre_path += f"/{args.subregion}"
+
+    if args.compare_list:
+        regions_to_compare = args.compare_list.split(",")
+        comparison_paths = [f"{pre_path}/{reg}" for reg in regions_to_compare]
         if all(path in hists_to_plot_binned for path in comparison_paths):
-            comparison_data = {
-                reg: hists_to_plot_binned[f"{pre_path}/{reg}"] for reg in regions_to_compare
-            }
-
-            # print(f"DEBUG: Plotting regions comparison: {', '.join(regions_to_compare)}")
-
-            # NOTA: Per un confronto regione per regione, è fondamentale:
-            # 1. Impostare stacked=False
-            # 2. Impostare compare_mode=True (questa attiva la logica di overlay che ho corretto nel drawer)
-
+            comparison_data = {reg: hists_to_plot_binned[f"{pre_path}/{reg}"] for reg in regions_to_compare}
             plot_histogram_from_config(
-                variable=args.var,
-                histograms_dict=comparison_data,
-                phys_model_dict=phys_model_dict,
-                processes_dict=proc_plotting_info_dict,
-                axes_cfg_dict=hist_cfg_dict,
-                page_cfg_dict=page_cfg_dict,
-                page_cfg_custom_dict=page_cfg_custom_dict,
-                filename_base=f"{args.outFile}_regions_comparison",
-                period=args.period,
-                stacked=args.stack,               # <-- IMPOSTA A FALSE
-                compare_mode=True,           # <-- IMPOSTA A TRUE
-                wantLogX=args.wantLogX,
-                wantLogY=args.wantLogY,
-                wantData=args.wantData,
-                wantSignal=args.wantSignal,
-                wantRatio=args.wantRatio,
-                category=args.category,
-                channel=args.channel,
-                ref_region = args.ref_region if args.ref_region else regions_to_compare[0]
+                variable=args.var, histograms_dict=comparison_data, phys_model_dict=phys_model_dict,
+                processes_dict=processes_dict, axes_cfg_dict=setup.hists, page_cfg_dict=page_cfg_dict,
+                page_cfg_custom_dict=page_cfg_custom_dict, filename_base=f"{args.outFile}_regions_comparison",
+                period=args.period, stacked=args.stack, compare_mode=True, wantLogX=args.wantLogX,
+                wantLogY=args.wantLogY, wantData=args.wantData, wantSignal=args.wantSignal, wantRatio=args.wantRatio,
+                category=args.category, channel=args.channel, ref_region=args.ref_region or regions_to_compare[0]
             )
         else:
-            print("Regions not found.")
 
+            print("Regions not found in histogram dict.")
     elif pre_path in hists_to_plot_binned:
-
-        main_region_data = {contrib: hists_to_plot_binned[pre_path][contrib] for contrib in all_contributions if contrib in hists_to_plot_binned[pre_path]}
-
-        if len(all_contributions) >= 1:
-            # print(f"DEBUG: Plotting histograms found at this path: {pre_path}")
-            # print(f"DEBUG: Contributions to plot: {hists_to_plot_binned[pre_path].keys()}")
+        main_region_data = {contrib: hists_to_plot_binned[pre_path][contrib]
+                          for contrib in all_contributions if contrib in hists_to_plot_binned[pre_path]}
+        if main_region_data:
             plot_histogram_from_config(
-                variable=args.var,
-                histograms_dict=main_region_data,
-                phys_model_dict=phys_model_dict,
-                processes_dict=proc_plotting_info_dict,
-                axes_cfg_dict=hist_cfg_dict,
-                page_cfg_dict=page_cfg_dict,
-                page_cfg_custom_dict=page_cfg_custom_dict,
-                filename_base=f"{args.outFile}_stacked" if args.stack else args.outFile,
-                period=args.period,
-                stacked=args.stack,
-                wantLogX=args.wantLogX,
-                wantLogY=args.wantLogY,
-                wantData=args.wantData,
-                wantSignal=args.wantSignal,
-                wantRatio=args.wantRatio,
-                category=args.category,
-                channel=args.channel
+                variable=args.var, histograms_dict=main_region_data, phys_model_dict=phys_model_dict,
+                processes_dict=processes_dict, axes_cfg_dict=setup.hists, page_cfg_dict=page_cfg_dict,
+                page_cfg_custom_dict=page_cfg_custom_dict, filename_base=args.outFile,
+                period=args.period, stacked=args.stack, wantLogX=args.wantLogX, wantLogY=args.wantLogY,
+                wantData=args.wantData, wantSignal=args.wantSignal, wantRatio=args.wantRatio,
+                category=args.category, channel=args.channel
             )
         else:
             print("No contributions found")
     else:
-        print(f"{pre_path} not found")
+        print(f"Path {pre_path} not found in file.")
+
     inFile_root.Close()
+
+
+if __name__ == "__main__":
+    main()

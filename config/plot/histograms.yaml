@@ -162,7 +162,7 @@ mu[0-9]+_dxy(_.*)?:
   x_title: "$d_{{xy}}(\\mu_{mu_idx})$"
   y_title: Events
   use_log_y: False
-  max_y_sf: 10.
+  max_y_sf: 2.
   divide_by_bin_width: False
 
 mu[0-9]+_dz(_.*)?:
@@ -171,7 +171,7 @@ mu[0-9]+_dz(_.*)?:
   x_title: "$d_z(\\mu_{mu_idx})$"
   y_title: Events
   use_log_y: False
-  max_y_sf: 10.
+  max_y_sf: 2.
   divide_by_bin_width: False
 
 mu[0-9]+_eta(_.*)?:
