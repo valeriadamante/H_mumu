@@ -630,3 +630,14 @@ payload_producers:
     awkward_based: True
     uproot_stepsize: '50MB'
     dependencies: [ ]
+  VBFNet:
+    producers_module_name: Analysis.VBFNet_Application
+    producer_name: VBFNetProducer
+    columns:
+      - NNOutput
+    n_cpus: 4
+    max_runtime: 2.0
+    cmssw_env: False
+    awkward_based: True
+    uproot_stepsize: '50MB'
+    dependencies: [ ]

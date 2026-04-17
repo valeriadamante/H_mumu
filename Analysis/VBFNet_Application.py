@@ -1,35 +1,33 @@
 from __future__ import annotations
-import os, sys
+
+import os
+import sys
+import tomllib
+
 import numpy as np
-import awkward as ak
 import onnxruntime as ort
 import psutil
 import yaml
-import os
-import ROOT
-import tomllib
-import pickle as pkl
-from pprint import pprint
 
-from Studies.DNN.model_generation.parse_column_names import parse_column_names
-import FLAF.Common.Utilities as Utilities
 import Analysis.H_mumu as analysis
-from FLAF.Common.Utilities import DeclareHeader
+import FLAF.Common.Utilities as Utilities
+from Analysis.JetRelatedFunctions import VBFNetJetCollectionDef
 from Corrections.Corrections import Corrections
+from FLAF.Common.Utilities import DeclareHeader
 
 
-class DNNProducer:
+class VBFNetProducer:
     def __init__(self, cfg, payload_name, period):
-        print("DNN Producer init!")
+        print("VBFNet Producer init!")
         # cfg is H_mumu/configs/global.yaml
         self.period = period
         self.cfg = cfg
         self.global_cfg = self._load_global_config()
         self.payload_name = payload_name
         self._load_framework()
-        self.parity, self.input_features = self._load_dnn_config()
+        self.parity, self.input_features = self._load_network_config()
         # Columns for tmp file
-        self.vars_to_save = self.input_features  # + self.corrected_input_features
+        self.vars_to_save = self.input_features
         # Final columns
         self.cols_to_save = [
             f"{self.payload_name}_{col}" for col in self.cfg["columns"]
@@ -65,9 +63,10 @@ class DNNProducer:
         """
         Load in the trained ONNX models
         """
-        directory = os.path.join(os.environ["ANALYSIS_PATH"], "Analysis", "DNN_models")
+        directory = os.path.join(
+            os.environ["ANALYSIS_PATH"], "Analysis", "VBFNet_models"
+        )
         models = []
-        renorm_vars = []
         for i in range(self.parity):
             # The model itself
             filename = os.path.join(directory, f"trained_model_{i}.onnx")
@@ -75,22 +74,18 @@ class DNNProducer:
             models.append(model)
         return models
 
-    def _load_dnn_config(self):
+    def _load_network_config(self):
         """
         Read in the config used to train the network and input features used
         """
-        directory = os.path.join(os.environ["ANALYSIS_PATH"], "Studies", "DNN")
-        filepath = os.path.join(directory, "configs", "config.toml")
+        directory = os.path.join(
+            os.environ["ANALYSIS_PATH"], "Analysis", "VBFNet_models"
+        )
+        filepath = os.path.join(directory, "config.toml")
         with open(filepath, "rb") as f:
             config = tomllib.load(f)
-        parity = config["kfold"]["k"]
-        # Input features
-        filepath = os.path.join(directory, "configs", "columns_config.yaml")
-        with open(filepath, "r") as f:
-            columns_config = yaml.safe_load(f)
-        input_features = parse_column_names(
-            columns_config["vars_to_save"], column_type="data"
-        )
+        parity = config["splitting"]["k"]
+        input_features = config["dataset"]["data_columns"]
         return parity, input_features
 
     ### Functions for running the inference ###
@@ -101,15 +96,12 @@ class DNNProducer:
         dfw = analysis.DataFrameBuilderForHistograms(
             dfw.df, self.global_cfg, self.period, corrections
         )
-        print(
-            f"when creating DataFrameBuilderForHistograms, dfw has {dfw.df.Count().GetValue()} entries"
-        )
         dfw = analysis.PrepareDFBuilder(dfw)
-        print(f"on top of PrepareDFBuilder it has {dfw.df.Count().GetValue()} entries")
+        dfw.df = VBFNetJetCollectionDef(dfw.df)
         return dfw
 
-    def ApplyDNN(self, branches):
-        print("*********** Running ApplyDNN...")
+    def ApplyVBFNet(self, branches):
+        print("*********** Running ApplyVBFNet...")
         nEvents = len(branches)
         event_number = np.array(getattr(branches, "FullEventId"))
         input_array = np.array(
@@ -133,8 +125,8 @@ class DNNProducer:
         return branches
 
     def run(self, array):
-        print("*********** Running DNN producer")
-        array = self.ApplyDNN(array)
+        print("*********** Running VBFNet producer")
+        array = self.ApplyVBFNet(array)
         # Delete not-needed branches
         for col in array.fields:
             if col not in self.cfg["columns"]:

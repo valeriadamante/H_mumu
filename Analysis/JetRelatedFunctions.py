@@ -230,14 +230,14 @@ def VBFNetJetCollectionDef(df, max_jets=4):
     jet_vars = [
         "pt",
         "eta",
-        "phi",
-        "btagPNetB",
-        "btagPNetCvB",
+        # "phi",
+        # "btagPNetB",
+        # "btagPNetCvB",
         "btagPNetCvL",
-        "btagPNetCvNotB",
+        # "btagPNetCvNotB",
         "btagPNetQvG",
-        "btagPNetTauVJet",
-        "puIdDisc",
+        # "btagPNetTauVJet",
+        # "puIdDisc",
     ]
     for var in jet_vars:
         df = df.Define(f"FilteredJet_{var}_vec", f"Jet_{var}[VBFCandJet_selection]")

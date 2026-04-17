@@ -9,4 +9,5 @@ store_noncentral: true
 phys_model: TestModel
 variables:
   - DNN_NNOutput
+  - VBFNet_NNOutput
   - mu1_pt
