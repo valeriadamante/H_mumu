@@ -2,10 +2,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 import mplhep as hep
 import ROOT
+import re
 if __name__ == "__main__":
     sys.path.append(os.environ["ANALYSIS_PATH"])
 from Analysis.plotting_tools.HelpersForHistograms import findBinEntry, resolve_text_positions, folder_names, period_dict, get_hist_arrays
 hep.style.use("CMS")
+
+
+def is_2d_histogram(axes_cfg_dict, variable):
+    var_entry = findBinEntry(axes_cfg_dict, variable)
+    if var_entry in axes_cfg_dict and "var_list" in axes_cfg_dict[var_entry]:
+        return True
+    return False
 
 
 def get_bin_edges_widths(hist):
@@ -130,12 +138,122 @@ def draw_ratio_comparison(ax_ratio, bin_edges, ref_vals, ref_errs, reg_vals, reg
     ax_ratio.set_ylabel(y_label, fontsize=11); ax_ratio.set_xlabel(x_label)
 
 
+def plot_2d_histogram_from_config(variable, histograms_dict, phys_model_dict, processes_dict,
+                                 axes_cfg_dict, page_cfg_dict, page_cfg_custom_dict, filename_base, period,
+                                 wantLogX=False, wantLogY=False, wantData=False, wantSignal=False,
+                                 category=None, channel=None):
+
+    var_entry = findBinEntry(axes_cfg_dict, variable)
+    hist_cfg = axes_cfg_dict.get(var_entry, {})
+
+    canvas_size = page_cfg_dict['page_setup'].get('canvas_size', [1000, 800])
+    fig = plt.figure(figsize=(canvas_size[0] / 80, canvas_size[1] / 100))
+    ax = fig.add_subplot(1, 1, 1)
+    fig.subplots_adjust(top=0.85, right=0.85)
+
+    mc_hists, signal_hists, data_hist = {}, {}, None
+    y_maxes = []
+
+    for contrib, hist in histograms_dict.items():
+        if hist is None: continue
+        if not hist.InheritsFrom("TH2"): continue
+        if contrib in phys_model_dict.get('data', []) + ['data']:
+            data_hist = hist
+        elif contrib in phys_model_dict.get('signals', []):
+            signal_hists[contrib] = hist
+        elif contrib in phys_model_dict.get('backgrounds', []):
+            mc_hists[contrib] = hist
+
+    all_hists = {**mc_hists}
+    if wantSignal: all_hists.update(signal_hists)
+    if wantData and data_hist: all_hists['data'] = data_hist
+
+    if not all_hists:
+        print("[plot_2d] No valid 2D histograms."); return
+
+    n_plots = len(all_hists)
+    n_cols = min(3, n_plots)
+    n_rows = (n_plots + n_cols - 1) // n_cols
+
+    fig.set_size_inches(canvas_size[0] / 80 * n_cols, canvas_size[1] / 100 * n_rows)
+    gs = fig.add_gridspec(n_rows, n_cols, hspace=0.3, wspace=0.3)
+
+    colors_2d = plt.cm.viridis(np.linspace(0, 1, 256))
+
+    for idx, (name, hist) in enumerate(all_hists.items()):
+        row = idx // n_cols
+        col = idx % n_cols
+        ax = fig.add_subplot(gs[row, col]) if n_plots > 1 else fig.add_subplot(gs[0, 0])
+
+        h = hist
+        h.SetOption("COLZ")
+
+        x_bins = h.GetNbinsX()
+        y_bins = h.GetNbinsY()
+        x_edges = np.array([h.GetXaxis().GetBinLowEdge(i) for i in range(1, x_bins + 2)])
+        y_edges = np.array([h.GetYaxis().GetBinLowEdge(i) for i in range(1, y_bins + 2)])
+
+        vals = np.array([[h.GetBinContent(ix, iy) for ix in range(1, x_bins + 1)] for iy in range(1, y_bins + 1)])
+
+        im = ax.pcolormesh(x_edges, y_edges, vals, cmap='viridis', shading='flat')
+        cbar = plt.colorbar(im, ax=ax)
+        cbar.set_label("Events", fontsize=10)
+
+        cfg = processes_dict.get(name, {})
+        plot_label = cfg.get("name", name)
+        ax.set_title(plot_label, fontsize=12)
+
+        var_list = hist_cfg.get("var_list", [])
+        if len(var_list) >= 2:
+            x_entry = findBinEntry(axes_cfg_dict, var_list[0])
+            y_entry = findBinEntry(axes_cfg_dict, var_list[1])
+            x_label = axes_cfg_dict[x_entry].get("x_title", var_list[0])
+            y_label = axes_cfg_dict[y_entry].get("x_title", var_list[1])
+        else:
+            x_label = hist_cfg.get("x_title", variable)
+            y_label = hist_cfg.get("y_title", variable)
+        ax.set_xlabel(x_label, fontsize=10)
+        ax.set_ylabel(y_label, fontsize=10)
+
+    legend_cfg = page_cfg_dict.get("legend_mplhep", {})
+    text_box_names = page_cfg_dict["page_setup"].get("text_boxes_mplhep", [])
+    text_box_cfg = {name: page_cfg_dict.get(name, {}) for name in text_box_names}
+
+    try:
+        resolved_positions = resolve_text_positions(text_box_cfg)
+    except NameError:
+        resolved_positions = {}
+
+    for name in text_box_names:
+        cfg = text_box_cfg.get(name, {})
+        pos = resolved_positions.get(name, cfg.get("pos", [0.02, 1.05]))
+        year = period.split('_')[1]
+        if year == "all": year = "2022-2023"
+        if cfg.get("type") == "cms_mplhep":
+            hep.cms.label(label="Preliminary", data=False,
+                          ax=ax, loc=0, com=cfg.get("com", "13.6 TeV"), lumi=cfg.get("lumi", period_dict.get(period, "")),
+                          year=year, fontsize=cfg.get("text_size", 12))
+
+    plt.savefig(f"{filename_base}.pdf", bbox_inches="tight")
+    print(f"2D Plot saved to {filename_base}.pdf")
+    plt.savefig(f"{filename_base}.png", bbox_inches="tight")
+    print(f"2D Plot saved to {filename_base}.png")
+    plt.close()
+
+
 def plot_histogram_from_config(variable, histograms_dict, phys_model_dict, processes_dict,
                                 axes_cfg_dict, page_cfg_dict, page_cfg_custom_dict, filename_base, period,
                                 stacked=True, compare_mode=False, compare_vars_mode=False,
                                 wantLogX=False, wantLogY=False, wantData=False, wantSignal=False,
                                 wantRatio=False, category=None, channel=None,
                                 group_minor_contributions=False, minor_fraction=0.001, ref_region=""):
+
+    if is_2d_histogram(axes_cfg_dict, variable):
+        return plot_2d_histogram_from_config(
+            variable, histograms_dict, phys_model_dict, processes_dict,
+            axes_cfg_dict, page_cfg_dict, page_cfg_custom_dict, filename_base, period,
+            wantLogX, wantLogY, wantData, wantSignal, category, channel
+        )
 
     var_entry = findBinEntry(axes_cfg_dict, variable)
     hist_cfg = axes_cfg_dict.get(var_entry, {})
@@ -305,6 +423,6 @@ def plot_histogram_from_config(variable, histograms_dict, phys_model_dict, proce
     plt.close()
 
 
-__all__ = ["plot_histogram_from_config", "get_bin_edges_widths", "get_hist_arrays", "integral",
+__all__ = ["plot_histogram_from_config", "plot_2d_histogram_from_config", "is_2d_histogram", "get_bin_edges_widths", "get_hist_arrays", "integral",
            "compute_total_mc_and_stat_err", "choose_reference_binning", "order_mc_contributions",
            "draw_mc_stack", "draw_signals", "draw_data", "draw_ratio", "draw_ratio_comparison"]

@@ -38,11 +38,17 @@ def createKeyFilterDict(global_params, period):
     # sign_regions_to_consider = global_params["MuMuMassRegions"]
     categories = []
 
-    if isinstance(global_params["categories"], list) and global_params["categories"]:
-        categories = list(global_params["categories"].keys())
+    if "categories" in global_params.keys():
+        if isinstance(global_params["categories"], dict):
+            categories = list(global_params["categories"].keys())
+        elif isinstance(global_params["categories"], list):
+            categories=global_params['categories']
+        elif global_params["categories"]=="all":
+            categories = list(global_params["category_definition"].keys())
+        else:
+            raise RuntimeError(f"global params has a key named categories, but it's neither a list nor a string=all nor a dict, it's: ", global_params["categories"])
     else:
         categories = list(global_params["category_definition"].keys())
-    print(f"saving categories: {categories}")
 
     ### add custom categories eventually:
     custom_categories = []
@@ -195,7 +201,6 @@ def GetWeight(
         weights_to_apply.extend(trg_weights_dict[channel])
 
     total_weight = "*".join(weights_to_apply)
-    # print(total_weight)
     return total_weight
 
 
@@ -285,7 +290,6 @@ def PrepareDFBuilder(dfBuilder):
         dfBuilder.df = dfBuilder.corrections.muScaRe.getP4VariationsForLegs(
             dfBuilder.df
         )
-        print(dfBuilder.df.GetColumnNames())
 
     dfBuilder.df = GetAllMuMuCorrectedPtRelatedObservables(
         dfBuilder.df, suff=dfBuilder.config["mu_pt_for_definitions"]

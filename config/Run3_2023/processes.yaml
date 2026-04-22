@@ -5,9 +5,17 @@ DY:
   color_mplhep: lightskyblue
   sub_processes:
     - DYto2L_InclusivePlusBinned
+
+DY_separated:
+  name: "DY"
+  color: "kAzure+7"
+  color_mplhep: lightskyblue
+  sub_processes:
+    - DYto2L
+
 DYto2L:
   processors: *DY_processors_allFlavors
-  name: "DY"
+  name: "DYto2L"
   color: "kAzure+7"
   color_mplhep: lightskyblue
   datasets:
@@ -15,6 +23,9 @@ DYto2L:
 
 DYto2L_jet_binned:
   processors: *DY_processors_allFlavors
+  name: "DYto2L_jet_binned"
+  color: "kAzure+7"
+  color_mplhep: lightskyblue
   corrections:
     Vpt:
       type: DY
@@ -24,6 +35,9 @@ DYto2L_jet_binned:
     - DYto2L_M_50_2J_amcatnloFXFX
 
 DYto2L_PtBinned:
+  name: "DYto2L_PtBinned"
+  color: "kAzure+7"
+  color_mplhep: lightskyblue
   processors: *DY_processors_allFlavors
   corrections:
     Vpt:
@@ -141,7 +155,7 @@ DYto2Mu_MLL105To160_FlashSim:
   color: "kAzure+7"
   color_mplhep: lightskyblue
   datasets: [ ]
-
+  
 ############## TT ##############
 TT:
   name: "t $\\bar{t}$"

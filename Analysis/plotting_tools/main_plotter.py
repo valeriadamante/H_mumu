@@ -46,7 +46,7 @@ def main():
         os.environ["ANALYSIS_PATH"],
         args.period,
         None,
-        custom_model_selection="WPStudiesModelPlusData"
+        # custom_model_selection="WPStudiesModelPlusData"
     )
 
     analysis = importlib.import_module(f"{setup.global_params['analysis_import']}")

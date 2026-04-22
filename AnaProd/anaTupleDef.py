@@ -162,7 +162,6 @@ def addAllVariables(
             dfw.colToSave.extend(
                 GetObservablesCols(obs_name, isData, global_params["nano_version"])
             )
-
     if trigger_class is not None:
         hltBranches = dfw.Apply(
             trigger_class.ApplyTriggers,

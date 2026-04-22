@@ -69,7 +69,72 @@ singleMu_th:
   Run3_2024: 26
   Run3_2025: 26
 
-categories: all
+categories:
+  # - no_cuts
+  # - mu_pt_sel
+  # - trigger_sel
+  # - mu1_prompt
+  # - mu2_prompt
+  # - mu1_from_tau
+  # - mu2_from_tau
+  # - both_muons_true_prompt
+  # - at_least_one_muon_from_tau
+  # - any_muon_not_true
+  # - baseline_WPIso_ML
+  # - baseline_WPIso_LL
+  # - baseline_WPIso_LL_miniIso
+  # - baseline_WPIso_TL_mvaLowPt_miniIso
+  # - baseline_WPIso_LL_mvaLowPt_miniIso
+  - baseline_WPcombo4
+  - baseline_WPcombo3
+  - baseline_WPcombo2
+  - baseline_WPcombo1
+  - baseline_WPcurrentcombo
+  - baseline_WPcombo1_trueMuons
+  - baseline_WPcombo2_trueMuons
+  - baseline_WPcombo3_trueMuons
+  - baseline_WPcombo4_trueMuons
+  - baseline_WPcurrentcombo_trueMuons
+  - baseline_WPcombo1_atLeastOneFromTaus
+  - baseline_WPcombo2_atLeastOneFromTaus
+  - baseline_WPcombo3_atLeastOneFromTaus
+  - baseline_WPcombo4_atLeastOneFromTaus
+  - baseline_WPcurrentcombo_atLeastOneFromTaus
+  - baseline_WPcombo1_NOtrueMuons
+  - baseline_WPcombo2_NOtrueMuons
+  - baseline_WPcombo3_NOtrueMuons
+  - baseline_WPcombo4_NOtrueMuons
+  - baseline_WPcurrentcombo_NOtrueMuons
+  - VBF_WPcombo4
+  - VBF_WPcombo3
+  - VBF_WPcombo2
+  - VBF_WPcombo1
+  - VBF_WPcurrentcombo
+  - VBF_WPcombo1_trueMuons
+  - VBF_WPcombo2_trueMuons
+  - VBF_WPcombo3_trueMuons
+  - VBF_WPcombo4_trueMuons
+  - VBF_WPcurrentcombo_trueMuons
+  - VBF_WPcombo1_atLeastOneFromTaus
+  - VBF_WPcombo2_atLeastOneFromTaus
+  - VBF_WPcombo3_atLeastOneFromTaus
+  - VBF_WPcombo4_atLeastOneFromTaus
+  - VBF_WPcurrentcombo_atLeastOneFromTaus
+  - VBF_WPcombo1_NOtrueMuons
+  - VBF_WPcombo2_NOtrueMuons
+  - VBF_WPcombo3_NOtrueMuons
+  - VBF_WPcombo4_NOtrueMuons
+  - VBF_WPcurrentcombo_NOtrueMuons
+
+  # - jets_0
+  # - jets_1
+  # - jets_2
+  # - jets_gt2
+  # - jets_inclusive
+
+
+
+# categories: all
   # - no_cuts
   # - baseline_WPIso_MM
   # - baseline_WPIso_ML
@@ -123,6 +188,7 @@ category_definition:
   at_least_one_muon_from_tau: "!(both_muons_true_prompt) && (mu1_from_tau || mu2_from_tau)"
   any_muon_not_true: "!(both_muons_true_prompt) && !(at_least_one_muon_from_tau)"
 
+  # mu1_pfRelIso04_all < 0.25 &&  mu2_pfRelIso04_all< 0.25 && mu1_mediumId && mu2_mediumId
 
   baseline_WPIso_ML: "mu1_pfRelIso04_all <= 0.25 &&  mu2_pfRelIso04_all<= 0.25 && mu1_mediumId && mu2_mediumId"
   baseline_WPIso_LL: "mu1_pfRelIso04_all <= 0.25 &&  mu2_pfRelIso04_all<= 0.25 && mu1_looseId && mu2_looseId"
@@ -584,7 +650,7 @@ corrections:
       mediumId: mediumId
       looseId: looseId
       p4: p4_bsConstrainedPt # p4_pt_nano
-    lowPt: False
+    lowPt: True
     midPt: True
     hiPt: False
   trigger:

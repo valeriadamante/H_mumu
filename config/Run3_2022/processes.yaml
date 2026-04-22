@@ -18,7 +18,7 @@ DY_separated:
 
 DYto2L:
   processors: *DY_processors_allFlavors
-  name: "DYto2L"
+  name: "DY"
   color: "kAzure+7"
   color_mplhep: lightskyblue
   datasets:
@@ -26,9 +26,6 @@ DYto2L:
 
 DYto2L_jet_binned:
   processors: *DY_processors_allFlavors
-  name: "DYto2L_jet_binned"
-  color: "kAzure+7"
-  color_mplhep: lightskyblue
   corrections:
     Vpt:
       type: DY
@@ -38,9 +35,6 @@ DYto2L_jet_binned:
     - DYto2L_M_50_2J_amcatnloFXFX
 
 DYto2L_PtBinned:
-  name: "DYto2L_PtBinned"
-  color: "kAzure+7"
-  color_mplhep: lightskyblue
   processors: *DY_processors_allFlavors
   corrections:
     Vpt:
