@@ -31,31 +31,28 @@ def analysis_setup(setup):
     analysis = importlib.import_module(f"{analysis_import}")
 
 
+
 def GetDfw(df, setup, dataset_name):
     global_params = setup.global_params
-    corrections = Corrections.getGlobal()
+    isData = dataset_name == "data"
     period = global_params["era"]
-    kwargset = (
-        {}
-    )  # here go the customisations for each analysis eventually extrcting stuff from the global params
-    kwargset["isData"] = global_params["process_group"] == "data"
-    kwargset["wantTriggerSFErrors"] = (
-        global_params["compute_rel_weights"]
-        and "trigger" in corrections.to_apply.keys()
-    )
-    print(kwargset["wantTriggerSFErrors"])
-    kwargset["colToSave"] = []
-    dfw = analysis.DataFrameBuilderForHistograms(
-        df, global_params, period, corrections, **kwargset, is_not_Cache=True
-    )
+    dfw = analysis.DataFrameBuilderForHistograms(df, global_params, period)
+    new_dfw = analysis.PrepareDfForHistograms(dfw, isData)
 
-    new_dfw = analysis.PrepareDFBuilder(dfw)
-    if global_params["further_cuts"]:
-        for key in global_params["further_cuts"].keys():
-            vars_to_add = global_params["further_cuts"][key][0]
-            for var_to_add in vars_to_add:
-                if var_to_add not in new_dfw.colToSave:
-                    new_dfw.colToSave.append(var_to_add)
+    full_res_vars = []
+    flavor = global_params.get("histTuple_flavor", "default")
+    if flavor == "default":
+        full_res_vars = global_params.get("histTuple_fullResolution_variables", [])
+    else:
+        flavor_entry = global_params["histTuple_flavors"][flavor]
+        full_res_vars = flavor_entry.get("fullResolution_variables", [])
+        variables = flavor_entry.get("variables", [])
+        global_params["variables"] = variables
+        global_params["histTuple_fullResolution_variables"] = full_res_vars
+
+    for var in full_res_vars:
+        new_dfw.colToSave.append(var)
+
     return new_dfw
 
 
