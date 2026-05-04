@@ -707,3 +707,14 @@ payload_producers:
     awkward_based: True
     uproot_stepsize: '50MB'
     dependencies: [ ]
+  PostVBFNetDNN:
+    producers_module_name: Analysis.PostVBFNetDNN_Application
+    producer_name: PostVBFNetDNNProducer
+    columns:
+      - NNOutput
+    n_cpus: 4
+    max_runtime: 2.0
+    cmssw_env: False
+    awkward_based: True
+    uproot_stepsize: '50MB'
+    dependencies: [ ]

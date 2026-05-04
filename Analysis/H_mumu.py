@@ -136,7 +136,7 @@ def SaveVarsForNNInput(variables):
         "delta_eta_jj",
     ]  # ,"j1_idx","j1_y","j1_phi","delta_phi_jj"
     mumu_jj_vars = [
-        "Zepperfield_Var",
+        "Zeppenfeld_Var",
         "R_pt",
         "pt_centrality",
         "minDeltaPhi",

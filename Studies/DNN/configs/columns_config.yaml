@@ -21,7 +21,7 @@ vars_to_save:
     # - minDeltaEta
     - minDeltaEtaSigned
     - minDeltaPhi
-    - Zepperfield_Var
+    - Zeppenfeld_Var
     - pt_centrality
   MuPair:
     - dR_mumu
