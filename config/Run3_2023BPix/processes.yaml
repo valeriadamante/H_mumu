@@ -2,7 +2,7 @@
 DY:
   name: "DY"
   color: "kAzure+7"
-  color_mplhep: lightskyblue
+  color_mplhep: dodgerblue
   sub_processes:
     - DYto2L_InclusivePlusBinned
 
@@ -10,7 +10,7 @@ DYto2L:
   processors: *DY_processors_allFlavors
   name: "DY"
   color: "kAzure+7"
-  color_mplhep: lightskyblue
+  color_mplhep: dodgerblue
   datasets:
     - DYto2L_M_50_amcatnloFXFX
 
@@ -133,20 +133,20 @@ DYto2Tau_M_50:
 DYto2Mu_MLL105To160:
   name: "DY"
   color: "kAzure+7"
-  color_mplhep: lightskyblue
+  color_mplhep: dodgerblue
   datasets:
     - DYto2Mu_MLL_105to160_amcatnloFXFX
 
 DYto2Mu_MLL105To160_FlashSim:
   name: "DY"
   color: "kAzure+7"
-  color_mplhep: lightskyblue
+  color_mplhep: dodgerblue
   datasets: [ ]
 ############## TT ##############
 TT:
   name: "t $\\bar{t}$"
   color: "kGreen-3"  # eliminates need for plot.yaml
-  color_mplhep: darkblue  # turquoise
+  color_mplhep: green  # turquoise
   datasets:
     - TTto2L2Nu
     - TTtoLNu2Q
@@ -164,14 +164,14 @@ TT_Inclusive:
 W:
   name: "W"
   color: "kGreen"  # eliminates need for plot.yaml
-  color_mplhep: yellow
+  color_mplhep: navy
   datasets:
     - WtoLNu_amcatnloFXFX
 
 W_NJets:
   name: "W $\\rightarrow \\ell \\nu$+ jets"
   color: "kGreen"  # eliminates need for plot.yaml
-  color_mplhep: yellow
+  color_mplhep: navy
   datasets:
     - WtoLNu_0J_amcatnloFXFX
     - WtoLNu_1J_amcatnloFXFX
@@ -181,34 +181,34 @@ W_NJets:
 EWK_LLJJ:
   name: "EWK"
   color: kMagenta+3
-  color_mplhep: darkmagenta
+  color_mplhep: lavender
   datasets: [ ]
 
 EWK:
   name: "EWK"
   color: kMagenta+3
-  color_mplhep: darkmagenta
+  color_mplhep: lavender
   datasets:
     - EWK_2L2J_madgraph_herwig
 
 EWK_2Mu2J_MLL_105to160_herwig:
   name: "EWK"
   color: kMagenta+3
-  color_mplhep: darkmagenta
+  color_mplhep: lavender
   datasets:
     - EWK_2Mu2J_MLL_105to160_herwig
 
 EWK_2Mu2J_MLL_105to160_pythia:
   name: "EWK"
   color: kMagenta+3
-  color_mplhep: darkmagenta
+  color_mplhep: lavender
   datasets:
     - EWK_2Mu2J_MLL_105to160_pythia
 
 EWK_2Mu2J_MLL_105to160_pythia_Flashsim:
   name: "EWK"
   color: kMagenta+3
-  color_mplhep: darkmagenta
+  color_mplhep: lavender
   datasets: [ ]
 
 ############## Other single H  ##############

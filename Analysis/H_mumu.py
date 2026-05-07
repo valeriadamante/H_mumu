@@ -175,13 +175,13 @@ def GetWeight(
         "weight_base",
     ]
     # quick fix for DY weights. In future should pass the full dataset and process info to DefineWeightForHistograms
-    if process_name.startswith("DY"):
-        weights_to_apply.extend(
-            [
-                "weight_EWKCorr_VptCentral",
-                "weight_DYw_DYWeightCentral",
-            ]
-        )
+    # if process_name.startswith("DY"):
+    #     weights_to_apply.extend(
+    #         [
+    #             "weight_EWKCorr_VptCentral",
+    #             "weight_DYw_DYWeightCentral",
+    #         ]
+    #     )
 
     trg_weights_dict = {"muMu": ["weight_TrgSF_singleMu_IsoMu24Central"]}
 
@@ -293,9 +293,7 @@ def PrepareDFBuilder(dfBuilder):
 
     dfBuilder.df = GetAllMuMuCorrectedPtRelatedObservables(
         dfBuilder.df, suff=dfBuilder.config["mu_pt_for_definitions"]
-    )
-    # if "m_mumu_resolution" in dfBuilder.config["variables"]:
-    #     dfBuilder.df = GetMuMuMassResolution(dfBuilder.df, dfBuilder.config["pt_to_use"])
+    ) 
     dfBuilder.defineChannels()
     dfBuilder.defineTriggers()
     dfBuilder.SignRegionDef()

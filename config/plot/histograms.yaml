@@ -37,7 +37,7 @@ m_mumu(_.*)?:
   use_log_x: False
   use_log_y: False
   # max_y_sf: 2.
-  max_y_sf: 5.
+  max_y_sf: 1.5
   # use_log_y: True
   # max_y_sf: 20.2
   # divide_by_bin_width: False

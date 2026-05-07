@@ -154,6 +154,7 @@ def plot_2d_histogram_from_config(variable, histograms_dict, phys_model_dict, pr
     mc_hists, signal_hists, data_hist = {}, {}, None
     y_maxes = []
 
+
     for contrib, hist in histograms_dict.items():
         if hist is None: continue
         if not hist.InheritsFrom("TH2"): continue
@@ -231,8 +232,7 @@ def plot_2d_histogram_from_config(variable, histograms_dict, phys_model_dict, pr
         if year == "all": year = "2022-2023"
         if cfg.get("type") == "cms_mplhep":
             hep.cms.label(label="Preliminary", data=False,
-                          ax=ax, loc=0, com=cfg.get("com", "13.6 TeV"), lumi=cfg.get("lumi", period_dict.get(period, "")),
-                          year=year, fontsize=cfg.get("text_size", 12))
+                          ax=ax, loc=0, com=cfg.get("com", "13.6 TeV"), lumi=lumi_opts.get("text", period_dict.get(period, "")),year=year, fontsize=lumi_opts.get("text_size", 12))
 
     plt.savefig(f"{filename_base}.pdf", bbox_inches="tight")
     print(f"2D Plot saved to {filename_base}.pdf")
@@ -260,6 +260,7 @@ def plot_histogram_from_config(variable, histograms_dict, phys_model_dict, proce
     blind_region = hist_cfg.get("blind_region", [])
     divide_by_bin_width = bool(hist_cfg.get("divide_by_bin_width", False))
     plot_opts = dict(page_cfg_dict.get("plot_options", {}))
+    lumi_opts = dict(page_cfg_custom_dict.get("lumi_text", {}))
     enable_kde = False
 
     canvas_size = page_cfg_dict['page_setup'].get('canvas_size', [1000, 800])
@@ -282,7 +283,7 @@ def plot_histogram_from_config(variable, histograms_dict, phys_model_dict, proce
         if ref_hist is None: print("[plot] No valid hist for binning."); return
         _, _, bin_edges, _ = get_hist_arrays(ref_hist, False)
         processes = list(set(phys_model_dict.get('backgrounds', []) + phys_model_dict.get('signals')))
-
+        print()
         ref_vals_dict, ref_vals_err_dict = {}, {}
         for proc in processes:
             h = histograms_dict[ref_region].get(proc)
@@ -332,11 +333,11 @@ def plot_histogram_from_config(variable, histograms_dict, phys_model_dict, proce
 
     else:
         for contrib, hist in histograms_dict.items():
+            print(contrib, hist)
             if hist is None: continue
             if contrib in phys_model_dict.get('data', []) + ['data']: data_hist = hist
-            elif contrib in phys_model_dict.get('signals', []): signal_hists[contrib] = hist
+            elif contrib in phys_model_dict.get('signals', [])+['VBFHto2Mu_m125_powheg','VBFHto2Mu_M125_powheg']: signal_hists[contrib] = hist
             elif contrib in phys_model_dict.get('backgrounds', []): mc_hists[contrib] = hist
-
         ref_hist = choose_reference_binning({**mc_hists, **({'data': data_hist} if data_hist else {}), **signal_hists})
         if ref_hist is None: print("[plot] No valid hist."); return
         _, _, bin_edges, _ = get_hist_arrays(ref_hist, False)
@@ -362,7 +363,7 @@ def plot_histogram_from_config(variable, histograms_dict, phys_model_dict, proce
                 cfg = processes_dict.get(name, {})
                 hep.histplot(vals, bins=bin_edges, histtype="step", label=cfg.get("title", name),
                              color=cfg.get("color_mplhep", "black"), linewidth=2, ax=ax)
-        print(f"total MC vals is {total_mc_vals}")
+        # print(f"total MC vals is {total_mc_vals}")
         for k in mc_hists.keys(): y_maxes.append(mc_hists[k].GetMaximum())
         draw_signals(ax, signal_hists, processes_dict, bin_edges, divide_by_bin_width, wantSignal)
         if data_hist is not None and wantData:
@@ -379,10 +380,10 @@ def plot_histogram_from_config(variable, histograms_dict, phys_model_dict, proce
     ax.set_xscale("log" if wantLogX else "linear")
 
     y_max = np.max(y_maxes)
+    max_factor = hist_cfg.get("max_y_sf", 1.2) if not wantLogY else (100 ** hist_cfg.get("max_y_sf", 1.0))
     if y_max is not None and np.isfinite(y_max) and y_max > 0:
-        max_factor = hist_cfg.get("max_y_sf", 1.2) if not wantLogY else (10 ** hist_cfg.get("max_y_sf", 1.0))
         ax.set_ylim(top=y_max * max_factor)
-        if wantLogY: ax.set_ylim(bottom=min(0.00001, y_max * 1e-5))
+        if wantLogY: ax.set_ylim(bottom=min(0.1, y_max * 1e-5))
 
     ax.set_xlim(bin_edges[0] * 0.99, bin_edges[-1] * 1.01)
     legend_cfg = page_cfg_dict.get("legend_mplhep", {})
@@ -410,8 +411,7 @@ def plot_histogram_from_config(variable, histograms_dict, phys_model_dict, proce
         if year == "all": year = "2022-2023"
         if cfg.get("type") == "cms_mplhep":
             hep.cms.label(label=f"Preliminary", data=("data" in histograms_dict or "Data_Muon" in histograms_dict),
-                          ax=ax, loc=0, com=cfg.get("com", "13.6 TeV"), lumi=cfg.get("lumi", period_dict.get(period, "")),
-                          year=year, fontsize=cfg.get("text_size", 12))
+                          ax=ax, loc=0, com=lumi_opts.get("com", "13.6 TeV"), lumi=lumi_opts.get("text", period_dict.get(period, "")),year=year, fontsize=lumi_opts.get("text_size", 12))
         else:
             text_content = cfg.get("text", "").format(category=category, channel=channel, variable=variable)
             ax.text(pos[0], pos[1], text_content, transform=ax.transAxes, fontsize=cfg.get("text_size", 10), ha="left", va="top")

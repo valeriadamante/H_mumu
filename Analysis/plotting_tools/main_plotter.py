@@ -52,7 +52,7 @@ def main():
     analysis = importlib.import_module(f"{setup.global_params['analysis_import']}")
 
     phys_model_dict = {
-        'signals': setup.phys_model.processes("signals"),
+        'signals': setup.phys_model.processes("signals")+['VBFHto2Mu_m125_powheg','VBFHto2Mu_M125_powheg'],
         'backgrounds': setup.phys_model.processes("backgrounds"),
         'data': setup.phys_model.processes("data"),
     }
@@ -74,12 +74,11 @@ def main():
     from Analysis.plotting_tools.HelpersForHistograms import findBinEntry, findNewBins, getNewBins, RebinHisto, get_histograms_from_dir
 
     all_contributions = phys_model_dict['backgrounds']
-    if args.wantSignal: all_contributions += phys_model_dict['signals']
+    if args.wantSignal: all_contributions += list(set(phys_model_dict['signals'] +['VBFHto2Mu_m125_powheg','VBFHto2Mu_M125_powheg']))
     if args.wantData: all_contributions += phys_model_dict['data']
     if args.contribution != 'all': all_contributions = args.contribution.split(",")
-
     var_entry = findBinEntry(setup.hists, args.var)
-
+    # print(all_contributions)
     new_bins = None
     if args.rebin and "x_rebin" in setup.hists[var_entry]:
         bins_to_compute = findNewBins(setup.hists, var_entry, channel=args.channel, category=args.category, region=args.region)

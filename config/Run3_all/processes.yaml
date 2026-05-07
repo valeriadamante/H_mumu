@@ -2,33 +2,20 @@
 DY:
   name: "DY"
   color: "kAzure+7"
-  color_mplhep: lightskyblue
+  color_mplhep: dodgerblue
   sub_processes:
     - DYto2L_InclusivePlusBinned
-    # - DYto2L
-    # - DYto2L_jet_binned
-    # - DYto2L_PtBinned
-
-DY_separated:
-  name: "DY"
-  color: "kAzure+7"
-  color_mplhep: lightskyblue
-  sub_processes:
-    - DYto2L
 
 DYto2L:
   processors: *DY_processors_allFlavors
-  name: "DYto2L"
+  name: "DY"
   color: "kAzure+7"
-  color_mplhep: lightskyblue
+  color_mplhep: dodgerblue
   datasets:
     - DYto2L_M_50_amcatnloFXFX
 
 DYto2L_jet_binned:
   processors: *DY_processors_allFlavors
-  name: "DYto2L_jet_binned"
-  color: "kAzure+7"
-  color_mplhep: lightskyblue
   corrections:
     Vpt:
       type: DY
@@ -38,9 +25,6 @@ DYto2L_jet_binned:
     - DYto2L_M_50_2J_amcatnloFXFX
 
 DYto2L_PtBinned:
-  name: "DYto2L_PtBinned"
-  color: "kAzure+7"
-  color_mplhep: lightskyblue
   processors: *DY_processors_allFlavors
   corrections:
     Vpt:
@@ -149,45 +133,29 @@ DYto2Tau_M_50:
 DYto2Mu_MLL105To160:
   name: "DY"
   color: "kAzure+7"
-  color_mplhep: lightskyblue
+  color_mplhep: dodgerblue
   datasets:
     - DYto2Mu_MLL_105to160_amcatnloFXFX
 
 DYto2Mu_MLL105To160_FlashSim:
   name: "DY"
   color: "kAzure+7"
-  color_mplhep: lightskyblue
+  color_mplhep: dodgerblue
   datasets: [ ]
-
 ############## TT ##############
 TT:
   name: "t $\\bar{t}$"
   color: "kGreen-3"  # eliminates need for plot.yaml
-  color_mplhep: darkblue  # turquoise
-  sub_processes:
-    - TTto2L2Nu
-    - TTtoLNu2Q
-    - TTto4Q
-
-TTto2L2Nu:
-  processors: *ext_processor
+  color_mplhep: orange  # turquoise
   datasets:
     - TTto2L2Nu
-
-TTtoLNu2Q:
-  processors: *ext_processor
-  datasets:
     - TTtoLNu2Q
-
-TTto4Q:
-  processors: *ext_processor
-  datasets:
     - TTto4Q
 
 TT_Inclusive:
   name: "t#bar{t} Inclusive"
   color: "kGreen-3"
-  color_mplhep: darkgreen  # turquoise
+  color_mplhep: orange  # turquoise
   datasets:
     - TT
 
@@ -196,14 +164,14 @@ TT_Inclusive:
 W:
   name: "W"
   color: "kGreen"  # eliminates need for plot.yaml
-  color_mplhep: turquoise
+  color_mplhep: green
   datasets:
     - WtoLNu_amcatnloFXFX
 
 W_NJets:
   name: "W $\\rightarrow \\ell \\nu$+ jets"
   color: "kGreen"  # eliminates need for plot.yaml
-  color_mplhep: turquoise
+  color_mplhep: green
   datasets:
     - WtoLNu_0J_amcatnloFXFX
     - WtoLNu_1J_amcatnloFXFX
@@ -213,34 +181,36 @@ W_NJets:
 EWK_LLJJ:
   name: "EWK"
   color: kMagenta+3
-  color_mplhep: darkmagenta
+  color_mplhep: yellow
   datasets: [ ]
 
 EWK:
   name: "EWK"
   color: kMagenta+3
-  color_mplhep: darkmagenta
+  color_mplhep: yellow
   datasets:
     - EWK_2L2J_madgraph_herwig
 
 EWK_2Mu2J_MLL_105to160_herwig:
   name: "EWK"
   color: kMagenta+3
-  color_mplhep: darkmagenta
+  color_mplhep: yellow
   datasets:
     - EWK_2Mu2J_MLL_105to160_herwig
 
 EWK_2Mu2J_MLL_105to160_pythia:
   name: "EWK"
   color: kMagenta+3
-  color_mplhep: darkmagenta
+  color_mplhep: yellow
   datasets:
     - EWK_2Mu2J_MLL_105to160_pythia
+
 EWK_2Mu2J_MLL_105to160_pythia_Flashsim:
-  name: "DY"
-  color: "kAzure+7"
-  color_mplhep: lightskyblue
+  name: "EWK"
+  color: kMagenta+3
+  color_mplhep: yellow
   datasets: [ ]
+
 ############## Other single H  ##############
 H_mainBckg:
   name: "Single H"
@@ -340,7 +310,6 @@ TTX:
     - TTWW
     - TTZH
     - TTZZ
-    - TTZ_Zto2Q
 
 
 ############## VBF signal ##############
@@ -356,7 +325,7 @@ VBFHto2Mu_M125_powheg:
   color: "kPink"
   color_mplhep: fuchsia
   datasets:
-    - VBFHto2Mu_m125_powheg
+    - VBFHto2Mu_M125_powheg
 
 VBFHto2Mu_m125_powheg:
   name: "VBFHto2Mu"
@@ -397,10 +366,10 @@ VBFHto2Mu_Herwig:
   name: "VBFHto2Mu_Herwig"
   color: "kPink"
   color_mplhep: fuchsia
-  datasets:
-    - VBFHto2Mu_M-125_13p6TeV_powheg-herwig7
-    - VBFHto2Mu_M-125_13p6TeV_powheg-herwig7_ext1
-    - VBFHto2Mu_M-125_13p6TeV_powheg-herwig7_ext2
+  datasets: [ ]
+#     - VBFHto2Mu_M-125_13p6TeV_powheg-herwig7
+#     # - VBFHto2Mu_M-125_13p6TeV_powheg-herwig7_ext1
+#     # - VBFHto2Mu_M-125_13p6TeV_powheg-herwig7_ext2
 
 ############## ggH signal ##############
 
@@ -447,7 +416,6 @@ TTH_inclusive:
     - TTHto2B_M125
 
 ############### Data ##############
-
 
 Other:
   name: "Other"
