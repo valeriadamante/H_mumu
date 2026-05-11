@@ -1,7 +1,16 @@
+# =========================
+# GENERAL CONFIG
+# =========================
+
 anaTupleDef: AnaProd/anaTupleDef.py
 histTupleDef: Analysis/histTupleDef.py
 analysis_import: Analysis.H_mumu
 phys_model: BaseModel
+treeName: Events
+
+# =========================
+# COMPUTING / WLCG
+# =========================
 
 WLCGFileSystem:
   remotePathCacheHost: cms-flaf.cern.ch
@@ -9,59 +18,55 @@ WLCGFileSystem:
   localPathCacheValidity: 600
   verbose: 0
 
-signal_types:
-  - ggH
-  - VBFH
-#  - ttH
-#  - VH
-
-storeFatJets: False
-met_type: "PuppiMET"
-
-treeName: "Events"
 nEventsPerFile:
   data: 1000000
   signals: 1000000
   backgrounds: 1000000
 
-channelSelection:
-  - muMu
 
-channelDefinition:
-  eTau: 13
-  muTau: 23
-  tauTau: 33
-  eE: 11
-  eMu: 12
-  muMu: 22
+met_type: PuppiMET
+storeFatJets: false
+signal_types: [ggH, VBFH]
+channelSelection: [muMu]
 
-region: All
-region_default: All
-custom_regions: MuMuMassRegions
-custom_categories: ""
-custom_subcategories: [ ]
+# =========================
+# CHANNELS
+# =========================
+channels:
+  selection: [muMu]
 
-further_cuts: { }
+  definition:
+    muMu: "true"
 
-MuMuMassRegions:  ### ALL same w.r.t. Run 2 ###
-  Z_sideband: "m_mumu > 70 && m_mumu < 110"
-  Signal_Fit: "m_mumu > 115 && m_mumu < 135"
-  H_sideband: "((m_mumu > 110 && m_mumu < 115) || (m_mumu > 135 && m_mumu < 150))"
-  Signal_ext: "m_mumu > 110 && m_mumu < 150"
-  mass_inclusive: "m_mumu > 60 && m_mumu < 150"
-  # mass_inclusive: "true"
+
+# =========================
+# REGIONS
+# =========================
+regions:
+  MuMuMassRegions:
+    Z_sideband: "m_mumu > 70 && m_mumu < 110"
+    Signal_Fit: "m_mumu > 115 && m_mumu < 135"
+    H_sideband: "((m_mumu > 110 && m_mumu < 115) || (m_mumu > 135 && m_mumu < 150))"
+    Signal_ext: "m_mumu > 110 && m_mumu < 150"
+    mass_inclusive: "m_mumu > 60 && m_mumu < 150"
+
+# =========================
+# TRIGGERS
+# =========================
+# triggers:
+#   muMu:
+#     default: "(HLT_singleMu)"
 
 triggers:
   muMu: [ singleMu ]
+
 hist_triggers:
   muMu:
-    default: (HLT_singleMu)
+    default: "(HLT_singleMu)"
 
 singleMu_th:
   Run2_2016: 26
-  Run2_2016_HIPM: 26
   Run2_2017: 29
-  Run2_2018: 26
   Run3_2022: 26
   Run3_2022EE: 26
   Run3_2023: 26
@@ -69,568 +74,76 @@ singleMu_th:
   Run3_2024: 26
   Run3_2025: 26
 
+# =========================
+# MUONS
+# =========================
+muons:
+  pt_for_selection: pt
+  pt_for_definitions: FSR
+  ID_WP: Medium
+  Iso_WP: Loose
+
+categories_to_select:
+  - no_cuts
+  - base_sel
+  - mu_pt_sel
+  - baseline
+  - baseline_thirdLepVeto
+  - baseline_chi2
+  - baseline_lowPtTT
+  - baseline_thirdLepVeto_chi2
+  - baseline_thirdLepVeto_lowPtTT
+  - baseline_chi2_lowPtTT
+
 categories:
-  # - no_cuts
-  # - mu_pt_sel
-  # - trigger_sel
-  # - mu1_prompt
-  # - mu2_prompt
-  # - mu1_from_tau
-  # - mu2_from_tau
-  # - both_muons_true_prompt
-  # - at_least_one_muon_from_tau
-  # - any_muon_not_true
-  # - baseline_WPIso_ML
-  # - baseline_WPIso_LL
-  # - baseline_WPIso_LL_miniIso
-  # - baseline_WPIso_TL_mvaLowPt_miniIso
-  # - baseline_WPIso_LL_mvaLowPt_miniIso
-  - baseline_WPcombo4
-  - baseline_WPcombo3
-  - baseline_WPcombo2
-  - baseline_WPcombo1
-  - baseline_WPcurrentcombo
-  - baseline_WPcombo1_trueMuons
-  - baseline_WPcombo2_trueMuons
-  - baseline_WPcombo3_trueMuons
-  - baseline_WPcombo4_trueMuons
-  - baseline_WPcurrentcombo_trueMuons
-  - baseline_WPcombo1_atLeastOneFromTaus
-  - baseline_WPcombo2_atLeastOneFromTaus
-  - baseline_WPcombo3_atLeastOneFromTaus
-  - baseline_WPcombo4_atLeastOneFromTaus
-  - baseline_WPcurrentcombo_atLeastOneFromTaus
-  - baseline_WPcombo1_NOtrueMuons
-  - baseline_WPcombo2_NOtrueMuons
-  - baseline_WPcombo3_NOtrueMuons
-  - baseline_WPcombo4_NOtrueMuons
-  - baseline_WPcurrentcombo_NOtrueMuons
-  - VBF_WPcombo4
-  - VBF_WPcombo3
-  - VBF_WPcombo2
-  - VBF_WPcombo1
-  - VBF_WPcurrentcombo
-  - VBF_WPcombo1_trueMuons
-  - VBF_WPcombo2_trueMuons
-  - VBF_WPcombo3_trueMuons
-  - VBF_WPcombo4_trueMuons
-  - VBF_WPcurrentcombo_trueMuons
-  - VBF_WPcombo1_atLeastOneFromTaus
-  - VBF_WPcombo2_atLeastOneFromTaus
-  - VBF_WPcombo3_atLeastOneFromTaus
-  - VBF_WPcombo4_atLeastOneFromTaus
-  - VBF_WPcurrentcombo_atLeastOneFromTaus
-  - VBF_WPcombo1_NOtrueMuons
-  - VBF_WPcombo2_NOtrueMuons
-  - VBF_WPcombo3_NOtrueMuons
-  - VBF_WPcombo4_NOtrueMuons
-  - VBF_WPcurrentcombo_NOtrueMuons
-
-  # - jets_0
-  # - jets_1
-  # - jets_2
-  # - jets_gt2
-  # - jets_inclusive
-
-
-
-# categories: all
-  # - no_cuts
-  # - baseline_WPIso_MM
-  # - baseline_WPIso_ML
-  # - mu_pt_sel
-  # - OS_sel
-  # - trigger_sel
-  # - VBF_def
-  # - VBF_JetVeto
-  # - ggH_muonPtSel
-  # - ggH
-  # - baseline_muonJet_0J
-  # - baseline_muonJet_1J
-  # - baseline_muonJet_2J
-  # - VBF_def_2J
-  # - VBF_JetVeto_2J
-  # - ggH_2J
-  # - baseline_muonJet_MoreThan2J
-  # - VBF_def_MoreThan2J
-  # - VBF_JetVeto_MoreThan2J
-  # - ggH_MoreThan2J
-  # - baseline_MuonPOG
-
-# muons pT choice options:
-#   pt = ScaRe corrected pT, can be either nano or BSC according on which pT has been used for scare application;
-#   pt_nano = pT from nanoAOD without scale and resol;
-#   bsConstrainedPt: BSC pT without scale and resol;
-#   pt_roccor: pT with RoccoR corrections applied, can be either nano or BSC according on which pT has been used for Rocccor application; not yet implemented
-extraFormat_for_triggerMatchingAndSF:
-  pt: "bsConstrainedPt"
-muon_pt_for_presel: "bsConstrainedPt"
-mu_pt_for_triggerMatchingAndSF: "pt"
-mu_pt_for_selection: "pt"
-
-mu_pt_for_definitions: "pt_FSR"
-muonID_WP_for_triggerSF: "Medium" # only medium or tight for trigger SF, both iso and ID
-muIDWP: "Medium"
-muIsoWP: "Loose"
-WP_to_use: "ML"
-
-
-category_definition:
   no_cuts: "true"
-  mu_pt_sel: "mu1_{mu_pt_for_selection} > 20 && mu2_{mu_pt_for_selection} > 20" # for sync purposes
   trigger_sel: "( HLT_singleMu && ( ( mu1_{mu_pt_for_selection} > {MuPtTh} && mu1_HasMatching_singleMu) || (mu2_{mu_pt_for_selection} > {MuPtTh} && mu2_HasMatching_singleMu) ) ) " # official
-
-  mu1_prompt: "(mu1_genPartIdx >= 0 && mu1_gen_kind == 2)"
-  mu2_prompt: "(mu2_genPartIdx >= 0 && mu2_gen_kind == 2)"
-  mu1_from_tau: "(mu1_genPartIdx >= 0 && mu1_gen_kind == 4)"
-  mu2_from_tau: "(mu2_genPartIdx >= 0 && mu2_gen_kind == 4)"
-  both_muons_true_prompt: "mu1_prompt && mu2_prompt"
-  at_least_one_muon_from_tau: "!(both_muons_true_prompt) && (mu1_from_tau || mu2_from_tau)"
-  any_muon_not_true: "!(both_muons_true_prompt) && !(at_least_one_muon_from_tau)"
-
-  # mu1_pfRelIso04_all < 0.25 &&  mu2_pfRelIso04_all< 0.25 && mu1_mediumId && mu2_mediumId
-
-  baseline_WPIso_ML: "mu1_pfRelIso04_all <= 0.25 &&  mu2_pfRelIso04_all<= 0.25 && mu1_mediumId && mu2_mediumId"
-  baseline_WPIso_LL: "mu1_pfRelIso04_all <= 0.25 &&  mu2_pfRelIso04_all<= 0.25 && mu1_looseId && mu2_looseId"
-  baseline_WPIso_LL_miniIso: "mu1_miniPFRelIso_all <= 0.4 &&  mu2_miniPFRelIso_all<= 0.4 && mu1_looseId && mu2_looseId"
-  baseline_WPIso_TL_mvaLowPt_miniIso: "mu1_miniPFRelIso_all <= 0.4 &&  mu2_miniPFRelIso_all<= 0.4 && mu1_mvaLowPt >= 0.15 && mu2_mvaLowPt>0.15"
-  baseline_WPIso_LL_mvaLowPt_miniIso: "mu1_miniPFRelIso_all <= 0.4 &&  mu2_miniPFRelIso_all<= 0.4 && mu1_mvaLowPt >= -0.6 && mu2_mvaLowPt>-0.6"
-
-  # jet multiplicity splitting
-  jets_0: "N_SelectedJets == 0"
-  jets_1: "N_SelectedJets == 1"
-  jets_2: "N_SelectedJets == 2"
-  jets_gt2: "N_SelectedJets > 2"
-  jets_inclusive: "N_SelectedJets >= 0"
-
-  # baseline with WP combos
-  baseline_WPcombo4: "baseline_WPIso_LL && OS && trigger_sel && JetTagSel"
-  baseline_WPcombo3: "baseline_WPIso_LL_miniIso && OS && trigger_sel && JetTagSel"
-  baseline_WPcombo2: "baseline_WPIso_LL_mvaLowPt_miniIso && OS && trigger_sel && JetTagSel"
-  baseline_WPcombo1: "baseline_WPIso_TL_mvaLowPt_miniIso && OS && trigger_sel && JetTagSel"
-  baseline_WPcurrentcombo: "baseline_WPIso_ML && OS && trigger_sel && JetTagSel" # abs(mu1_dz) < 1. && abs(mu1_dxy) < 0.5 && abs(mu2_dz) < 1. && abs(mu2_dxy) < 0.5"
-
-  # baseline with WP combos and jet multiplicity splitting
-  baseline_WPcombo1__0j:   "baseline_WPcombo1 && jets_0"
-  baseline_WPcombo1__1j:   "baseline_WPcombo1 && jets_1"
-  baseline_WPcombo1__2j:   "baseline_WPcombo1 && jets_2"
-  baseline_WPcombo1__gt2j: "baseline_WPcombo1 && jets_gt2"
-  baseline_WPcombo2__0j:   "baseline_WPcombo2 && jets_0"
-  baseline_WPcombo2__1j:   "baseline_WPcombo2 && jets_1"
-  baseline_WPcombo2__2j:   "baseline_WPcombo2 && jets_2"
-  baseline_WPcombo2__gt2j: "baseline_WPcombo2 && jets_gt2"
-  baseline_WPcombo3__0j:   "baseline_WPcombo3 && jets_0"
-  baseline_WPcombo3__1j:   "baseline_WPcombo3 && jets_1"
-  baseline_WPcombo3__2j:   "baseline_WPcombo3 && jets_2"
-  baseline_WPcombo3__gt2j: "baseline_WPcombo3 && jets_gt2"
-  baseline_WPcombo4__0j:   "baseline_WPcombo4 && jets_0"
-  baseline_WPcombo4__1j:   "baseline_WPcombo4 && jets_1"
-  baseline_WPcombo4__2j:   "baseline_WPcombo4 && jets_2"
-  baseline_WPcombo4__gt2j: "baseline_WPcombo4 && jets_gt2"
-  baseline_WPcurrentcombo__0j:   "baseline_WPcurrentcombo && jets_0"
-  baseline_WPcurrentcombo__1j:   "baseline_WPcurrentcombo && jets_1"
-  baseline_WPcurrentcombo__2j:   "baseline_WPcurrentcombo && jets_2"
-  baseline_WPcurrentcombo__gt2j: "baseline_WPcurrentcombo && jets_gt2"
-
-
-  baseline_WPcombo1_trueMuons: "baseline_WPcombo1 && both_muons_true_prompt"
-  baseline_WPcombo2_trueMuons: "baseline_WPcombo2 && both_muons_true_prompt"
-  baseline_WPcombo3_trueMuons: "baseline_WPcombo3 && both_muons_true_prompt"
-  baseline_WPcombo4_trueMuons: "baseline_WPcombo4 && both_muons_true_prompt"
-  baseline_WPcurrentcombo_trueMuons: "baseline_WPcurrentcombo && both_muons_true_prompt"
-
-  baseline_WPcombo1_atLeastOneFromTaus: "baseline_WPcombo1 && at_least_one_muon_from_tau"
-  baseline_WPcombo2_atLeastOneFromTaus: "baseline_WPcombo2 && at_least_one_muon_from_tau"
-  baseline_WPcombo3_atLeastOneFromTaus: "baseline_WPcombo3 && at_least_one_muon_from_tau"
-  baseline_WPcombo4_atLeastOneFromTaus: "baseline_WPcombo4 && at_least_one_muon_from_tau"
-  baseline_WPcurrentcombo_atLeastOneFromTaus: "baseline_WPcurrentcombo && at_least_one_muon_from_tau"
-
-  baseline_WPcombo1_NOtrueMuons: "baseline_WPcombo1 && any_muon_not_true"
-  baseline_WPcombo2_NOtrueMuons: "baseline_WPcombo2 && any_muon_not_true"
-  baseline_WPcombo3_NOtrueMuons: "baseline_WPcombo3 && any_muon_not_true"
-  baseline_WPcombo4_NOtrueMuons: "baseline_WPcombo4 && any_muon_not_true"
-  baseline_WPcurrentcombo_NOtrueMuons: "baseline_WPcurrentcombo && any_muon_not_true"
-
-  # --- No true muons ---
-  baseline_WPcombo1_NOtrueMuons__0j:   "baseline_WPcombo1_NOtrueMuons && jets_0"
-  baseline_WPcombo1_NOtrueMuons__1j:   "baseline_WPcombo1_NOtrueMuons && jets_1"
-  baseline_WPcombo1_NOtrueMuons__2j:   "baseline_WPcombo1_NOtrueMuons && jets_2"
-  baseline_WPcombo1_NOtrueMuons__gt2j: "baseline_WPcombo1_NOtrueMuons && jets_gt2"
-
-  baseline_WPcombo2_NOtrueMuons__0j:   "baseline_WPcombo2_NOtrueMuons && jets_0"
-  baseline_WPcombo2_NOtrueMuons__1j:   "baseline_WPcombo2_NOtrueMuons && jets_1"
-  baseline_WPcombo2_NOtrueMuons__2j:   "baseline_WPcombo2_NOtrueMuons && jets_2"
-  baseline_WPcombo2_NOtrueMuons__gt2j: "baseline_WPcombo2_NOtrueMuons && jets_gt2"
-
-  baseline_WPcombo3_NOtrueMuons__0j:   "baseline_WPcombo3_NOtrueMuons && jets_0"
-  baseline_WPcombo3_NOtrueMuons__1j:   "baseline_WPcombo3_NOtrueMuons && jets_1"
-  baseline_WPcombo3_NOtrueMuons__2j:   "baseline_WPcombo3_NOtrueMuons && jets_2"
-  baseline_WPcombo3_NOtrueMuons__gt2j: "baseline_WPcombo3_NOtrueMuons && jets_gt2"
-
-  baseline_WPcombo4_NOtrueMuons__0j:   "baseline_WPcombo4_NOtrueMuons && jets_0"
-  baseline_WPcombo4_NOtrueMuons__1j:   "baseline_WPcombo4_NOtrueMuons && jets_1"
-  baseline_WPcombo4_NOtrueMuons__2j:   "baseline_WPcombo4_NOtrueMuons && jets_2"
-  baseline_WPcombo4_NOtrueMuons__gt2j: "baseline_WPcombo4_NOtrueMuons && jets_gt2"
-
-  baseline_WPcurrentcombo_NOtrueMuons__0j:   "baseline_WPcurrentcombo_NOtrueMuons && jets_0"
-  baseline_WPcurrentcombo_NOtrueMuons__1j:   "baseline_WPcurrentcombo_NOtrueMuons && jets_1"
-  baseline_WPcurrentcombo_NOtrueMuons__2j:   "baseline_WPcurrentcombo_NOtrueMuons && jets_2"
-  baseline_WPcurrentcombo_NOtrueMuons__gt2j: "baseline_WPcurrentcombo_NOtrueMuons && jets_gt2"
-
-  # --- True muons ---
-  baseline_WPcombo1_trueMuons__0j:   "baseline_WPcombo1_trueMuons && jets_0"
-  baseline_WPcombo1_trueMuons__1j:   "baseline_WPcombo1_trueMuons && jets_1"
-  baseline_WPcombo1_trueMuons__2j:   "baseline_WPcombo1_trueMuons && jets_2"
-  baseline_WPcombo1_trueMuons__gt2j: "baseline_WPcombo1_trueMuons && jets_gt2"
-
-  baseline_WPcombo2_trueMuons__0j:   "baseline_WPcombo2_trueMuons && jets_0"
-  baseline_WPcombo2_trueMuons__1j:   "baseline_WPcombo2_trueMuons && jets_1"
-  baseline_WPcombo2_trueMuons__2j:   "baseline_WPcombo2_trueMuons && jets_2"
-  baseline_WPcombo2_trueMuons__gt2j: "baseline_WPcombo2_trueMuons && jets_gt2"
-
-  baseline_WPcombo3_trueMuons__0j:   "baseline_WPcombo3_trueMuons && jets_0"
-  baseline_WPcombo3_trueMuons__1j:   "baseline_WPcombo3_trueMuons && jets_1"
-  baseline_WPcombo3_trueMuons__2j:   "baseline_WPcombo3_trueMuons && jets_2"
-  baseline_WPcombo3_trueMuons__gt2j: "baseline_WPcombo3_trueMuons && jets_gt2"
-
-  baseline_WPcombo4_trueMuons__0j:   "baseline_WPcombo4_trueMuons && jets_0"
-  baseline_WPcombo4_trueMuons__1j:   "baseline_WPcombo4_trueMuons && jets_1"
-  baseline_WPcombo4_trueMuons__2j:   "baseline_WPcombo4_trueMuons && jets_2"
-  baseline_WPcombo4_trueMuons__gt2j: "baseline_WPcombo4_trueMuons && jets_gt2"
-
-  baseline_WPcurrentcombo_trueMuons__0j:   "baseline_WPcurrentcombo_trueMuons && jets_0"
-  baseline_WPcurrentcombo_trueMuons__1j:   "baseline_WPcurrentcombo_trueMuons && jets_1"
-  baseline_WPcurrentcombo_trueMuons__2j:   "baseline_WPcurrentcombo_trueMuons && jets_2"
-  baseline_WPcurrentcombo_trueMuons__gt2j: "baseline_WPcurrentcombo_trueMuons && jets_gt2"
-
-  # --- From taus ---
-
-  baseline_WPcombo1_atLeastOneFromTaus__0j:   "baseline_WPcombo1_atLeastOneFromTaus && jets_0"
-  baseline_WPcombo1_atLeastOneFromTaus__1j:   "baseline_WPcombo1_atLeastOneFromTaus && jets_1"
-  baseline_WPcombo1_atLeastOneFromTaus__2j:   "baseline_WPcombo1_atLeastOneFromTaus && jets_2"
-  baseline_WPcombo1_atLeastOneFromTaus__gt2j: "baseline_WPcombo1_atLeastOneFromTaus && jets_gt2"
-
-  baseline_WPcombo2_atLeastOneFromTaus__0j:   "baseline_WPcombo2_atLeastOneFromTaus && jets_0"
-  baseline_WPcombo2_atLeastOneFromTaus__1j:   "baseline_WPcombo2_atLeastOneFromTaus && jets_1"
-  baseline_WPcombo2_atLeastOneFromTaus__2j:   "baseline_WPcombo2_atLeastOneFromTaus && jets_2"
-  baseline_WPcombo2_atLeastOneFromTaus__gt2j: "baseline_WPcombo2_atLeastOneFromTaus && jets_gt2"
-
-  baseline_WPcombo3_atLeastOneFromTaus__0j:   "baseline_WPcombo3_atLeastOneFromTaus && jets_0"
-  baseline_WPcombo3_atLeastOneFromTaus__1j:   "baseline_WPcombo3_atLeastOneFromTaus && jets_1"
-  baseline_WPcombo3_atLeastOneFromTaus__2j:   "baseline_WPcombo3_atLeastOneFromTaus && jets_2"
-  baseline_WPcombo3_atLeastOneFromTaus__gt2j: "baseline_WPcombo3_atLeastOneFromTaus && jets_gt2"
-
-  baseline_WPcombo4_atLeastOneFromTaus__0j:   "baseline_WPcombo4_atLeastOneFromTaus && jets_0"
-  baseline_WPcombo4_atLeastOneFromTaus__1j:   "baseline_WPcombo4_atLeastOneFromTaus && jets_1"
-  baseline_WPcombo4_atLeastOneFromTaus__2j:   "baseline_WPcombo4_atLeastOneFromTaus && jets_2"
-  baseline_WPcombo4_atLeastOneFromTaus__gt2j: "baseline_WPcombo4_atLeastOneFromTaus && jets_gt2"
-
-  baseline_WPcurrentcombo_atLeastOneFromTaus__0j:   "baseline_WPcurrentcombo_atLeastOneFromTaus && jets_0"
-  baseline_WPcurrentcombo_atLeastOneFromTaus__1j:   "baseline_WPcurrentcombo_atLeastOneFromTaus && jets_1"
-  baseline_WPcurrentcombo_atLeastOneFromTaus__2j:   "baseline_WPcurrentcombo_atLeastOneFromTaus && jets_2"
-  baseline_WPcurrentcombo_atLeastOneFromTaus__gt2j: "baseline_WPcurrentcombo_atLeastOneFromTaus && jets_gt2"
-
-
-
-
-  VBF_def: "HasVBF && j1_pt >= 35 && j2_pt >= 25"
-  VBF_WPcombo1: "baseline_WPcombo1 && VBF_def "
-  VBF_WPcombo2: "baseline_WPcombo2 && VBF_def"
-  VBF_WPcombo3: "baseline_WPcombo3 && VBF_def"
-  VBF_WPcombo4: "baseline_WPcombo4 && VBF_def"
-  VBF_WPcurrentcombo: "baseline_WPcurrentcombo && VBF_def"
-
-
-  # baseline with WP combos and jet multiplicity splitting
-  VBF_WPcombo1__0j:   "VBF_WPcombo1 && jets_0"
-  VBF_WPcombo1__1j:   "VBF_WPcombo1 && jets_1"
-  VBF_WPcombo1__2j:   "VBF_WPcombo1 && jets_2"
-  VBF_WPcombo1__gt2j: "VBF_WPcombo1 && jets_gt2"
-  VBF_WPcombo2__0j:   "VBF_WPcombo2 && jets_0"
-  VBF_WPcombo2__1j:   "VBF_WPcombo2 && jets_1"
-  VBF_WPcombo2__2j:   "VBF_WPcombo2 && jets_2"
-  VBF_WPcombo2__gt2j: "VBF_WPcombo2 && jets_gt2"
-  VBF_WPcombo3__0j:   "VBF_WPcombo3 && jets_0"
-  VBF_WPcombo3__1j:   "VBF_WPcombo3 && jets_1"
-  VBF_WPcombo3__2j:   "VBF_WPcombo3 && jets_2"
-  VBF_WPcombo3__gt2j: "VBF_WPcombo3 && jets_gt2"
-  VBF_WPcombo4__0j:   "VBF_WPcombo4 && jets_0"
-  VBF_WPcombo4__1j:   "VBF_WPcombo4 && jets_1"
-  VBF_WPcombo4__2j:   "VBF_WPcombo4 && jets_2"
-  VBF_WPcombo4__gt2j: "VBF_WPcombo4 && jets_gt2"
-  VBF_WPcurrentcombo__0j:   "VBF_WPcurrentcombo && jets_0"
-  VBF_WPcurrentcombo__1j:   "VBF_WPcurrentcombo && jets_1"
-  VBF_WPcurrentcombo__2j:   "VBF_WPcurrentcombo && jets_2"
-  VBF_WPcurrentcombo__gt2j: "VBF_WPcurrentcombo && jets_gt2"
-
-
-  VBF_WPcombo1_trueMuons: "VBF_WPcombo1 && both_muons_true_prompt"
-  VBF_WPcombo2_trueMuons: "VBF_WPcombo2 && both_muons_true_prompt"
-  VBF_WPcombo3_trueMuons: "VBF_WPcombo3 && both_muons_true_prompt"
-  VBF_WPcombo4_trueMuons: "VBF_WPcombo4 && both_muons_true_prompt"
-  VBF_WPcurrentcombo_trueMuons: "VBF_WPcurrentcombo && both_muons_true_prompt"
-
-  VBF_WPcombo1_atLeastOneFromTaus: "VBF_WPcombo1 && at_least_one_muon_from_tau"
-  VBF_WPcombo2_atLeastOneFromTaus: "VBF_WPcombo2 && at_least_one_muon_from_tau"
-  VBF_WPcombo3_atLeastOneFromTaus: "VBF_WPcombo3 && at_least_one_muon_from_tau"
-  VBF_WPcombo4_atLeastOneFromTaus: "VBF_WPcombo4 && at_least_one_muon_from_tau"
-  VBF_WPcurrentcombo_atLeastOneFromTaus: "VBF_WPcurrentcombo && at_least_one_muon_from_tau"
-
-  VBF_WPcombo1_NOtrueMuons: "VBF_WPcombo1 && any_muon_not_true"
-  VBF_WPcombo2_NOtrueMuons: "VBF_WPcombo2 && any_muon_not_true"
-  VBF_WPcombo3_NOtrueMuons: "VBF_WPcombo3 && any_muon_not_true"
-  VBF_WPcombo4_NOtrueMuons: "VBF_WPcombo4 && any_muon_not_true"
-  VBF_WPcurrentcombo_NOtrueMuons: "VBF_WPcurrentcombo && any_muon_not_true"
-
-  # --- No true muons ---
-  VBF_WPcombo1_NOtrueMuons__0j:   "VBF_WPcombo1_NOtrueMuons && jets_0"
-  VBF_WPcombo1_NOtrueMuons__1j:   "VBF_WPcombo1_NOtrueMuons && jets_1"
-  VBF_WPcombo1_NOtrueMuons__2j:   "VBF_WPcombo1_NOtrueMuons && jets_2"
-  VBF_WPcombo1_NOtrueMuons__gt2j: "VBF_WPcombo1_NOtrueMuons && jets_gt2"
-
-  VBF_WPcombo2_NOtrueMuons__0j:   "VBF_WPcombo2_NOtrueMuons && jets_0"
-  VBF_WPcombo2_NOtrueMuons__1j:   "VBF_WPcombo2_NOtrueMuons && jets_1"
-  VBF_WPcombo2_NOtrueMuons__2j:   "VBF_WPcombo2_NOtrueMuons && jets_2"
-  VBF_WPcombo2_NOtrueMuons__gt2j: "VBF_WPcombo2_NOtrueMuons && jets_gt2"
-
-  VBF_WPcombo3_NOtrueMuons__0j:   "VBF_WPcombo3_NOtrueMuons && jets_0"
-  VBF_WPcombo3_NOtrueMuons__1j:   "VBF_WPcombo3_NOtrueMuons && jets_1"
-  VBF_WPcombo3_NOtrueMuons__2j:   "VBF_WPcombo3_NOtrueMuons && jets_2"
-  VBF_WPcombo3_NOtrueMuons__gt2j: "VBF_WPcombo3_NOtrueMuons && jets_gt2"
-
-  VBF_WPcombo4_NOtrueMuons__0j:   "VBF_WPcombo4_NOtrueMuons && jets_0"
-  VBF_WPcombo4_NOtrueMuons__1j:   "VBF_WPcombo4_NOtrueMuons && jets_1"
-  VBF_WPcombo4_NOtrueMuons__2j:   "VBF_WPcombo4_NOtrueMuons && jets_2"
-  VBF_WPcombo4_NOtrueMuons__gt2j: "VBF_WPcombo4_NOtrueMuons && jets_gt2"
-
-  VBF_WPcurrentcombo_NOtrueMuons__0j:   "VBF_WPcurrentcombo_NOtrueMuons && jets_0"
-  VBF_WPcurrentcombo_NOtrueMuons__1j:   "VBF_WPcurrentcombo_NOtrueMuons && jets_1"
-  VBF_WPcurrentcombo_NOtrueMuons__2j:   "VBF_WPcurrentcombo_NOtrueMuons && jets_2"
-  VBF_WPcurrentcombo_NOtrueMuons__gt2j: "VBF_WPcurrentcombo_NOtrueMuons && jets_gt2"
-
-  # --- True muons ---
-  VBF_WPcombo1_trueMuons__0j:   "VBF_WPcombo1_trueMuons && jets_0"
-  VBF_WPcombo1_trueMuons__1j:   "VBF_WPcombo1_trueMuons && jets_1"
-  VBF_WPcombo1_trueMuons__2j:   "VBF_WPcombo1_trueMuons && jets_2"
-  VBF_WPcombo1_trueMuons__gt2j: "VBF_WPcombo1_trueMuons && jets_gt2"
-
-  VBF_WPcombo2_trueMuons__0j:   "VBF_WPcombo2_trueMuons && jets_0"
-  VBF_WPcombo2_trueMuons__1j:   "VBF_WPcombo2_trueMuons && jets_1"
-  VBF_WPcombo2_trueMuons__2j:   "VBF_WPcombo2_trueMuons && jets_2"
-  VBF_WPcombo2_trueMuons__gt2j: "VBF_WPcombo2_trueMuons && jets_gt2"
-
-  VBF_WPcombo3_trueMuons__0j:   "VBF_WPcombo3_trueMuons && jets_0"
-  VBF_WPcombo3_trueMuons__1j:   "VBF_WPcombo3_trueMuons && jets_1"
-  VBF_WPcombo3_trueMuons__2j:   "VBF_WPcombo3_trueMuons && jets_2"
-  VBF_WPcombo3_trueMuons__gt2j: "VBF_WPcombo3_trueMuons && jets_gt2"
-
-  VBF_WPcombo4_trueMuons__0j:   "VBF_WPcombo4_trueMuons && jets_0"
-  VBF_WPcombo4_trueMuons__1j:   "VBF_WPcombo4_trueMuons && jets_1"
-  VBF_WPcombo4_trueMuons__2j:   "VBF_WPcombo4_trueMuons && jets_2"
-  VBF_WPcombo4_trueMuons__gt2j: "VBF_WPcombo4_trueMuons && jets_gt2"
-
-  VBF_WPcurrentcombo_trueMuons__0j:   "VBF_WPcurrentcombo_trueMuons && jets_0"
-  VBF_WPcurrentcombo_trueMuons__1j:   "VBF_WPcurrentcombo_trueMuons && jets_1"
-  VBF_WPcurrentcombo_trueMuons__2j:   "VBF_WPcurrentcombo_trueMuons && jets_2"
-  VBF_WPcurrentcombo_trueMuons__gt2j: "VBF_WPcurrentcombo_trueMuons && jets_gt2"
-
-  # --- From taus ---
-
-  VBF_WPcombo1_atLeastOneFromTaus__0j:   "VBF_WPcombo1_atLeastOneFromTaus && jets_0"
-  VBF_WPcombo1_atLeastOneFromTaus__1j:   "VBF_WPcombo1_atLeastOneFromTaus && jets_1"
-  VBF_WPcombo1_atLeastOneFromTaus__2j:   "VBF_WPcombo1_atLeastOneFromTaus && jets_2"
-  VBF_WPcombo1_atLeastOneFromTaus__gt2j: "VBF_WPcombo1_atLeastOneFromTaus && jets_gt2"
-
-  VBF_WPcombo2_atLeastOneFromTaus__0j:   "VBF_WPcombo2_atLeastOneFromTaus && jets_0"
-  VBF_WPcombo2_atLeastOneFromTaus__1j:   "VBF_WPcombo2_atLeastOneFromTaus && jets_1"
-  VBF_WPcombo2_atLeastOneFromTaus__2j:   "VBF_WPcombo2_atLeastOneFromTaus && jets_2"
-  VBF_WPcombo2_atLeastOneFromTaus__gt2j: "VBF_WPcombo2_atLeastOneFromTaus && jets_gt2"
-
-  VBF_WPcombo3_atLeastOneFromTaus__0j:   "VBF_WPcombo3_atLeastOneFromTaus && jets_0"
-  VBF_WPcombo3_atLeastOneFromTaus__1j:   "VBF_WPcombo3_atLeastOneFromTaus && jets_1"
-  VBF_WPcombo3_atLeastOneFromTaus__2j:   "VBF_WPcombo3_atLeastOneFromTaus && jets_2"
-  VBF_WPcombo3_atLeastOneFromTaus__gt2j: "VBF_WPcombo3_atLeastOneFromTaus && jets_gt2"
-
-  VBF_WPcombo4_atLeastOneFromTaus__0j:   "VBF_WPcombo4_atLeastOneFromTaus && jets_0"
-  VBF_WPcombo4_atLeastOneFromTaus__1j:   "VBF_WPcombo4_atLeastOneFromTaus && jets_1"
-  VBF_WPcombo4_atLeastOneFromTaus__2j:   "VBF_WPcombo4_atLeastOneFromTaus && jets_2"
-  VBF_WPcombo4_atLeastOneFromTaus__gt2j: "VBF_WPcombo4_atLeastOneFromTaus && jets_gt2"
-
-  VBF_WPcurrentcombo_atLeastOneFromTaus__0j:   "VBF_WPcurrentcombo_atLeastOneFromTaus && jets_0"
-  VBF_WPcurrentcombo_atLeastOneFromTaus__1j:   "VBF_WPcurrentcombo_atLeastOneFromTaus && jets_1"
-  VBF_WPcurrentcombo_atLeastOneFromTaus__2j:   "VBF_WPcurrentcombo_atLeastOneFromTaus && jets_2"
-  VBF_WPcurrentcombo_atLeastOneFromTaus__gt2j: "VBF_WPcurrentcombo_atLeastOneFromTaus && jets_gt2"
-
-
-  ggH_def: "!(VBF_def)"
-  ggH_WPcombo1: "baseline_WPcombo1 && ggH_def"
-  ggH_WPcombo2: "baseline_WPcombo2 && ggH_def"
-  ggH_WPcombo3: "baseline_WPcombo3 && ggH_def"
-  ggH_WPcombo4: "baseline_WPcombo4 && ggH_def"
-  ggH_WPcurrentcombo: "baseline_WPcurrentcombo && ggH_def"
-
-  # baseline with WP combos and jet multiplicity splitting
-  ggH_WPcombo1__0j:   "ggH_WPcombo1 && jets_0"
-  ggH_WPcombo1__1j:   "ggH_WPcombo1 && jets_1"
-  ggH_WPcombo1__2j:   "ggH_WPcombo1 && jets_2"
-  ggH_WPcombo1__gt2j: "ggH_WPcombo1 && jets_gt2"
-  ggH_WPcombo2__0j:   "ggH_WPcombo2 && jets_0"
-  ggH_WPcombo2__1j:   "ggH_WPcombo2 && jets_1"
-  ggH_WPcombo2__2j:   "ggH_WPcombo2 && jets_2"
-  ggH_WPcombo2__gt2j: "ggH_WPcombo2 && jets_gt2"
-  ggH_WPcombo3__0j:   "ggH_WPcombo3 && jets_0"
-  ggH_WPcombo3__1j:   "ggH_WPcombo3 && jets_1"
-  ggH_WPcombo3__2j:   "ggH_WPcombo3 && jets_2"
-  ggH_WPcombo3__gt2j: "ggH_WPcombo3 && jets_gt2"
-  ggH_WPcombo4__0j:   "ggH_WPcombo4 && jets_0"
-  ggH_WPcombo4__1j:   "ggH_WPcombo4 && jets_1"
-  ggH_WPcombo4__2j:   "ggH_WPcombo4 && jets_2"
-  ggH_WPcombo4__gt2j: "ggH_WPcombo4 && jets_gt2"
-  ggH_WPcurrentcombo__0j:   "ggH_WPcurrentcombo && jets_0"
-  ggH_WPcurrentcombo__1j:   "ggH_WPcurrentcombo && jets_1"
-  ggH_WPcurrentcombo__2j:   "ggH_WPcurrentcombo && jets_2"
-  ggH_WPcurrentcombo__gt2j: "ggH_WPcurrentcombo && jets_gt2"
-
-
-  ggH_WPcombo1_trueMuons: "ggH_WPcombo1 && both_muons_true_prompt"
-  ggH_WPcombo2_trueMuons: "ggH_WPcombo2 && both_muons_true_prompt"
-  ggH_WPcombo3_trueMuons: "ggH_WPcombo3 && both_muons_true_prompt"
-  ggH_WPcombo4_trueMuons: "ggH_WPcombo4 && both_muons_true_prompt"
-  ggH_WPcurrentcombo_trueMuons: "ggH_WPcurrentcombo && both_muons_true_prompt"
-
-  ggH_WPcombo1_atLeastOneFromTaus: "ggH_WPcombo1 && at_least_one_muon_from_tau"
-  ggH_WPcombo2_atLeastOneFromTaus: "ggH_WPcombo2 && at_least_one_muon_from_tau"
-  ggH_WPcombo3_atLeastOneFromTaus: "ggH_WPcombo3 && at_least_one_muon_from_tau"
-  ggH_WPcombo4_atLeastOneFromTaus: "ggH_WPcombo4 && at_least_one_muon_from_tau"
-  ggH_WPcurrentcombo_atLeastOneFromTaus: "ggH_WPcurrentcombo && at_least_one_muon_from_tau"
-
-  ggH_WPcombo1_NOtrueMuons: "ggH_WPcombo1 && any_muon_not_true"
-  ggH_WPcombo2_NOtrueMuons: "ggH_WPcombo2 && any_muon_not_true"
-  ggH_WPcombo3_NOtrueMuons: "ggH_WPcombo3 && any_muon_not_true"
-  ggH_WPcombo4_NOtrueMuons: "ggH_WPcombo4 && any_muon_not_true"
-  ggH_WPcurrentcombo_NOtrueMuons: "ggH_WPcurrentcombo && any_muon_not_true"
-
-  # --- No true muons ---
-  ggH_WPcombo1_NOtrueMuons__0j:   "ggH_WPcombo1_NOtrueMuons && jets_0"
-  ggH_WPcombo1_NOtrueMuons__1j:   "ggH_WPcombo1_NOtrueMuons && jets_1"
-  ggH_WPcombo1_NOtrueMuons__2j:   "ggH_WPcombo1_NOtrueMuons && jets_2"
-  ggH_WPcombo1_NOtrueMuons__gt2j: "ggH_WPcombo1_NOtrueMuons && jets_gt2"
-
-  ggH_WPcombo2_NOtrueMuons__0j:   "ggH_WPcombo2_NOtrueMuons && jets_0"
-  ggH_WPcombo2_NOtrueMuons__1j:   "ggH_WPcombo2_NOtrueMuons && jets_1"
-  ggH_WPcombo2_NOtrueMuons__2j:   "ggH_WPcombo2_NOtrueMuons && jets_2"
-  ggH_WPcombo2_NOtrueMuons__gt2j: "ggH_WPcombo2_NOtrueMuons && jets_gt2"
-
-  ggH_WPcombo3_NOtrueMuons__0j:   "ggH_WPcombo3_NOtrueMuons && jets_0"
-  ggH_WPcombo3_NOtrueMuons__1j:   "ggH_WPcombo3_NOtrueMuons && jets_1"
-  ggH_WPcombo3_NOtrueMuons__2j:   "ggH_WPcombo3_NOtrueMuons && jets_2"
-  ggH_WPcombo3_NOtrueMuons__gt2j: "ggH_WPcombo3_NOtrueMuons && jets_gt2"
-
-  ggH_WPcombo4_NOtrueMuons__0j:   "ggH_WPcombo4_NOtrueMuons && jets_0"
-  ggH_WPcombo4_NOtrueMuons__1j:   "ggH_WPcombo4_NOtrueMuons && jets_1"
-  ggH_WPcombo4_NOtrueMuons__2j:   "ggH_WPcombo4_NOtrueMuons && jets_2"
-  ggH_WPcombo4_NOtrueMuons__gt2j: "ggH_WPcombo4_NOtrueMuons && jets_gt2"
-
-  ggH_WPcurrentcombo_NOtrueMuons__0j:   "ggH_WPcurrentcombo_NOtrueMuons && jets_0"
-  ggH_WPcurrentcombo_NOtrueMuons__1j:   "ggH_WPcurrentcombo_NOtrueMuons && jets_1"
-  ggH_WPcurrentcombo_NOtrueMuons__2j:   "ggH_WPcurrentcombo_NOtrueMuons && jets_2"
-  ggH_WPcurrentcombo_NOtrueMuons__gt2j: "ggH_WPcurrentcombo_NOtrueMuons && jets_gt2"
-
-  # --- True muons ---
-  ggH_WPcombo1_trueMuons__0j:   "ggH_WPcombo1_trueMuons && jets_0"
-  ggH_WPcombo1_trueMuons__1j:   "ggH_WPcombo1_trueMuons && jets_1"
-  ggH_WPcombo1_trueMuons__2j:   "ggH_WPcombo1_trueMuons && jets_2"
-  ggH_WPcombo1_trueMuons__gt2j: "ggH_WPcombo1_trueMuons && jets_gt2"
-
-  ggH_WPcombo2_trueMuons__0j:   "ggH_WPcombo2_trueMuons && jets_0"
-  ggH_WPcombo2_trueMuons__1j:   "ggH_WPcombo2_trueMuons && jets_1"
-  ggH_WPcombo2_trueMuons__2j:   "ggH_WPcombo2_trueMuons && jets_2"
-  ggH_WPcombo2_trueMuons__gt2j: "ggH_WPcombo2_trueMuons && jets_gt2"
-
-  ggH_WPcombo3_trueMuons__0j:   "ggH_WPcombo3_trueMuons && jets_0"
-  ggH_WPcombo3_trueMuons__1j:   "ggH_WPcombo3_trueMuons && jets_1"
-  ggH_WPcombo3_trueMuons__2j:   "ggH_WPcombo3_trueMuons && jets_2"
-  ggH_WPcombo3_trueMuons__gt2j: "ggH_WPcombo3_trueMuons && jets_gt2"
-
-  ggH_WPcombo4_trueMuons__0j:   "ggH_WPcombo4_trueMuons && jets_0"
-  ggH_WPcombo4_trueMuons__1j:   "ggH_WPcombo4_trueMuons && jets_1"
-  ggH_WPcombo4_trueMuons__2j:   "ggH_WPcombo4_trueMuons && jets_2"
-  ggH_WPcombo4_trueMuons__gt2j: "ggH_WPcombo4_trueMuons && jets_gt2"
-
-  ggH_WPcurrentcombo_trueMuons__0j:   "ggH_WPcurrentcombo_trueMuons && jets_0"
-  ggH_WPcurrentcombo_trueMuons__1j:   "ggH_WPcurrentcombo_trueMuons && jets_1"
-  ggH_WPcurrentcombo_trueMuons__2j:   "ggH_WPcurrentcombo_trueMuons && jets_2"
-  ggH_WPcurrentcombo_trueMuons__gt2j: "ggH_WPcurrentcombo_trueMuons && jets_gt2"
-
-  # --- From taus ---
-
-  ggH_WPcombo1_atLeastOneFromTaus__0j:   "ggH_WPcombo1_atLeastOneFromTaus && jets_0"
-  ggH_WPcombo1_atLeastOneFromTaus__1j:   "ggH_WPcombo1_atLeastOneFromTaus && jets_1"
-  ggH_WPcombo1_atLeastOneFromTaus__2j:   "ggH_WPcombo1_atLeastOneFromTaus && jets_2"
-  ggH_WPcombo1_atLeastOneFromTaus__gt2j: "ggH_WPcombo1_atLeastOneFromTaus && jets_gt2"
-
-  ggH_WPcombo2_atLeastOneFromTaus__0j:   "ggH_WPcombo2_atLeastOneFromTaus && jets_0"
-  ggH_WPcombo2_atLeastOneFromTaus__1j:   "ggH_WPcombo2_atLeastOneFromTaus && jets_1"
-  ggH_WPcombo2_atLeastOneFromTaus__2j:   "ggH_WPcombo2_atLeastOneFromTaus && jets_2"
-  ggH_WPcombo2_atLeastOneFromTaus__gt2j: "ggH_WPcombo2_atLeastOneFromTaus && jets_gt2"
-
-  ggH_WPcombo3_atLeastOneFromTaus__0j:   "ggH_WPcombo3_atLeastOneFromTaus && jets_0"
-  ggH_WPcombo3_atLeastOneFromTaus__1j:   "ggH_WPcombo3_atLeastOneFromTaus && jets_1"
-  ggH_WPcombo3_atLeastOneFromTaus__2j:   "ggH_WPcombo3_atLeastOneFromTaus && jets_2"
-  ggH_WPcombo3_atLeastOneFromTaus__gt2j: "ggH_WPcombo3_atLeastOneFromTaus && jets_gt2"
-
-  ggH_WPcombo4_atLeastOneFromTaus__0j:   "ggH_WPcombo4_atLeastOneFromTaus && jets_0"
-  ggH_WPcombo4_atLeastOneFromTaus__1j:   "ggH_WPcombo4_atLeastOneFromTaus && jets_1"
-  ggH_WPcombo4_atLeastOneFromTaus__2j:   "ggH_WPcombo4_atLeastOneFromTaus && jets_2"
-  ggH_WPcombo4_atLeastOneFromTaus__gt2j: "ggH_WPcombo4_atLeastOneFromTaus && jets_gt2"
-
-  ggH_WPcurrentcombo_atLeastOneFromTaus__0j:   "ggH_WPcurrentcombo_atLeastOneFromTaus && jets_0"
-  ggH_WPcurrentcombo_atLeastOneFromTaus__1j:   "ggH_WPcurrentcombo_atLeastOneFromTaus && jets_1"
-  ggH_WPcurrentcombo_atLeastOneFromTaus__2j:   "ggH_WPcurrentcombo_atLeastOneFromTaus && jets_2"
-  ggH_WPcurrentcombo_atLeastOneFromTaus__gt2j: "ggH_WPcurrentcombo_atLeastOneFromTaus && jets_gt2"
-
-
-
-
-# category_definition:
-#   no_cuts: "true"
-#   baseline_WPIso_MM: "mu1_pfRelIso04_all < 0.2 &&  mu2_pfRelIso04_all< 0.2 && mu1_mediumId && mu2_mediumId"
-#   baseline_WPIso_ML: "mu1_pfRelIso04_all < 0.25 &&  mu2_pfRelIso04_all< 0.25 && mu1_mediumId && mu2_mediumId"
-#   mu_pt_sel: "mu1_{mu_pt_for_selection} > 20 && mu2_{mu_pt_for_selection} > 20" # for sync purposes
-#   OS_sel: "baseline_WPIso_{WP_to_use} && OS" # official
-#   trigger_sel: "( HLT_singleMu && ( ( mu1_{mu_pt_for_selection} > {MuPtTh} && mu1_HasMatching_singleMu) || (mu2_{mu_pt_for_selection} > {MuPtTh} && mu2_HasMatching_singleMu) ) ) " # official
-#   baseline_muon: "OS_sel && trigger_sel" # &&  abs(mu1_dz) < 1. && abs(mu1_dxy) < 0.5 && abs(mu2_dz) < 1. && abs(mu2_dxy) < 0.5"
-#   baseline_muonJet: "baseline_muon && JetTagSel"
-#   VBF_def: "baseline_muonJet && HasVBF"
-#   VBF_JetVeto: "VBF_def && j1_pt >= 35 && j2_pt >= 25 "
-#   ggH_muonPtSel: "baseline_muonJet && !(VBF_JetVeto) && mu1_{mu_pt_for_selection} > {MuPtTh} && mu2_{mu_pt_for_selection}>{MuPtTh}"
-#   ggH: "baseline_muonJet && !(VBF_JetVeto)"
-#   #### 0 jets
-#   baseline_muonJet_0J: "baseline_muonJet && N_SelectedJets == 0"
-#   #### 1 jets
-#   baseline_muonJet_1J: "baseline_muonJet && N_SelectedJets == 1"
-#   #### 2 jets
-#   baseline_muonJet_2J: "baseline_muonJet && N_SelectedJets == 2"
-#   VBF_def_2J: "baseline_muonJet_2J && HasVBF"
-#   VBF_JetVeto_2J: "VBF_def && j1_pt >= 35 && j2_pt >= 25 "
-#   ggH_2J: "baseline_muonJet_2J && !(VBF_JetVeto_2J)"
-#   #### ≥2 jets
-#   baseline_muonJet_MoreThan2J: "baseline_muonJet && N_SelectedJets >= 2"
-#   VBF_def_MoreThan2J: "baseline_muonJet_MoreThan2J && HasVBF"
-#   VBF_JetVeto_MoreThan2J: "VBF_def && j1_pt >= 35 && j2_pt >= 25 "
-#   ggH_MoreThan2J: "baseline_muonJet_MoreThan2J && !(VBF_JetVeto_MoreThan2J)"
-#   baseline_MuonPOG: "OS_sel && trigger_sel && mu1_pfRelIso04_all < 0.15 && mu2_pfRelIso04_all< 0.15 && mu1_tightId && mu2_tightId && mu1_{mu_pt_for_selection} > {MuPtTh} && mu2_{mu_pt_for_selection}>{MuPtTh}"
-
-# DIFFERENCES WITH RUN2:
-#   #  the baseline selection requires OS -- > Opposite Sign of muons charge (as in Run2, obv), and either the first or the second muon matching the online object and passing the pT threshold driven by the trigger (which is always 26 GeV in Run3 up to now) -- See AN/2019_185 lines 123 - 130
-# - muon baseline pT cut (before requiring eventual matching to the trigger object) 20 --> 10 GeV
-# - FSR photon recovery for muons NOT YET INCLUDED
-# - b-jet tagging: In Run2, the DeepCSV Algorithm was used (see AN/2019_185 lines 106 - 112 ). In Run3 the ParticleNet is recommended in place of DeepCSV/DeepJet
-# - Jet PUID is no longer used in Run3 (see AnaProd/baseline.py)
-# - in Run2 there was not this JetVetoMap for or at least it's not described in the AN.
-# - no jet veto for jet horn spikes in Run 2
-# - VBF Jets selection compared to Run2. It is the same selection, but since there could be MORE than one jet pair, the one with highest invariant mass is excluded, keeping the DeltaEta threshold fixed to 2.5
-
+  OS_sel: "OS"
+  jets_noHorn_cleanFromMu_sel: "JetTagSel"
+
+  mu1_pt_l30 : "mu1_{mu_pt_for_selection} < 30"
+  mu2_pt_l30 : "mu2_{mu_pt_for_selection} < 30"
+  mu1_pt_g20 : "mu1_{mu_pt_for_selection} > 20"
+  mu2_pt_g20 : "mu2_{mu_pt_for_selection} > 20"
+  mu_pt_sel: "mu1_pt_g20 && mu2_pt_g20"
+
+  base_sel: "trigger_sel && OS_sel && jets_noHorn_cleanFromMu_sel"
+
+  mu1_ML: "mu1_pfIsoId >= 2 && mu1_mediumId"
+  mu1_LL: "mu1_pfIsoId >= 2 && mu1_looseId"
+  mu1_TT: "mu1_pfIsoId >= 4 && mu1_tightId"
+  mu2_ML: "mu2_pfIsoId >= 2 && mu2_mediumId"
+  mu2_LL: "mu2_pfIsoId >= 2 && mu2_looseId"
+  mu2_TT: "mu2_pfIsoId >= 4 && mu2_tightId"
+  bothMuons_ML: "mu1_ML && mu2_ML"
+  bothMuons_LL: "mu1_LL && mu2_LL"
+
+  chi2_sel: "mu1_bsConstrainedChi2 < 30 && mu2_bsConstrainedChi2 < 30"
+  pt_lessthan30_and_TT: "(((mu1_pt_l30 && mu1_TT) || !(mu1_pt_l30)) && ((mu2_pt_l30 && mu2_TT) || !(mu2_pt_l30)))"
+
+  baseline: "base_sel && mu1_ML && mu2_ML"
+  baseline_thirdLepVeto: "baseline && vetoed_muons==0"
+  baseline_chi2: "baseline && chi2_sel"
+  baseline_lowPtTT: "(baseline) && (pt_lessthan30_and_TT)"
+
+  baseline_thirdLepVeto_chi2: "baseline && chi2_sel && vetoed_muons==0"
+  baseline_thirdLepVeto_lowPtTT: "baseline && (pt_lessthan30_and_TT) && vetoed_muons==0"
+  baseline_chi2_lowPtTT: "baseline && (pt_lessthan30_and_TT) && chi2_sel"
+
+  # mu1_prompt: "(mu1_genPartIdx >= 0 && mu1_gen_kind == 2)"
+  # mu2_prompt: "(mu2_genPartIdx >= 0 && mu2_gen_kind == 2)"
+  # mu1_from_tau: "(mu1_genPartIdx >= 0 && mu1_gen_kind == 4)"
+  # mu2_from_tau: "(mu2_genPartIdx >= 0 && mu2_gen_kind == 4)"
+  # both_muons_true_prompt: "mu1_prompt && mu2_prompt"
+  # at_least_one_muon_from_tau: "!(both_muons_true_prompt) && (mu1_from_tau || mu2_from_tau)"
+  # any_muon_not_true: "!(both_muons_true_prompt) && !(at_least_one_muon_from_tau)"
+
+
+further_cuts: { }
+
+# =========================
+# CORRECTIONS
+# =========================
 corrections:
   btag:
     stages: [ AnaTuple, AnalysisCache, HistTuple ]
@@ -678,11 +191,14 @@ corrections:
     apply_jet_horns_fix: true
 
 
-scales:
-  - Up
-  - Down
 
-ApplyBweight: False
+# =========================
+# SCALES
+# =========================
+scales: [Up, Down]
+
+ApplyBweight: false
+
 
 payload_producers:
   DNN:
@@ -707,3 +223,710 @@ payload_producers:
     awkward_based: True
     uproot_stepsize: '50MB'
     dependencies: [ ]
+
+
+# anaTupleDef: AnaProd/anaTupleDef.py
+# histTupleDef: Analysis/histTupleDef.py
+# analysis_import: Analysis.H_mumu
+# phys_model: BaseModel
+
+# WLCGFileSystem:
+#   remotePathCacheHost: cms-flaf.cern.ch
+#   remotePathCachePort: 5000
+#   localPathCacheValidity: 600
+#   verbose: 0
+
+# signal_types:
+#   - ggH
+#   - VBFH
+# #  - ttH
+# #  - VH
+
+# storeFatJets: False
+# met_type: "PuppiMET"
+
+# treeName: "Events"
+# nEventsPerFile:
+#   data: 1000000
+#   signals: 1000000
+#   backgrounds: 1000000
+
+# channelSelection:
+#   - muMu
+
+# channelDefinition:
+#   eTau: 13
+#   muTau: 23
+#   tauTau: 33
+#   eE: 11
+#   eMu: 12
+#   muMu: 22
+
+# regions: MuMuMassRegions
+# custom_categories: ""
+# custom_subcategories: [ ]
+
+
+
+# MuMuMassRegions:
+#   Z_sideband: "m_mumu > 70 && m_mumu < 110"
+#   Signal_Fit: "m_mumu > 115 && m_mumu < 135"
+#   H_sideband: "((m_mumu > 110 && m_mumu < 115) || (m_mumu > 135 && m_mumu < 150))"
+#   Signal_ext: "m_mumu > 110 && m_mumu < 150"
+#   mass_inclusive: "m_mumu > 60 && m_mumu < 150"
+#   # mass_inclusive: "true"
+
+# triggers:
+#   muMu: [ singleMu ]
+# hist_triggers:
+#   muMu:
+#     default: (HLT_singleMu)
+
+# singleMu_th:
+#   Run2_2016: 26
+#   Run2_2016_HIPM: 26
+#   Run2_2017: 29
+#   Run2_2018: 26
+#   Run3_2022: 26
+#   Run3_2022EE: 26
+#   Run3_2023: 26
+#   Run3_2023BPix: 26
+#   Run3_2024: 26
+#   Run3_2025: 26
+
+# categories:
+#   # - no_cuts
+#   # - mu_pt_sel
+#   # - trigger_sel
+#   # - mu1_prompt
+#   # - mu2_prompt
+#   # - mu1_from_tau
+#   # - mu2_from_tau
+#   # - both_muons_true_prompt
+#   # - at_least_one_muon_from_tau
+#   # - any_muon_not_true
+#   # - baseline_WPIso_ML
+#   # - baseline_WPIso_LL
+#   # - baseline_WPIso_LL_miniIso
+#   # - baseline_WPIso_TL_mvaLowPt_miniIso
+#   # - baseline_WPIso_LL_mvaLowPt_miniIso
+#   - baseline_WPcombo4
+#   - baseline_WPcombo3
+#   - baseline_WPcombo2
+#   - baseline_WPcombo1
+#   - baseline_WPcurrentcombo
+#   - baseline_WPcombo1_trueMuons
+#   - baseline_WPcombo2_trueMuons
+#   - baseline_WPcombo3_trueMuons
+#   - baseline_WPcombo4_trueMuons
+#   - baseline_WPcurrentcombo_trueMuons
+#   - baseline_WPcombo1_atLeastOneFromTaus
+#   - baseline_WPcombo2_atLeastOneFromTaus
+#   - baseline_WPcombo3_atLeastOneFromTaus
+#   - baseline_WPcombo4_atLeastOneFromTaus
+#   - baseline_WPcurrentcombo_atLeastOneFromTaus
+#   - baseline_WPcombo1_NOtrueMuons
+#   - baseline_WPcombo2_NOtrueMuons
+#   - baseline_WPcombo3_NOtrueMuons
+#   - baseline_WPcombo4_NOtrueMuons
+#   - baseline_WPcurrentcombo_NOtrueMuons
+#   - VBF_WPcombo4
+#   - VBF_WPcombo3
+#   - VBF_WPcombo2
+#   - VBF_WPcombo1
+#   - VBF_WPcurrentcombo
+#   - VBF_WPcombo1_trueMuons
+#   - VBF_WPcombo2_trueMuons
+#   - VBF_WPcombo3_trueMuons
+#   - VBF_WPcombo4_trueMuons
+#   - VBF_WPcurrentcombo_trueMuons
+#   - VBF_WPcombo1_atLeastOneFromTaus
+#   - VBF_WPcombo2_atLeastOneFromTaus
+#   - VBF_WPcombo3_atLeastOneFromTaus
+#   - VBF_WPcombo4_atLeastOneFromTaus
+#   - VBF_WPcurrentcombo_atLeastOneFromTaus
+#   - VBF_WPcombo1_NOtrueMuons
+#   - VBF_WPcombo2_NOtrueMuons
+#   - VBF_WPcombo3_NOtrueMuons
+#   - VBF_WPcombo4_NOtrueMuons
+#   - VBF_WPcurrentcombo_NOtrueMuons
+
+#   # - jets_0
+#   # - jets_1
+#   # - jets_2
+#   # - jets_gt2
+#   # - jets_inclusive
+
+
+
+# # categories: all
+#   # - no_cuts
+#   # - baseline_WPIso_MM
+#   # - baseline_WPIso_ML
+#   # - mu_pt_sel
+#   # - OS_sel
+#   # - trigger_sel
+#   # - VBF_def
+#   # - VBF_JetVeto
+#   # - ggH_muonPtSel
+#   # - ggH
+#   # - baseline_muonJet_0J
+#   # - baseline_muonJet_1J
+#   # - baseline_muonJet_2J
+#   # - VBF_def_2J
+#   # - VBF_JetVeto_2J
+#   # - ggH_2J
+#   # - baseline_muonJet_MoreThan2J
+#   # - VBF_def_MoreThan2J
+#   # - VBF_JetVeto_MoreThan2J
+#   # - ggH_MoreThan2J
+#   # - baseline_MuonPOG
+
+# # muons pT choice options:
+# #   pt = ScaRe corrected pT, can be either nano or BSC according on which pT has been used for scare application;
+# #   pt_nano = pT from nanoAOD without scale and resol;
+# #   bsConstrainedPt: BSC pT without scale and resol;
+# #   pt_roccor: pT with RoccoR corrections applied, can be either nano or BSC according on which pT has been used for Rocccor application; not yet implemented
+# extraFormat_for_triggerMatchingAndSF:
+#   pt: "bsConstrainedPt"
+# muon_pt_for_presel: "bsConstrainedPt"
+# mu_pt_for_triggerMatchingAndSF: "pt"
+# mu_pt_for_selection: "pt"
+
+# mu_pt_for_definitions: "pt_FSR"
+# muonID_WP_for_triggerSF: "Medium" # only medium or tight for trigger SF, both iso and ID
+# muIDWP: "Medium"
+# muIsoWP: "Loose"
+# WP_to_use: "ML"
+
+
+# category_definition:
+#   no_cuts: "true"
+#   mu_pt_sel: "mu1_{mu_pt_for_selection} > 20 && mu2_{mu_pt_for_selection} > 20" # for sync purposes
+#   trigger_sel: "( HLT_singleMu && ( ( mu1_{mu_pt_for_selection} > {MuPtTh} && mu1_HasMatching_singleMu) || (mu2_{mu_pt_for_selection} > {MuPtTh} && mu2_HasMatching_singleMu) ) ) " # official
+
+#   mu1_prompt: "(mu1_genPartIdx >= 0 && mu1_gen_kind == 2)"
+#   mu2_prompt: "(mu2_genPartIdx >= 0 && mu2_gen_kind == 2)"
+#   mu1_from_tau: "(mu1_genPartIdx >= 0 && mu1_gen_kind == 4)"
+#   mu2_from_tau: "(mu2_genPartIdx >= 0 && mu2_gen_kind == 4)"
+#   both_muons_true_prompt: "mu1_prompt && mu2_prompt"
+#   at_least_one_muon_from_tau: "!(both_muons_true_prompt) && (mu1_from_tau || mu2_from_tau)"
+#   any_muon_not_true: "!(both_muons_true_prompt) && !(at_least_one_muon_from_tau)"
+
+#   baseline_WPIso_ML: "mu1_pfRelIso04_all <= 0.25 &&  mu2_pfRelIso04_all<= 0.25 && mu1_mediumId && mu2_mediumId"
+#   baseline_WPIso_LL: "mu1_pfRelIso04_all <= 0.25 &&  mu2_pfRelIso04_all<= 0.25 && mu1_looseId && mu2_looseId"
+#   baseline_WPIso_LL_miniIso: "mu1_miniPFRelIso_all <= 0.4 &&  mu2_miniPFRelIso_all<= 0.4 && mu1_looseId && mu2_looseId"
+#   baseline_WPIso_TL_mvaLowPt_miniIso: "mu1_miniPFRelIso_all <= 0.4 &&  mu2_miniPFRelIso_all<= 0.4 && mu1_mvaLowPt >= 0.15 && mu2_mvaLowPt>0.15"
+#   baseline_WPIso_LL_mvaLowPt_miniIso: "mu1_miniPFRelIso_all <= 0.4 &&  mu2_miniPFRelIso_all<= 0.4 && mu1_mvaLowPt >= -0.6 && mu2_mvaLowPt>-0.6"
+
+#   # jet multiplicity splitting
+#   jets_0: "N_SelectedJets == 0"
+#   jets_1: "N_SelectedJets == 1"
+#   jets_2: "N_SelectedJets == 2"
+#   jets_gt2: "N_SelectedJets > 2"
+#   jets_inclusive: "N_SelectedJets >= 0"
+
+#   # baseline with WP combos
+#   baseline_WPcombo4: "baseline_WPIso_LL && OS && trigger_sel && JetTagSel"
+#   baseline_WPcombo3: "baseline_WPIso_LL_miniIso && OS && trigger_sel && JetTagSel"
+#   baseline_WPcombo2: "baseline_WPIso_LL_mvaLowPt_miniIso && OS && trigger_sel && JetTagSel"
+#   baseline_WPcombo1: "baseline_WPIso_TL_mvaLowPt_miniIso && OS && trigger_sel && JetTagSel"
+#   baseline_WPcurrentcombo: "baseline_WPIso_ML && OS && trigger_sel && JetTagSel" # abs(mu1_dz) < 1. && abs(mu1_dxy) < 0.5 && abs(mu2_dz) < 1. && abs(mu2_dxy) < 0.5"
+
+#   # baseline with WP combos and jet multiplicity splitting
+#   baseline_WPcombo1__0j:   "baseline_WPcombo1 && jets_0"
+#   baseline_WPcombo1__1j:   "baseline_WPcombo1 && jets_1"
+#   baseline_WPcombo1__2j:   "baseline_WPcombo1 && jets_2"
+#   baseline_WPcombo1__gt2j: "baseline_WPcombo1 && jets_gt2"
+#   baseline_WPcombo2__0j:   "baseline_WPcombo2 && jets_0"
+#   baseline_WPcombo2__1j:   "baseline_WPcombo2 && jets_1"
+#   baseline_WPcombo2__2j:   "baseline_WPcombo2 && jets_2"
+#   baseline_WPcombo2__gt2j: "baseline_WPcombo2 && jets_gt2"
+#   baseline_WPcombo3__0j:   "baseline_WPcombo3 && jets_0"
+#   baseline_WPcombo3__1j:   "baseline_WPcombo3 && jets_1"
+#   baseline_WPcombo3__2j:   "baseline_WPcombo3 && jets_2"
+#   baseline_WPcombo3__gt2j: "baseline_WPcombo3 && jets_gt2"
+#   baseline_WPcombo4__0j:   "baseline_WPcombo4 && jets_0"
+#   baseline_WPcombo4__1j:   "baseline_WPcombo4 && jets_1"
+#   baseline_WPcombo4__2j:   "baseline_WPcombo4 && jets_2"
+#   baseline_WPcombo4__gt2j: "baseline_WPcombo4 && jets_gt2"
+#   baseline_WPcurrentcombo__0j:   "baseline_WPcurrentcombo && jets_0"
+#   baseline_WPcurrentcombo__1j:   "baseline_WPcurrentcombo && jets_1"
+#   baseline_WPcurrentcombo__2j:   "baseline_WPcurrentcombo && jets_2"
+#   baseline_WPcurrentcombo__gt2j: "baseline_WPcurrentcombo && jets_gt2"
+
+
+#   baseline_WPcombo1_trueMuons: "baseline_WPcombo1 && both_muons_true_prompt"
+#   baseline_WPcombo2_trueMuons: "baseline_WPcombo2 && both_muons_true_prompt"
+#   baseline_WPcombo3_trueMuons: "baseline_WPcombo3 && both_muons_true_prompt"
+#   baseline_WPcombo4_trueMuons: "baseline_WPcombo4 && both_muons_true_prompt"
+#   baseline_WPcurrentcombo_trueMuons: "baseline_WPcurrentcombo && both_muons_true_prompt"
+
+#   baseline_WPcombo1_atLeastOneFromTaus: "baseline_WPcombo1 && at_least_one_muon_from_tau"
+#   baseline_WPcombo2_atLeastOneFromTaus: "baseline_WPcombo2 && at_least_one_muon_from_tau"
+#   baseline_WPcombo3_atLeastOneFromTaus: "baseline_WPcombo3 && at_least_one_muon_from_tau"
+#   baseline_WPcombo4_atLeastOneFromTaus: "baseline_WPcombo4 && at_least_one_muon_from_tau"
+#   baseline_WPcurrentcombo_atLeastOneFromTaus: "baseline_WPcurrentcombo && at_least_one_muon_from_tau"
+
+#   baseline_WPcombo1_NOtrueMuons: "baseline_WPcombo1 && any_muon_not_true"
+#   baseline_WPcombo2_NOtrueMuons: "baseline_WPcombo2 && any_muon_not_true"
+#   baseline_WPcombo3_NOtrueMuons: "baseline_WPcombo3 && any_muon_not_true"
+#   baseline_WPcombo4_NOtrueMuons: "baseline_WPcombo4 && any_muon_not_true"
+#   baseline_WPcurrentcombo_NOtrueMuons: "baseline_WPcurrentcombo && any_muon_not_true"
+
+#   # --- No true muons ---
+#   baseline_WPcombo1_NOtrueMuons__0j:   "baseline_WPcombo1_NOtrueMuons && jets_0"
+#   baseline_WPcombo1_NOtrueMuons__1j:   "baseline_WPcombo1_NOtrueMuons && jets_1"
+#   baseline_WPcombo1_NOtrueMuons__2j:   "baseline_WPcombo1_NOtrueMuons && jets_2"
+#   baseline_WPcombo1_NOtrueMuons__gt2j: "baseline_WPcombo1_NOtrueMuons && jets_gt2"
+
+#   baseline_WPcombo2_NOtrueMuons__0j:   "baseline_WPcombo2_NOtrueMuons && jets_0"
+#   baseline_WPcombo2_NOtrueMuons__1j:   "baseline_WPcombo2_NOtrueMuons && jets_1"
+#   baseline_WPcombo2_NOtrueMuons__2j:   "baseline_WPcombo2_NOtrueMuons && jets_2"
+#   baseline_WPcombo2_NOtrueMuons__gt2j: "baseline_WPcombo2_NOtrueMuons && jets_gt2"
+
+#   baseline_WPcombo3_NOtrueMuons__0j:   "baseline_WPcombo3_NOtrueMuons && jets_0"
+#   baseline_WPcombo3_NOtrueMuons__1j:   "baseline_WPcombo3_NOtrueMuons && jets_1"
+#   baseline_WPcombo3_NOtrueMuons__2j:   "baseline_WPcombo3_NOtrueMuons && jets_2"
+#   baseline_WPcombo3_NOtrueMuons__gt2j: "baseline_WPcombo3_NOtrueMuons && jets_gt2"
+
+#   baseline_WPcombo4_NOtrueMuons__0j:   "baseline_WPcombo4_NOtrueMuons && jets_0"
+#   baseline_WPcombo4_NOtrueMuons__1j:   "baseline_WPcombo4_NOtrueMuons && jets_1"
+#   baseline_WPcombo4_NOtrueMuons__2j:   "baseline_WPcombo4_NOtrueMuons && jets_2"
+#   baseline_WPcombo4_NOtrueMuons__gt2j: "baseline_WPcombo4_NOtrueMuons && jets_gt2"
+
+#   baseline_WPcurrentcombo_NOtrueMuons__0j:   "baseline_WPcurrentcombo_NOtrueMuons && jets_0"
+#   baseline_WPcurrentcombo_NOtrueMuons__1j:   "baseline_WPcurrentcombo_NOtrueMuons && jets_1"
+#   baseline_WPcurrentcombo_NOtrueMuons__2j:   "baseline_WPcurrentcombo_NOtrueMuons && jets_2"
+#   baseline_WPcurrentcombo_NOtrueMuons__gt2j: "baseline_WPcurrentcombo_NOtrueMuons && jets_gt2"
+
+#   # --- True muons ---
+#   baseline_WPcombo1_trueMuons__0j:   "baseline_WPcombo1_trueMuons && jets_0"
+#   baseline_WPcombo1_trueMuons__1j:   "baseline_WPcombo1_trueMuons && jets_1"
+#   baseline_WPcombo1_trueMuons__2j:   "baseline_WPcombo1_trueMuons && jets_2"
+#   baseline_WPcombo1_trueMuons__gt2j: "baseline_WPcombo1_trueMuons && jets_gt2"
+
+#   baseline_WPcombo2_trueMuons__0j:   "baseline_WPcombo2_trueMuons && jets_0"
+#   baseline_WPcombo2_trueMuons__1j:   "baseline_WPcombo2_trueMuons && jets_1"
+#   baseline_WPcombo2_trueMuons__2j:   "baseline_WPcombo2_trueMuons && jets_2"
+#   baseline_WPcombo2_trueMuons__gt2j: "baseline_WPcombo2_trueMuons && jets_gt2"
+
+#   baseline_WPcombo3_trueMuons__0j:   "baseline_WPcombo3_trueMuons && jets_0"
+#   baseline_WPcombo3_trueMuons__1j:   "baseline_WPcombo3_trueMuons && jets_1"
+#   baseline_WPcombo3_trueMuons__2j:   "baseline_WPcombo3_trueMuons && jets_2"
+#   baseline_WPcombo3_trueMuons__gt2j: "baseline_WPcombo3_trueMuons && jets_gt2"
+
+#   baseline_WPcombo4_trueMuons__0j:   "baseline_WPcombo4_trueMuons && jets_0"
+#   baseline_WPcombo4_trueMuons__1j:   "baseline_WPcombo4_trueMuons && jets_1"
+#   baseline_WPcombo4_trueMuons__2j:   "baseline_WPcombo4_trueMuons && jets_2"
+#   baseline_WPcombo4_trueMuons__gt2j: "baseline_WPcombo4_trueMuons && jets_gt2"
+
+#   baseline_WPcurrentcombo_trueMuons__0j:   "baseline_WPcurrentcombo_trueMuons && jets_0"
+#   baseline_WPcurrentcombo_trueMuons__1j:   "baseline_WPcurrentcombo_trueMuons && jets_1"
+#   baseline_WPcurrentcombo_trueMuons__2j:   "baseline_WPcurrentcombo_trueMuons && jets_2"
+#   baseline_WPcurrentcombo_trueMuons__gt2j: "baseline_WPcurrentcombo_trueMuons && jets_gt2"
+
+#   # --- From taus ---
+
+#   baseline_WPcombo1_atLeastOneFromTaus__0j:   "baseline_WPcombo1_atLeastOneFromTaus && jets_0"
+#   baseline_WPcombo1_atLeastOneFromTaus__1j:   "baseline_WPcombo1_atLeastOneFromTaus && jets_1"
+#   baseline_WPcombo1_atLeastOneFromTaus__2j:   "baseline_WPcombo1_atLeastOneFromTaus && jets_2"
+#   baseline_WPcombo1_atLeastOneFromTaus__gt2j: "baseline_WPcombo1_atLeastOneFromTaus && jets_gt2"
+
+#   baseline_WPcombo2_atLeastOneFromTaus__0j:   "baseline_WPcombo2_atLeastOneFromTaus && jets_0"
+#   baseline_WPcombo2_atLeastOneFromTaus__1j:   "baseline_WPcombo2_atLeastOneFromTaus && jets_1"
+#   baseline_WPcombo2_atLeastOneFromTaus__2j:   "baseline_WPcombo2_atLeastOneFromTaus && jets_2"
+#   baseline_WPcombo2_atLeastOneFromTaus__gt2j: "baseline_WPcombo2_atLeastOneFromTaus && jets_gt2"
+
+#   baseline_WPcombo3_atLeastOneFromTaus__0j:   "baseline_WPcombo3_atLeastOneFromTaus && jets_0"
+#   baseline_WPcombo3_atLeastOneFromTaus__1j:   "baseline_WPcombo3_atLeastOneFromTaus && jets_1"
+#   baseline_WPcombo3_atLeastOneFromTaus__2j:   "baseline_WPcombo3_atLeastOneFromTaus && jets_2"
+#   baseline_WPcombo3_atLeastOneFromTaus__gt2j: "baseline_WPcombo3_atLeastOneFromTaus && jets_gt2"
+
+#   baseline_WPcombo4_atLeastOneFromTaus__0j:   "baseline_WPcombo4_atLeastOneFromTaus && jets_0"
+#   baseline_WPcombo4_atLeastOneFromTaus__1j:   "baseline_WPcombo4_atLeastOneFromTaus && jets_1"
+#   baseline_WPcombo4_atLeastOneFromTaus__2j:   "baseline_WPcombo4_atLeastOneFromTaus && jets_2"
+#   baseline_WPcombo4_atLeastOneFromTaus__gt2j: "baseline_WPcombo4_atLeastOneFromTaus && jets_gt2"
+
+#   baseline_WPcurrentcombo_atLeastOneFromTaus__0j:   "baseline_WPcurrentcombo_atLeastOneFromTaus && jets_0"
+#   baseline_WPcurrentcombo_atLeastOneFromTaus__1j:   "baseline_WPcurrentcombo_atLeastOneFromTaus && jets_1"
+#   baseline_WPcurrentcombo_atLeastOneFromTaus__2j:   "baseline_WPcurrentcombo_atLeastOneFromTaus && jets_2"
+#   baseline_WPcurrentcombo_atLeastOneFromTaus__gt2j: "baseline_WPcurrentcombo_atLeastOneFromTaus && jets_gt2"
+
+
+
+
+#   VBF_def: "HasVBF && j1_pt >= 35 && j2_pt >= 25"
+#   VBF_WPcombo1: "baseline_WPcombo1 && VBF_def "
+#   VBF_WPcombo2: "baseline_WPcombo2 && VBF_def"
+#   VBF_WPcombo3: "baseline_WPcombo3 && VBF_def"
+#   VBF_WPcombo4: "baseline_WPcombo4 && VBF_def"
+#   VBF_WPcurrentcombo: "baseline_WPcurrentcombo && VBF_def"
+
+
+#   # baseline with WP combos and jet multiplicity splitting
+#   VBF_WPcombo1__0j:   "VBF_WPcombo1 && jets_0"
+#   VBF_WPcombo1__1j:   "VBF_WPcombo1 && jets_1"
+#   VBF_WPcombo1__2j:   "VBF_WPcombo1 && jets_2"
+#   VBF_WPcombo1__gt2j: "VBF_WPcombo1 && jets_gt2"
+#   VBF_WPcombo2__0j:   "VBF_WPcombo2 && jets_0"
+#   VBF_WPcombo2__1j:   "VBF_WPcombo2 && jets_1"
+#   VBF_WPcombo2__2j:   "VBF_WPcombo2 && jets_2"
+#   VBF_WPcombo2__gt2j: "VBF_WPcombo2 && jets_gt2"
+#   VBF_WPcombo3__0j:   "VBF_WPcombo3 && jets_0"
+#   VBF_WPcombo3__1j:   "VBF_WPcombo3 && jets_1"
+#   VBF_WPcombo3__2j:   "VBF_WPcombo3 && jets_2"
+#   VBF_WPcombo3__gt2j: "VBF_WPcombo3 && jets_gt2"
+#   VBF_WPcombo4__0j:   "VBF_WPcombo4 && jets_0"
+#   VBF_WPcombo4__1j:   "VBF_WPcombo4 && jets_1"
+#   VBF_WPcombo4__2j:   "VBF_WPcombo4 && jets_2"
+#   VBF_WPcombo4__gt2j: "VBF_WPcombo4 && jets_gt2"
+#   VBF_WPcurrentcombo__0j:   "VBF_WPcurrentcombo && jets_0"
+#   VBF_WPcurrentcombo__1j:   "VBF_WPcurrentcombo && jets_1"
+#   VBF_WPcurrentcombo__2j:   "VBF_WPcurrentcombo && jets_2"
+#   VBF_WPcurrentcombo__gt2j: "VBF_WPcurrentcombo && jets_gt2"
+
+
+#   VBF_WPcombo1_trueMuons: "VBF_WPcombo1 && both_muons_true_prompt"
+#   VBF_WPcombo2_trueMuons: "VBF_WPcombo2 && both_muons_true_prompt"
+#   VBF_WPcombo3_trueMuons: "VBF_WPcombo3 && both_muons_true_prompt"
+#   VBF_WPcombo4_trueMuons: "VBF_WPcombo4 && both_muons_true_prompt"
+#   VBF_WPcurrentcombo_trueMuons: "VBF_WPcurrentcombo && both_muons_true_prompt"
+
+#   VBF_WPcombo1_atLeastOneFromTaus: "VBF_WPcombo1 && at_least_one_muon_from_tau"
+#   VBF_WPcombo2_atLeastOneFromTaus: "VBF_WPcombo2 && at_least_one_muon_from_tau"
+#   VBF_WPcombo3_atLeastOneFromTaus: "VBF_WPcombo3 && at_least_one_muon_from_tau"
+#   VBF_WPcombo4_atLeastOneFromTaus: "VBF_WPcombo4 && at_least_one_muon_from_tau"
+#   VBF_WPcurrentcombo_atLeastOneFromTaus: "VBF_WPcurrentcombo && at_least_one_muon_from_tau"
+
+#   VBF_WPcombo1_NOtrueMuons: "VBF_WPcombo1 && any_muon_not_true"
+#   VBF_WPcombo2_NOtrueMuons: "VBF_WPcombo2 && any_muon_not_true"
+#   VBF_WPcombo3_NOtrueMuons: "VBF_WPcombo3 && any_muon_not_true"
+#   VBF_WPcombo4_NOtrueMuons: "VBF_WPcombo4 && any_muon_not_true"
+#   VBF_WPcurrentcombo_NOtrueMuons: "VBF_WPcurrentcombo && any_muon_not_true"
+
+#   # --- No true muons ---
+#   VBF_WPcombo1_NOtrueMuons__0j:   "VBF_WPcombo1_NOtrueMuons && jets_0"
+#   VBF_WPcombo1_NOtrueMuons__1j:   "VBF_WPcombo1_NOtrueMuons && jets_1"
+#   VBF_WPcombo1_NOtrueMuons__2j:   "VBF_WPcombo1_NOtrueMuons && jets_2"
+#   VBF_WPcombo1_NOtrueMuons__gt2j: "VBF_WPcombo1_NOtrueMuons && jets_gt2"
+
+#   VBF_WPcombo2_NOtrueMuons__0j:   "VBF_WPcombo2_NOtrueMuons && jets_0"
+#   VBF_WPcombo2_NOtrueMuons__1j:   "VBF_WPcombo2_NOtrueMuons && jets_1"
+#   VBF_WPcombo2_NOtrueMuons__2j:   "VBF_WPcombo2_NOtrueMuons && jets_2"
+#   VBF_WPcombo2_NOtrueMuons__gt2j: "VBF_WPcombo2_NOtrueMuons && jets_gt2"
+
+#   VBF_WPcombo3_NOtrueMuons__0j:   "VBF_WPcombo3_NOtrueMuons && jets_0"
+#   VBF_WPcombo3_NOtrueMuons__1j:   "VBF_WPcombo3_NOtrueMuons && jets_1"
+#   VBF_WPcombo3_NOtrueMuons__2j:   "VBF_WPcombo3_NOtrueMuons && jets_2"
+#   VBF_WPcombo3_NOtrueMuons__gt2j: "VBF_WPcombo3_NOtrueMuons && jets_gt2"
+
+#   VBF_WPcombo4_NOtrueMuons__0j:   "VBF_WPcombo4_NOtrueMuons && jets_0"
+#   VBF_WPcombo4_NOtrueMuons__1j:   "VBF_WPcombo4_NOtrueMuons && jets_1"
+#   VBF_WPcombo4_NOtrueMuons__2j:   "VBF_WPcombo4_NOtrueMuons && jets_2"
+#   VBF_WPcombo4_NOtrueMuons__gt2j: "VBF_WPcombo4_NOtrueMuons && jets_gt2"
+
+#   VBF_WPcurrentcombo_NOtrueMuons__0j:   "VBF_WPcurrentcombo_NOtrueMuons && jets_0"
+#   VBF_WPcurrentcombo_NOtrueMuons__1j:   "VBF_WPcurrentcombo_NOtrueMuons && jets_1"
+#   VBF_WPcurrentcombo_NOtrueMuons__2j:   "VBF_WPcurrentcombo_NOtrueMuons && jets_2"
+#   VBF_WPcurrentcombo_NOtrueMuons__gt2j: "VBF_WPcurrentcombo_NOtrueMuons && jets_gt2"
+
+#   # --- True muons ---
+#   VBF_WPcombo1_trueMuons__0j:   "VBF_WPcombo1_trueMuons && jets_0"
+#   VBF_WPcombo1_trueMuons__1j:   "VBF_WPcombo1_trueMuons && jets_1"
+#   VBF_WPcombo1_trueMuons__2j:   "VBF_WPcombo1_trueMuons && jets_2"
+#   VBF_WPcombo1_trueMuons__gt2j: "VBF_WPcombo1_trueMuons && jets_gt2"
+
+#   VBF_WPcombo2_trueMuons__0j:   "VBF_WPcombo2_trueMuons && jets_0"
+#   VBF_WPcombo2_trueMuons__1j:   "VBF_WPcombo2_trueMuons && jets_1"
+#   VBF_WPcombo2_trueMuons__2j:   "VBF_WPcombo2_trueMuons && jets_2"
+#   VBF_WPcombo2_trueMuons__gt2j: "VBF_WPcombo2_trueMuons && jets_gt2"
+
+#   VBF_WPcombo3_trueMuons__0j:   "VBF_WPcombo3_trueMuons && jets_0"
+#   VBF_WPcombo3_trueMuons__1j:   "VBF_WPcombo3_trueMuons && jets_1"
+#   VBF_WPcombo3_trueMuons__2j:   "VBF_WPcombo3_trueMuons && jets_2"
+#   VBF_WPcombo3_trueMuons__gt2j: "VBF_WPcombo3_trueMuons && jets_gt2"
+
+#   VBF_WPcombo4_trueMuons__0j:   "VBF_WPcombo4_trueMuons && jets_0"
+#   VBF_WPcombo4_trueMuons__1j:   "VBF_WPcombo4_trueMuons && jets_1"
+#   VBF_WPcombo4_trueMuons__2j:   "VBF_WPcombo4_trueMuons && jets_2"
+#   VBF_WPcombo4_trueMuons__gt2j: "VBF_WPcombo4_trueMuons && jets_gt2"
+
+#   VBF_WPcurrentcombo_trueMuons__0j:   "VBF_WPcurrentcombo_trueMuons && jets_0"
+#   VBF_WPcurrentcombo_trueMuons__1j:   "VBF_WPcurrentcombo_trueMuons && jets_1"
+#   VBF_WPcurrentcombo_trueMuons__2j:   "VBF_WPcurrentcombo_trueMuons && jets_2"
+#   VBF_WPcurrentcombo_trueMuons__gt2j: "VBF_WPcurrentcombo_trueMuons && jets_gt2"
+
+#   # --- From taus ---
+
+#   VBF_WPcombo1_atLeastOneFromTaus__0j:   "VBF_WPcombo1_atLeastOneFromTaus && jets_0"
+#   VBF_WPcombo1_atLeastOneFromTaus__1j:   "VBF_WPcombo1_atLeastOneFromTaus && jets_1"
+#   VBF_WPcombo1_atLeastOneFromTaus__2j:   "VBF_WPcombo1_atLeastOneFromTaus && jets_2"
+#   VBF_WPcombo1_atLeastOneFromTaus__gt2j: "VBF_WPcombo1_atLeastOneFromTaus && jets_gt2"
+
+#   VBF_WPcombo2_atLeastOneFromTaus__0j:   "VBF_WPcombo2_atLeastOneFromTaus && jets_0"
+#   VBF_WPcombo2_atLeastOneFromTaus__1j:   "VBF_WPcombo2_atLeastOneFromTaus && jets_1"
+#   VBF_WPcombo2_atLeastOneFromTaus__2j:   "VBF_WPcombo2_atLeastOneFromTaus && jets_2"
+#   VBF_WPcombo2_atLeastOneFromTaus__gt2j: "VBF_WPcombo2_atLeastOneFromTaus && jets_gt2"
+
+#   VBF_WPcombo3_atLeastOneFromTaus__0j:   "VBF_WPcombo3_atLeastOneFromTaus && jets_0"
+#   VBF_WPcombo3_atLeastOneFromTaus__1j:   "VBF_WPcombo3_atLeastOneFromTaus && jets_1"
+#   VBF_WPcombo3_atLeastOneFromTaus__2j:   "VBF_WPcombo3_atLeastOneFromTaus && jets_2"
+#   VBF_WPcombo3_atLeastOneFromTaus__gt2j: "VBF_WPcombo3_atLeastOneFromTaus && jets_gt2"
+
+#   VBF_WPcombo4_atLeastOneFromTaus__0j:   "VBF_WPcombo4_atLeastOneFromTaus && jets_0"
+#   VBF_WPcombo4_atLeastOneFromTaus__1j:   "VBF_WPcombo4_atLeastOneFromTaus && jets_1"
+#   VBF_WPcombo4_atLeastOneFromTaus__2j:   "VBF_WPcombo4_atLeastOneFromTaus && jets_2"
+#   VBF_WPcombo4_atLeastOneFromTaus__gt2j: "VBF_WPcombo4_atLeastOneFromTaus && jets_gt2"
+
+#   VBF_WPcurrentcombo_atLeastOneFromTaus__0j:   "VBF_WPcurrentcombo_atLeastOneFromTaus && jets_0"
+#   VBF_WPcurrentcombo_atLeastOneFromTaus__1j:   "VBF_WPcurrentcombo_atLeastOneFromTaus && jets_1"
+#   VBF_WPcurrentcombo_atLeastOneFromTaus__2j:   "VBF_WPcurrentcombo_atLeastOneFromTaus && jets_2"
+#   VBF_WPcurrentcombo_atLeastOneFromTaus__gt2j: "VBF_WPcurrentcombo_atLeastOneFromTaus && jets_gt2"
+
+
+#   ggH_def: "!(VBF_def)"
+#   ggH_WPcombo1: "baseline_WPcombo1 && ggH_def"
+#   ggH_WPcombo2: "baseline_WPcombo2 && ggH_def"
+#   ggH_WPcombo3: "baseline_WPcombo3 && ggH_def"
+#   ggH_WPcombo4: "baseline_WPcombo4 && ggH_def"
+#   ggH_WPcurrentcombo: "baseline_WPcurrentcombo && ggH_def"
+
+#   # baseline with WP combos and jet multiplicity splitting
+#   ggH_WPcombo1__0j:   "ggH_WPcombo1 && jets_0"
+#   ggH_WPcombo1__1j:   "ggH_WPcombo1 && jets_1"
+#   ggH_WPcombo1__2j:   "ggH_WPcombo1 && jets_2"
+#   ggH_WPcombo1__gt2j: "ggH_WPcombo1 && jets_gt2"
+#   ggH_WPcombo2__0j:   "ggH_WPcombo2 && jets_0"
+#   ggH_WPcombo2__1j:   "ggH_WPcombo2 && jets_1"
+#   ggH_WPcombo2__2j:   "ggH_WPcombo2 && jets_2"
+#   ggH_WPcombo2__gt2j: "ggH_WPcombo2 && jets_gt2"
+#   ggH_WPcombo3__0j:   "ggH_WPcombo3 && jets_0"
+#   ggH_WPcombo3__1j:   "ggH_WPcombo3 && jets_1"
+#   ggH_WPcombo3__2j:   "ggH_WPcombo3 && jets_2"
+#   ggH_WPcombo3__gt2j: "ggH_WPcombo3 && jets_gt2"
+#   ggH_WPcombo4__0j:   "ggH_WPcombo4 && jets_0"
+#   ggH_WPcombo4__1j:   "ggH_WPcombo4 && jets_1"
+#   ggH_WPcombo4__2j:   "ggH_WPcombo4 && jets_2"
+#   ggH_WPcombo4__gt2j: "ggH_WPcombo4 && jets_gt2"
+#   ggH_WPcurrentcombo__0j:   "ggH_WPcurrentcombo && jets_0"
+#   ggH_WPcurrentcombo__1j:   "ggH_WPcurrentcombo && jets_1"
+#   ggH_WPcurrentcombo__2j:   "ggH_WPcurrentcombo && jets_2"
+#   ggH_WPcurrentcombo__gt2j: "ggH_WPcurrentcombo && jets_gt2"
+
+
+#   ggH_WPcombo1_trueMuons: "ggH_WPcombo1 && both_muons_true_prompt"
+#   ggH_WPcombo2_trueMuons: "ggH_WPcombo2 && both_muons_true_prompt"
+#   ggH_WPcombo3_trueMuons: "ggH_WPcombo3 && both_muons_true_prompt"
+#   ggH_WPcombo4_trueMuons: "ggH_WPcombo4 && both_muons_true_prompt"
+#   ggH_WPcurrentcombo_trueMuons: "ggH_WPcurrentcombo && both_muons_true_prompt"
+
+#   ggH_WPcombo1_atLeastOneFromTaus: "ggH_WPcombo1 && at_least_one_muon_from_tau"
+#   ggH_WPcombo2_atLeastOneFromTaus: "ggH_WPcombo2 && at_least_one_muon_from_tau"
+#   ggH_WPcombo3_atLeastOneFromTaus: "ggH_WPcombo3 && at_least_one_muon_from_tau"
+#   ggH_WPcombo4_atLeastOneFromTaus: "ggH_WPcombo4 && at_least_one_muon_from_tau"
+#   ggH_WPcurrentcombo_atLeastOneFromTaus: "ggH_WPcurrentcombo && at_least_one_muon_from_tau"
+
+#   ggH_WPcombo1_NOtrueMuons: "ggH_WPcombo1 && any_muon_not_true"
+#   ggH_WPcombo2_NOtrueMuons: "ggH_WPcombo2 && any_muon_not_true"
+#   ggH_WPcombo3_NOtrueMuons: "ggH_WPcombo3 && any_muon_not_true"
+#   ggH_WPcombo4_NOtrueMuons: "ggH_WPcombo4 && any_muon_not_true"
+#   ggH_WPcurrentcombo_NOtrueMuons: "ggH_WPcurrentcombo && any_muon_not_true"
+
+#   # --- No true muons ---
+#   ggH_WPcombo1_NOtrueMuons__0j:   "ggH_WPcombo1_NOtrueMuons && jets_0"
+#   ggH_WPcombo1_NOtrueMuons__1j:   "ggH_WPcombo1_NOtrueMuons && jets_1"
+#   ggH_WPcombo1_NOtrueMuons__2j:   "ggH_WPcombo1_NOtrueMuons && jets_2"
+#   ggH_WPcombo1_NOtrueMuons__gt2j: "ggH_WPcombo1_NOtrueMuons && jets_gt2"
+
+#   ggH_WPcombo2_NOtrueMuons__0j:   "ggH_WPcombo2_NOtrueMuons && jets_0"
+#   ggH_WPcombo2_NOtrueMuons__1j:   "ggH_WPcombo2_NOtrueMuons && jets_1"
+#   ggH_WPcombo2_NOtrueMuons__2j:   "ggH_WPcombo2_NOtrueMuons && jets_2"
+#   ggH_WPcombo2_NOtrueMuons__gt2j: "ggH_WPcombo2_NOtrueMuons && jets_gt2"
+
+#   ggH_WPcombo3_NOtrueMuons__0j:   "ggH_WPcombo3_NOtrueMuons && jets_0"
+#   ggH_WPcombo3_NOtrueMuons__1j:   "ggH_WPcombo3_NOtrueMuons && jets_1"
+#   ggH_WPcombo3_NOtrueMuons__2j:   "ggH_WPcombo3_NOtrueMuons && jets_2"
+#   ggH_WPcombo3_NOtrueMuons__gt2j: "ggH_WPcombo3_NOtrueMuons && jets_gt2"
+
+#   ggH_WPcombo4_NOtrueMuons__0j:   "ggH_WPcombo4_NOtrueMuons && jets_0"
+#   ggH_WPcombo4_NOtrueMuons__1j:   "ggH_WPcombo4_NOtrueMuons && jets_1"
+#   ggH_WPcombo4_NOtrueMuons__2j:   "ggH_WPcombo4_NOtrueMuons && jets_2"
+#   ggH_WPcombo4_NOtrueMuons__gt2j: "ggH_WPcombo4_NOtrueMuons && jets_gt2"
+
+#   ggH_WPcurrentcombo_NOtrueMuons__0j:   "ggH_WPcurrentcombo_NOtrueMuons && jets_0"
+#   ggH_WPcurrentcombo_NOtrueMuons__1j:   "ggH_WPcurrentcombo_NOtrueMuons && jets_1"
+#   ggH_WPcurrentcombo_NOtrueMuons__2j:   "ggH_WPcurrentcombo_NOtrueMuons && jets_2"
+#   ggH_WPcurrentcombo_NOtrueMuons__gt2j: "ggH_WPcurrentcombo_NOtrueMuons && jets_gt2"
+
+#   # --- True muons ---
+#   ggH_WPcombo1_trueMuons__0j:   "ggH_WPcombo1_trueMuons && jets_0"
+#   ggH_WPcombo1_trueMuons__1j:   "ggH_WPcombo1_trueMuons && jets_1"
+#   ggH_WPcombo1_trueMuons__2j:   "ggH_WPcombo1_trueMuons && jets_2"
+#   ggH_WPcombo1_trueMuons__gt2j: "ggH_WPcombo1_trueMuons && jets_gt2"
+
+#   ggH_WPcombo2_trueMuons__0j:   "ggH_WPcombo2_trueMuons && jets_0"
+#   ggH_WPcombo2_trueMuons__1j:   "ggH_WPcombo2_trueMuons && jets_1"
+#   ggH_WPcombo2_trueMuons__2j:   "ggH_WPcombo2_trueMuons && jets_2"
+#   ggH_WPcombo2_trueMuons__gt2j: "ggH_WPcombo2_trueMuons && jets_gt2"
+
+#   ggH_WPcombo3_trueMuons__0j:   "ggH_WPcombo3_trueMuons && jets_0"
+#   ggH_WPcombo3_trueMuons__1j:   "ggH_WPcombo3_trueMuons && jets_1"
+#   ggH_WPcombo3_trueMuons__2j:   "ggH_WPcombo3_trueMuons && jets_2"
+#   ggH_WPcombo3_trueMuons__gt2j: "ggH_WPcombo3_trueMuons && jets_gt2"
+
+#   ggH_WPcombo4_trueMuons__0j:   "ggH_WPcombo4_trueMuons && jets_0"
+#   ggH_WPcombo4_trueMuons__1j:   "ggH_WPcombo4_trueMuons && jets_1"
+#   ggH_WPcombo4_trueMuons__2j:   "ggH_WPcombo4_trueMuons && jets_2"
+#   ggH_WPcombo4_trueMuons__gt2j: "ggH_WPcombo4_trueMuons && jets_gt2"
+
+#   ggH_WPcurrentcombo_trueMuons__0j:   "ggH_WPcurrentcombo_trueMuons && jets_0"
+#   ggH_WPcurrentcombo_trueMuons__1j:   "ggH_WPcurrentcombo_trueMuons && jets_1"
+#   ggH_WPcurrentcombo_trueMuons__2j:   "ggH_WPcurrentcombo_trueMuons && jets_2"
+#   ggH_WPcurrentcombo_trueMuons__gt2j: "ggH_WPcurrentcombo_trueMuons && jets_gt2"
+
+#   # --- From taus ---
+
+#   ggH_WPcombo1_atLeastOneFromTaus__0j:   "ggH_WPcombo1_atLeastOneFromTaus && jets_0"
+#   ggH_WPcombo1_atLeastOneFromTaus__1j:   "ggH_WPcombo1_atLeastOneFromTaus && jets_1"
+#   ggH_WPcombo1_atLeastOneFromTaus__2j:   "ggH_WPcombo1_atLeastOneFromTaus && jets_2"
+#   ggH_WPcombo1_atLeastOneFromTaus__gt2j: "ggH_WPcombo1_atLeastOneFromTaus && jets_gt2"
+
+#   ggH_WPcombo2_atLeastOneFromTaus__0j:   "ggH_WPcombo2_atLeastOneFromTaus && jets_0"
+#   ggH_WPcombo2_atLeastOneFromTaus__1j:   "ggH_WPcombo2_atLeastOneFromTaus && jets_1"
+#   ggH_WPcombo2_atLeastOneFromTaus__2j:   "ggH_WPcombo2_atLeastOneFromTaus && jets_2"
+#   ggH_WPcombo2_atLeastOneFromTaus__gt2j: "ggH_WPcombo2_atLeastOneFromTaus && jets_gt2"
+
+#   ggH_WPcombo3_atLeastOneFromTaus__0j:   "ggH_WPcombo3_atLeastOneFromTaus && jets_0"
+#   ggH_WPcombo3_atLeastOneFromTaus__1j:   "ggH_WPcombo3_atLeastOneFromTaus && jets_1"
+#   ggH_WPcombo3_atLeastOneFromTaus__2j:   "ggH_WPcombo3_atLeastOneFromTaus && jets_2"
+#   ggH_WPcombo3_atLeastOneFromTaus__gt2j: "ggH_WPcombo3_atLeastOneFromTaus && jets_gt2"
+
+#   ggH_WPcombo4_atLeastOneFromTaus__0j:   "ggH_WPcombo4_atLeastOneFromTaus && jets_0"
+#   ggH_WPcombo4_atLeastOneFromTaus__1j:   "ggH_WPcombo4_atLeastOneFromTaus && jets_1"
+#   ggH_WPcombo4_atLeastOneFromTaus__2j:   "ggH_WPcombo4_atLeastOneFromTaus && jets_2"
+#   ggH_WPcombo4_atLeastOneFromTaus__gt2j: "ggH_WPcombo4_atLeastOneFromTaus && jets_gt2"
+
+#   ggH_WPcurrentcombo_atLeastOneFromTaus__0j:   "ggH_WPcurrentcombo_atLeastOneFromTaus && jets_0"
+#   ggH_WPcurrentcombo_atLeastOneFromTaus__1j:   "ggH_WPcurrentcombo_atLeastOneFromTaus && jets_1"
+#   ggH_WPcurrentcombo_atLeastOneFromTaus__2j:   "ggH_WPcurrentcombo_atLeastOneFromTaus && jets_2"
+#   ggH_WPcurrentcombo_atLeastOneFromTaus__gt2j: "ggH_WPcurrentcombo_atLeastOneFromTaus && jets_gt2"
+
+
+
+
+# # category_definition:
+# #   no_cuts: "true"
+# #   baseline_WPIso_MM: "mu1_pfRelIso04_all < 0.2 &&  mu2_pfRelIso04_all< 0.2 && mu1_mediumId && mu2_mediumId"
+# #   baseline_WPIso_ML: "mu1_pfRelIso04_all < 0.25 &&  mu2_pfRelIso04_all< 0.25 && mu1_mediumId && mu2_mediumId"
+# #   mu_pt_sel: "mu1_{mu_pt_for_selection} > 20 && mu2_{mu_pt_for_selection} > 20" # for sync purposes
+# #   OS_sel: "baseline_WPIso_{WP_to_use} && OS" # official
+# #   trigger_sel: "( HLT_singleMu && ( ( mu1_{mu_pt_for_selection} > {MuPtTh} && mu1_HasMatching_singleMu) || (mu2_{mu_pt_for_selection} > {MuPtTh} && mu2_HasMatching_singleMu) ) ) " # official
+# #   baseline_muon: "OS_sel && trigger_sel" # &&  abs(mu1_dz) < 1. && abs(mu1_dxy) < 0.5 && abs(mu2_dz) < 1. && abs(mu2_dxy) < 0.5"
+# #   baseline_muonJet: "baseline_muon && JetTagSel"
+# #   VBF_def: "baseline_muonJet && HasVBF"
+# #   VBF_JetVeto: "VBF_def && j1_pt >= 35 && j2_pt >= 25 "
+# #   ggH_muonPtSel: "baseline_muonJet && !(VBF_JetVeto) && mu1_{mu_pt_for_selection} > {MuPtTh} && mu2_{mu_pt_for_selection}>{MuPtTh}"
+# #   ggH: "baseline_muonJet && !(VBF_JetVeto)"
+# #   #### 0 jets
+# #   baseline_muonJet_0J: "baseline_muonJet && N_SelectedJets == 0"
+# #   #### 1 jets
+# #   baseline_muonJet_1J: "baseline_muonJet && N_SelectedJets == 1"
+# #   #### 2 jets
+# #   baseline_muonJet_2J: "baseline_muonJet && N_SelectedJets == 2"
+# #   VBF_def_2J: "baseline_muonJet_2J && HasVBF"
+# #   VBF_JetVeto_2J: "VBF_def && j1_pt >= 35 && j2_pt >= 25 "
+# #   ggH_2J: "baseline_muonJet_2J && !(VBF_JetVeto_2J)"
+# #   #### ≥2 jets
+# #   baseline_muonJet_MoreThan2J: "baseline_muonJet && N_SelectedJets >= 2"
+# #   VBF_def_MoreThan2J: "baseline_muonJet_MoreThan2J && HasVBF"
+# #   VBF_JetVeto_MoreThan2J: "VBF_def && j1_pt >= 35 && j2_pt >= 25 "
+# #   ggH_MoreThan2J: "baseline_muonJet_MoreThan2J && !(VBF_JetVeto_MoreThan2J)"
+# #   baseline_MuonPOG: "OS_sel && trigger_sel && mu1_pfRelIso04_all < 0.15 && mu2_pfRelIso04_all< 0.15 && mu1_tightId && mu2_tightId && mu1_{mu_pt_for_selection} > {MuPtTh} && mu2_{mu_pt_for_selection}>{MuPtTh}"
+
+# # DIFFERENCES WITH RUN2:
+# #   #  the baseline selection requires OS -- > Opposite Sign of muons charge (as in Run2, obv), and either the first or the second muon matching the online object and passing the pT threshold driven by the trigger (which is always 26 GeV in Run3 up to now) -- See AN/2019_185 lines 123 - 130
+# # - muon baseline pT cut (before requiring eventual matching to the trigger object) 20 --> 10 GeV
+# # - FSR photon recovery for muons NOT YET INCLUDED
+# # - b-jet tagging: In Run2, the DeepCSV Algorithm was used (see AN/2019_185 lines 106 - 112 ). In Run3 the ParticleNet is recommended in place of DeepCSV/DeepJet
+# # - Jet PUID is no longer used in Run3 (see AnaProd/baseline.py)
+# # - in Run2 there was not this JetVetoMap for or at least it's not described in the AN.
+# # - no jet veto for jet horn spikes in Run 2
+# # - VBF Jets selection compared to Run2. It is the same selection, but since there could be MORE than one jet pair, the one with highest invariant mass is excluded, keeping the DeltaEta threshold fixed to 2.5
+
+# corrections:
+#   btag:
+#     stages: [ AnaTuple, AnalysisCache, HistTuple ]
+#     modes:
+#       AnaTuple: none
+#       AnalysisCache: none
+#       HistTuple: none
+#     tagger: particleNet
+#     jetCollection: Jet
+#   mu:
+#     stage: HistTuple # AnaTuple
+#     columns:
+#       pfRelIso04_all: pfRelIso04_all
+#       tightId: tightId
+#       tkRelIso: tkRelIso
+#       highPtId: highPtId
+#       mediumId: mediumId
+#       looseId: looseId
+#       p4: p4_bsConstrainedPt # p4_pt_nano
+#     lowPt: True
+#     midPt: True
+#     hiPt: False
+#   trigger:
+#     stages: HistTuple # AnaTuple
+#     mode: SF
+#     extraFormat:
+#       pt: "bsConstrainedPt"
+#   muScaRe:
+#     stage: AnaTuple
+#     mu_pt_for_ScaReApplication: "bsConstrainedPt"
+#     apply_scare: true
+#     apply_fsr_recovery: true
+#   lumi: { stage: AnaTuple }
+#   xs: { stage: AnaTuple }
+#   gen: { stage: AnaTuple }
+#   pu:
+#     stages: [ AnaTuple, AnaTupleMerge ]
+#     enabled:
+#       AnaTuple: true
+#       AnaTupleMerge: false
+#   base: { stage: AnaTupleMerge }
+#   JEC: { stage: AnaTuple }
+#   JER:
+#     stage: AnaTuple
+#     apply_jet_horns_fix: true
+
+
+# scales:
+#   - Up
+#   - Down
+
+# ApplyBweight: False
+
+# payload_producers:
+#   DNN:
+#     producers_module_name: Analysis.DNN_Application
+#     producer_name: DNNProducer
+#     columns:
+#       - NNOutput
+#     n_cpus: 4
+#     max_runtime: 2.0
+#     cmssw_env: False
+#     awkward_based: True
+#     uproot_stepsize: '50MB'
+#     dependencies: [ ]
+#   VBFNet:
+#     producers_module_name: Analysis.VBFNet_Application
+#     producer_name: VBFNetProducer
+#     columns:
+#       - NNOutput
+#     n_cpus: 4
+#     max_runtime: 2.0
+#     cmssw_env: False
+#     awkward_based: True
+#     uproot_stepsize: '50MB'
+#     dependencies: [ ]

@@ -43,14 +43,14 @@ def GetDfw(df, setup, dataset_name):
         global_params["compute_rel_weights"]
         and "trigger" in corrections.to_apply.keys()
     )
-    print(kwargset["wantTriggerSFErrors"])
     kwargset["colToSave"] = []
     dfw = analysis.DataFrameBuilderForHistograms(
         df, global_params, period, corrections, **kwargset, is_not_Cache=True
     )
 
     new_dfw = analysis.PrepareDFBuilder(dfw)
-    if global_params["further_cuts"]:
+    further_cuts = global_params.get("further_cuts", {})
+    if further_cuts.keys():
         for key in global_params["further_cuts"].keys():
             vars_to_add = global_params["further_cuts"][key][0]
             for var_to_add in vars_to_add:
@@ -123,8 +123,8 @@ def DefineWeightForHistograms(
     process_group = global_params["process_group"]
     process_name = global_params["process_name"]
     isCentral = uncName == "Central"
-    muID_WP_for_SF = global_params.get("muIDWP", "Loose")
-    muIso_WP_for_SF = global_params.get("muIsoWP", "Medium")
+    muID_WP_for_SF = global_params["muons"].get("ID_WP", "Medium")
+    muIso_WP_for_SF = global_params["muons"].get("Iso_WP", "Loose")
     enable_trigger = "trigger" in corrections.to_apply.keys()
     enable_ID = "mu" in corrections.to_apply.keys()
     total_weight_expression = (

@@ -188,7 +188,7 @@ def JetCollectionDef(df, bTagAlgo, LooseWPValue, MediumWPValue):
     )
     df = df.Define(
         "JetTagSel",
-        "Jet_p4[Jet_NoOverlapWithMuons && Jet_btag_Veto_medium].size() < 1  && Jet_p4[Jet_NoOverlapWithMuons && Jet_btag_Veto_loose].size() < 2 ",  # && No_Jets_in_dead_Zone",
+        "Jet_p4[Jet_IsOutsideOfHornVetoRegion && Jet_btag_Veto_medium].size() < 1  && Jet_p4[Jet_IsOutsideOfHornVetoRegion && Jet_btag_Veto_loose].size() < 2 ",  # && No_Jets_in_dead_Zone",
     )
     return df
 
