@@ -132,7 +132,7 @@ def GetAllMuonsObservablesNew(df):
         p4_dimu_system = f"(mu1_p4_{newsuff}+mu2_p4_{newsuff})"
         p4_dimu_system_list =[f"mu1_p4_{newsuff}", f"mu2_p4_{newsuff}"]
         for obs,expr in dimu_obs.items():
-            df = df.Define(f"{obs}_{newsuff}",expr.format(dimu=p4_dimu, mu1p4=p4_dimu_list[0],mu2p4=p4_dimu_list[1],suff=f"_{newsuff}"))
+            df = df.Define(f"{obs}_{newsuff}",expr.format(dimu=p4_dimu_system, mu1p4=p4_dimu_system_list[0],mu2p4=p4_dimu_system_list[1],suff=f"_{newsuff}"))
     return df
 
 # def GetAllMuMuCorrectedPtRelatedObservables(df, suff={}):
