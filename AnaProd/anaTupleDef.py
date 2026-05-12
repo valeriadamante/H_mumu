@@ -80,10 +80,39 @@ def addAllVariables(
                 var_type="float",
                 default="-1000.f",
             )
-
+        LegVar(
+            "pt_bsc_scare",
+            f"Muon_p4_Central.at(mu{leg_idx+1}_idx).Pt()",
+            var_cond=f"mu{leg_idx+1}_idx>=0",
+            var_type="float",
+            default="-100000.f",
+        )
         LegVar(
             "pt_nano",
             f"Muon_p4_nano.at(mu{leg_idx+1}_idx).Pt()",
+            var_cond=f"mu{leg_idx+1}_idx>=0",
+            var_type="float",
+            default="-100000.f",
+        )
+        LegVar(
+            "pt_nano_scare",
+            f"Muon_p4_Central_nano.at(mu{leg_idx+1}_idx).Pt()",
+            var_cond=f"mu{leg_idx+1}_idx>=0",
+            var_type="float",
+            default="-100000.f",
+        )
+
+
+        LegVar(
+            "pt_nano_scare_FSR",
+            f"Muon_p4_FSR_Central_nano.at(mu{leg_idx+1}_idx).Pt()",
+            var_cond=f"mu{leg_idx+1}_idx>=0",
+            var_type="float",
+            default="-100000.f",
+        )
+        LegVar(
+            "pt_bsc_scare_FSR",
+            f"Muon_p4_FSR_Central.at(mu{leg_idx+1}_idx).Pt()",
             var_cond=f"mu{leg_idx+1}_idx>=0",
             var_type="float",
             default="-100000.f",
@@ -121,7 +150,7 @@ def addAllVariables(
 
         # defining each leg p4 for FindMatching from Muon_p4
 
-        for suffix in ["p4_bsConstrainedPt", "p4_nano", "p4"]:
+        for suffix in ["p4_bsConstrainedPt", "p4_nano","p4"]:
             if f"mu{leg_idx+1}_{suffix}" not in dfw.df.GetColumnNames():
                 dfw.df = dfw.df.Define(
                     f"mu{leg_idx+1}_{suffix}",
@@ -130,7 +159,7 @@ def addAllVariables(
 
     dfw.Apply(
         AnaBaseline.LowerMassCut,
-        p4_cols=["p4", "p4_nano", "p4_bsConstrainedPt"],
+        p4_cols=["p4_nano", "p4_bsConstrainedPt","p4"],
         cut_value=50,
     )
 
@@ -168,6 +197,6 @@ def addAllVariables(
             lepton_legs,
             isData,
             applyTriggerFilter,
-            global_params.get("extraFormat_for_triggerMatchingAndSF", {}),
+            global_params['muons'].get("extraFormat_for_triggerMatchingAndSF", {}),
         )
         dfw.colToSave.extend(hltBranches)

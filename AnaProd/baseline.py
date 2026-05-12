@@ -47,9 +47,13 @@ def LeptonsSelection(df):
 
 
 def LeptonsSelection_dev(df):
+    df = df.Define("Muon_p4_to_use", "RVecLV Muon_p4_to_use(Muon_bsConstrainedChi2.size()); for(int muidx=0; muidx<Muon_bsConstrainedChi2.size(); muidx++){{ Muon_p4_to_use[muidx] = Muon_bsConstrainedChi2[muidx] < 30 ? Muon_p4_Central[muidx] : Muon_p4_Central_nano[muidx]; }} return Muon_p4_to_use; ")
+    if "Muon_p4" in df.GetColumnNames():
+        df= df.Redefine("Muon_p4", "Muon_p4_to_use")
+    else: df= df.Define("Muon_p4", "Muon_p4_to_use")
     df = df.Define(
         "Muon_acceptanceSel",
-        "v_ops::pt(Muon_p4) > 15 && abs(v_ops::eta(Muon_p4)) < 2.4",
+        "v_ops::pt(Muon_p4) > 15 && abs(v_ops::eta(Muon_p4)) < 2.4", # BSC+ScaRe
     )
 
     big_ID_OR = "(Muon_looseId || Muon_mvaLowPt > -0.6 || Muon_mediumId)"

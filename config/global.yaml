@@ -82,6 +82,8 @@ muons:
   pt_for_definitions: FSR
   ID_WP: Medium
   Iso_WP: Loose
+  extraFormat_for_triggerMatchingAndSF:
+    pt: "bsConstrainedPt"
 
 categories_to_select:
   - no_cuts
@@ -129,7 +131,27 @@ categories:
   baseline_thirdLepVeto_chi2: "baseline && chi2_sel && vetoed_muons==0"
   baseline_thirdLepVeto_lowPtTT: "baseline && (pt_lessthan30_and_TT) && vetoed_muons==0"
   baseline_chi2_lowPtTT: "baseline && (pt_lessthan30_and_TT) && chi2_sel"
+  baseline_thirdLepVeto_lowPtTT_chi2: "baseline && (pt_lessthan30_and_TT) && chi2_sel && vetoed_muons==0"
 
+  VBF_def: "HasVBF && j1_pt >= 35 && j2_pt >= 25"
+
+  VBF: "baseline && VBF_def"
+  ggF: "baseline && !(VBF_def)"
+  VBF_thirdLepVeto: "baseline_thirdLepVeto && VBF_def"
+  ggF_thirdLepVeto: "baseline_thirdLepVeto && !(VBF_def)"
+  VBF_chi2: "baseline_chi2 && VBF_def"
+  ggF_chi2: "baseline_chi2 && !(VBF_def)"
+  VBF_lowPtTT: "baseline_lowPtTT && VBF_def"
+  ggF_lowPtTT: "baseline_lowPtTT && !(VBF_def)"
+  VBF_thirdLepVeto_chi2: "baseline_thirdLepVeto_chi2 && VBF_def"
+  ggF_thirdLepVeto_chi2: "baseline_thirdLepVeto_chi2 && !(VBF_def)"
+  VBF_chi2_lowPtTT: "baseline_chi2_lowPtTT && VBF_def"
+  ggF_chi2_lowPtTT: "baseline_chi2_lowPtTT && !(VBF_def)"
+  VBF_thirdLepVeto_lowPtTT: "baseline_thirdLepVeto_lowPtTT && VBF_def"
+  ggF_thirdLepVeto_lowPtTT: "baseline_thirdLepVeto_lowPtTT && !(VBF_def)"
+  VBF_thirdLepVeto_lowPtTT_chi2: "baseline_thirdLepVeto_lowPtTT_chi2 && VBF_def"
+  ggF_thirdLepVeto_lowPtTT_chi2: "baseline_thirdLepVeto_lowPtTT_chi2 && !(VBF_def)"
+  
   # mu1_prompt: "(mu1_genPartIdx >= 0 && mu1_gen_kind == 2)"
   # mu2_prompt: "(mu2_genPartIdx >= 0 && mu2_gen_kind == 2)"
   # mu1_from_tau: "(mu1_genPartIdx >= 0 && mu1_gen_kind == 4)"
