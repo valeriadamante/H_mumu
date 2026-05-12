@@ -94,104 +94,118 @@ def GetMuMuMassResolution(df, pt_to_use):
     return df
 
 
-def GetMuMuP4Observables(df):
-    for mu_idx in [1, 2]:  # tmp patch for back compatibility with old AnaTuples
-        if f"mu{mu_idx}_bsConstrainedPt" in df.GetColumnNames():
-            if f"mu{mu_idx}_pt_bsConstrainedPt" not in df.GetColumnNames():
-                # print(f"defining mu{mu_idx}_pt_bsConstrainedPt" )
-                df = df.Define(
-                    f"mu{mu_idx}_pt_bsConstrainedPt", f"mu{mu_idx}_bsConstrainedPt"
-                )
-    pt_def = [col for col in df.GetColumnNames() if f"mu1_pt_" in col]
-    # print(f"pt defined are: {pt_def}")
-    muon_p4_to_define = list(set(["_".join(pt.split("_")[2:]) for pt in pt_def]))
-    # print(f"suffixes are : {muon_p4_to_define}")
-    for pt_suffix in muon_p4_to_define + [""]:
-        pt_suffix_plus_underscore = f"_{pt_suffix}" if pt_suffix != "" else ""
-        for idx in [0, 1]:
-            df = df.Define(
-                f"mu{idx+1}_p4{pt_suffix_plus_underscore}",
-                f"ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double>>(mu{idx+1}_pt{pt_suffix_plus_underscore},mu{idx+1}_eta,mu{idx+1}_phi,mu{idx+1}_mass)",
-            )
-
-        df = df.Define(
-            f"pt_mumu{pt_suffix_plus_underscore}",
-            f"(mu1_p4{pt_suffix_plus_underscore}+mu2_p4{pt_suffix_plus_underscore}).Pt()",
-        )
-        df = df.Define(
-            f"m_mumu{pt_suffix_plus_underscore}",
-            f"(mu1_p4{pt_suffix_plus_underscore}+mu2_p4{pt_suffix_plus_underscore}).M()",
-        )
-    return df
 
 
-def GetAllMuMuCorrectedPtRelatedObservables(df, suff=""):
-    suffix = f"_{suff}" if suff else ""
-    cols = set(df.GetColumnNames())
-
-    def define_or_redefine(df, name, expr):
-        if name in cols:
-            return df.Redefine(name, expr)
-        else:
-            cols.add(name)
-            return df.Define(name, expr)
-
+def GetAllMuonsObservablesNew(df):
     df = df.Define("Ebeam", "13600.0/2")
 
-    dimu = f"(mu1_p4{suffix}+mu2_p4{suffix})"
-
-    # dimuon observables
     dimu_obs = {
-        "pt_mumu": f"{dimu}.Pt()",
-        "m_mumu": f"{dimu}.M()",
-        "y_mumu": f"{dimu}.Rapidity()",
-        "eta_mumu": f"{dimu}.Eta()",
-        "phi_mumu": f"{dimu}.Phi()",
+        "pt_mumu": "{dimu}.Pt()",
+        "m_mumu": "{dimu}.M()",
+        "y_mumu": "{dimu}.Rapidity()",
+        "eta_mumu": "{dimu}.Eta()",
+        "phi_mumu": "{dimu}.Phi()",
+        "dR_mumu": "ROOT::Math::VectorUtil::DeltaR({mu1p4}, {mu2p4})",
+        "cosTheta_Phi_CS": "ComputeCosThetaPhiCS({mu1p4}, {mu2p4}, Ebeam)",
+        "cosTheta_CS": "static_cast<float>(std::get<0>(cosTheta_Phi_CS{suff}))",
+        "phi_CS": "static_cast<float>(std::get<1>(cosTheta_Phi_CS{suff}))",
     }
 
-    for name, expr in dimu_obs.items():
-        df = define_or_redefine(df, name, expr)
-
-    df = df.Define(
-        "dR_mumu", f"ROOT::Math::VectorUtil::DeltaR(mu1_p4{suffix}, mu2_p4{suffix})"
-    )
-
-    df = (
-        df.Define(
-            "cosTheta_Phi_CS",
-            f"ComputeCosThetaPhiCS(mu1_p4{suffix}, mu2_p4{suffix}, Ebeam)",
-        )
-        .Define("cosTheta_CS", "static_cast<float>(std::get<0>(cosTheta_Phi_CS))")
-        .Define("phi_CS", "static_cast<float>(std::get<1>(cosTheta_Phi_CS))")
-    )
-
-    # ensure m_mumu_suffix exists
-    m_mumu_s = f"m_mumu{suffix}"
-    if m_mumu_s not in cols:
-        df = df.Define(m_mumu_s, f"{dimu}.M()")
-        cols.add(m_mumu_s)
-
-    for i in (1, 2):
-
-        p4 = f"mu{i}_p4{suffix}"
-        pt_s = f"mu{i}_pt{suffix}"
-        pt = f"mu{i}_pt"
-
-        if f"mu{i}_p4" not in cols:
-            df = df.Define(f"mu{i}_p4", p4)
-            cols.add(f"mu{i}_p4")
-
-        df = df.Redefine(f"mu{i}_p4", p4)
-
-        if pt_s not in cols:
-            df = df.Define(pt_s, f"{p4}.Pt()")
-            cols.add(pt_s)
-
-        df = define_or_redefine(df, pt, f"{p4}.Pt()")
-
-        df = df.Define(f"mu{i}_pt_rel{suffix}", f"{pt_s}/{m_mumu_s}")
-
-        if suffix:
-            df = df.Define(f"mu{i}_pt_rel", f"{pt_s}/{m_mumu_s}")
-
+    for pt_suffix in ["", '_bsc_scare', '_nano_scare', '_nano', '_nano_scare_FSR', '_bsConstrainedPt', '_bsc_scare_FSR']:
+        for mu_idx in [1,2]:
+            mu_pt_name = f"mu{mu_idx}_pt{pt_suffix}" if pt_suffix !="_bsConstrainedPt" else f"mu{mu_idx}{pt_suffix}"
+            if f"mu{mu_idx}_p4{pt_suffix}" in df.GetColumnNames(): continue
+            df = df.Define(f"mu{mu_idx}_p4{pt_suffix}", f"ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double>>({mu_pt_name},mu{mu_idx}_eta,mu{mu_idx}_phi,mu{mu_idx}_mass)")
+        p4_dimu = f"(mu1_p4{pt_suffix}+mu2_p4{pt_suffix})"
+        p4_dimu_list =[f"mu1_p4{pt_suffix}", f"mu2_p4{pt_suffix}"]
+        for obs,expr in dimu_obs.items():
+            if pt_suffix == "": continue
+            print(expr.format(dimu=p4_dimu, mu1p4=p4_dimu_list[0],mu2p4=p4_dimu_list[1],suff=pt_suffix))
+            df = df.Define(f"{obs}{pt_suffix}",expr.format(dimu=p4_dimu, mu1p4=p4_dimu_list[0],mu2p4=p4_dimu_list[1],suff=pt_suffix))
+    for mu_idx in [1,2]:
+        df = df.Define(f"mu{mu_idx}_p4_noCorr", f"mu{mu_idx}_bsConstrainedChi2 < 30 ? mu{mu_idx}_p4_bsConstrainedPt : mu{mu_idx}_p4_nano")
+        df = df.Define(f"mu{mu_idx}_p4_ScaRe", f"mu{mu_idx}_bsConstrainedChi2 < 30 ? mu{mu_idx}_p4_bsc_scare : mu{mu_idx}_p4_nano_scare")
+        df = df.Define(f"mu{mu_idx}_p4_ScaRe_FSR", f"mu{mu_idx}_bsConstrainedChi2 < 30 ? mu{mu_idx}_p4_bsc_scare_FSR : mu{mu_idx}_p4_nano_scare_FSR")
+    for newsuff in ["noCorr", "ScaRe","ScaRe_FSR"]:
+        df = df.Define(f"mu1_pt_{newsuff}", f"mu1_p4_{newsuff}.pt()")
+        df = df.Define(f"mu2_pt_{newsuff}", f"mu2_p4_{newsuff}.pt()")
+        p4_dimu_system = f"(mu1_p4_{newsuff}+mu2_p4_{newsuff})"
+        p4_dimu_system_list =[f"mu1_p4_{newsuff}", f"mu2_p4_{newsuff}"]
+        for obs,expr in dimu_obs.items():
+            df = df.Define(f"{obs}_{newsuff}",expr.format(dimu=p4_dimu, mu1p4=p4_dimu_list[0],mu2p4=p4_dimu_list[1],suff=f"_{newsuff}"))
     return df
+
+# def GetAllMuMuCorrectedPtRelatedObservables(df, suff={}):
+#     suff_bsc = suff["bsc"]
+#     suff_nano = suff["nano"]
+#     df = df.Define("mu1_p4_final", f"mu1_bsConstrainedChi2 < 30 ? mu1_p4_{suff_bsc} : mu1_p4_{suff_nano} ")
+#     df = df.Define("mu2_p4_final", f"mu2_bsConstrainedChi2 < 30 ? mu2_p4_{suff_bsc} : mu2_p4_{suff_nano} ")
+#     cols = set(df.GetColumnNames())
+
+#     def define_or_redefine(df, name, expr):
+#         if name in cols:
+#             return df.Redefine(name, expr)
+#         else:
+#             cols.add(name)
+#             return df.Define(name, expr)
+
+
+
+#     dimu = f"(mu1_p4_final+mu2_p4_final)"
+#     dimu_list = ["mu1_p4", "mu2_p4"]
+
+#     # dimuon observables
+#     dimu_obs = {
+#         "pt_mumu": f"{dimu}.Pt()",
+#         "m_mumu": f"{dimu}.M()",
+#         "y_mumu": f"{dimu}.Rapidity()",
+#         "eta_mumu": f"{dimu}.Eta()",
+#         "phi_mumu": f"{dimu}.Phi()",
+#         "dR_mumu": f"ROOT::Math::VectorUtil::DeltaR({dimu_list[0]}, {dimu_list[1]})",
+#         "cosTheta_Phi_CS":f"ComputeCosThetaPhiCS({dimu_list[0]}, {dimu_list[1]}, Ebeam)",
+#         "cosTheta_CS", "static_cast<float>(std::get<0>(cosTheta_Phi_CS))",
+#         "phi_CS", "static_cast<float>(std::get<1>(cosTheta_Phi_CS))",
+#     }
+
+#     for name, expr in dimu_obs.items():
+#         df = define_or_redefine(df, name, expr)
+
+#     df = df.Define(
+#         "dR_mumu", f"ROOT::Math::VectorUtil::DeltaR(mu1_p4_final, mu2_p4_final)"
+#     )
+
+#     df = (
+#         df.Define(
+#             "cosTheta_Phi_CS",
+#             f"ComputeCosThetaPhiCS(mu1_p4_final, mu2_p4_final, Ebeam)",
+#         )
+#         .Define("cosTheta_CS", "static_cast<float>(std::get<0>(cosTheta_Phi_CS))")
+#         .Define("phi_CS", "static_cast<float>(std::get<1>(cosTheta_Phi_CS))")
+#     )
+
+#     df = define_or_redefine(df, "m_mumu", f"{dimu}.M()")
+
+#     # for i in (1, 2):
+
+#     #     p4 = f"mu{i}_p4_final"
+#     #     pt_s = f"mu{i}_pt_final"
+#     #     pt = f"mu{i}_pt"
+
+#     #     if f"mu{i}_p4" not in cols:
+#     #         df = df.Define(f"mu{i}_p4", p4)
+#     #         cols.add(f"mu{i}_p4")
+
+#     #     df = df.Redefine(f"mu{i}_p4", p4)
+
+#     #     if pt_s not in cols:
+#     #         df = df.Define(pt_s, f"{p4}.Pt()")
+#     #         cols.add(pt_s)
+
+#     #     df = define_or_redefine(df, pt, f"{p4}.Pt()")
+
+#     #     df = df.Define(f"mu{i}_pt_rel{suffix}", f"{pt_s}/{m_mumu_s}")
+
+#     #     if suffix:
+#     #         df = df.Define(f"mu{i}_pt_rel", f"{pt_s}/{m_mumu_s}")
+
+#     return df

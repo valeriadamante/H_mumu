@@ -133,7 +133,7 @@ def GetSoftJets(df):
     return df
 
 
-def JetCollectionDef(df, bTagAlgo, LooseWPValue, MediumWPValue):
+def JetCollectionDef(df, bTagAlgo, LooseWPValue, MediumWPValue, mu_suff="ScaRe_FSR"):
     if "Jet_idx" not in df.GetColumnNames():
         print("Jet_idx not in df.GetColumnNames")
         df = df.Define(f"Jet_idx", f"CreateIndexes(Jet_pt.size())")
@@ -158,7 +158,7 @@ def JetCollectionDef(df, bTagAlgo, LooseWPValue, MediumWPValue):
 
     df = df.Define(
         f"Jet_NoOverlapWithMuons",
-        f"RemoveOverlaps(Jet_p4, Jet_preSel_andDeadZoneVetoMap, {{mu1_p4, mu2_p4}}, 0.4)",
+        f"RemoveOverlaps(Jet_p4, Jet_preSel_andDeadZoneVetoMap, {{mu1_p4_{mu_suff}, mu2_p4_{mu_suff}}}, 0.4)",
     )
     df = df.Define(
         "Jet_IsOutsideOfHornVetoRegion",
@@ -341,18 +341,18 @@ def VBFJetSelection(df):
     return df
 
 
-def VBFJetMuonsObservables(df):
+def VBFJetMuonsObservables(df, mu_suff="ScaRe_FSR"):
     df = df.Define(
         "Zepperfield_Var",
-        "if (HasVBF) return static_cast<float>((y_mumu - 0.5*(j1_y+j2_y))/std::abs(j1_y - j2_y)); return -10000.f;",
+        f"if (HasVBF) return static_cast<float>((y_mumu_{mu_suff} - 0.5*(j1_y+j2_y))/std::abs(j1_y - j2_y)); return -10000.f;",
     )
     df = df.Define(
         "pT_all_sum",
-        "if(HasVBF) return static_cast<float>(pT_sum ({mu1_p4, mu2_p4, VBFJetCand.leg_p4[0], VBFJetCand.leg_p4[1]})); return -10000.f;",
+        f"if(HasVBF) return static_cast<float>(pT_sum ({{mu1_p4_{mu_suff}, mu2_p4_{mu_suff}, VBFJetCand.leg_p4[0], VBFJetCand.leg_p4[1]}})); return -10000.f;",
     )
     df = df.Define(
         "R_pt",
-        "if(HasVBF) return static_cast<float>((pT_all_sum)/(pt_mumu + j1_pt + j2_pt)); return -10000.f;",
+        f"if(HasVBF) return static_cast<float>((pT_all_sum)/(pt_mumu_{mu_suff} + j1_pt + j2_pt)); return -10000.f;",
     )
     df = df.Define(
         "pT_jj_sum",
@@ -360,7 +360,7 @@ def VBFJetMuonsObservables(df):
     )
     df = df.Define(
         "pt_centrality",
-        "if(HasVBF) return static_cast<float>(( (pt_mumu-0.5*(pT_jj_sum)) / pT_diff(VBFJetCand.leg_p4[0], VBFJetCand.leg_p4[1]) )); return -10000.f;",
+        f"if(HasVBF) return static_cast<float>(( (pt_mumu_{mu_suff}-0.5*(pT_jj_sum)) / pT_diff(VBFJetCand.leg_p4[0], VBFJetCand.leg_p4[1]) )); return -10000.f;",
     )
 
     df = df.Define(
@@ -369,11 +369,11 @@ def VBFJetMuonsObservables(df):
     )
     df = df.Define(
         "minDeltaEta",
-        "if(HasVBF) return static_cast<float>(std::min(std::abs(eta_mumu - j1_eta),std::abs(eta_mumu - j2_eta))) ; return -10000.f;",
+        f"if(HasVBF) return static_cast<float>(std::min(std::abs(eta_mumu_{mu_suff} - j1_eta),std::abs(eta_mumu_{mu_suff} - j2_eta))) ; return -10000.f;",
     )
     df = df.Define(
         "minDeltaEtaSigned",
-        "if(HasVBF) return static_cast<float>(std::min((eta_mumu - j1_eta),(eta_mumu - j2_eta))) ; return -10000.f;",
+        f"if(HasVBF) return static_cast<float>(std::min((eta_mumu_{mu_suff} - j1_eta),(eta_mumu_{mu_suff} - j2_eta))) ; return -10000.f;",
     )
 
     return df

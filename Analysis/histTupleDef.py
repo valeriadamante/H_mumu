@@ -106,7 +106,7 @@ def DefineWeightForHistograms(
         )
         print("we should define the trigger weights:")
         defineTriggerWeights(
-            dfw, global_params.get("mu_pt_for_triggerMatchingAndSF", "pt")
+            dfw, global_params["muons"].get("pt_for_TrgSFEvaluation", "pt")
         )
 
         if df_is_central and global_params["compute_unc_histograms"]:
@@ -114,7 +114,7 @@ def DefineWeightForHistograms(
         if df_is_central and global_params["compute_unc_histograms"]:
             defineTriggerWeightsErrors(
                 dfw,
-                global_params.get("mu_pt_for_triggerMatchingAndSF", "pt"),
+                global_params["muons"].get("pt_for_TrgSFEvaluation", "pt"),
             )
         if df_is_central:
             central_df_weights_computed = True

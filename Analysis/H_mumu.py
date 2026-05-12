@@ -255,16 +255,10 @@ class DataFrameBuilderForHistograms(DataFrameBuilderBase):
 
 
 def PrepareDFBuilder(dfBuilder):
-
-    dfBuilder.df = GetMuMuP4Observables(dfBuilder.df)
-
     if "muScaRe" in dfBuilder.corrections.to_apply:
         if dfBuilder.config["corrections"]["muScaRe"]["stage"] == "HistTuple":
             dfBuilder.df = dfBuilder.corrections.muScaRe.getP4VariationsForLegs(dfBuilder.df)
-    dfBuilder.df = GetAllMuMuCorrectedPtRelatedObservables(
-        dfBuilder.df,
-        suff=dfBuilder.config["muons"]["pt_for_definitions"]
-    )
+    dfBuilder.df = GetAllMuonsObservablesNew(dfBuilder.df)
 
     dfBuilder.defineChannels()
     dfBuilder.defineTriggers()
