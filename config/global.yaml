@@ -9,6 +9,10 @@ WLCGFileSystem:
   localPathCacheValidity: 600
   verbose: 0
 
+runTokenServer:
+  host: cms-flaf.cern.ch
+  port: 5007
+
 signal_types:
   - ggH
   - VBFH
