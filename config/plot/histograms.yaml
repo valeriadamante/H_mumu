@@ -16,6 +16,15 @@ VBFNet_NNOutput:
   max_y_sf: 1.8
   divide_by_bin_width: False
 
+PostVBFNetDNN_NNOutput:
+  x_bins: "100|0:1"
+  x_title: PostVBFNetDNN_NNOutput
+  x_rebin: [ 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 ]
+  y_title: Events
+  use_log_y: True
+  max_y_sf: 1.8
+  divide_by_bin_width: False
+
 ########## \mu\mu BEGIN ##########
 
 m_mumu(_.*)?:
@@ -368,7 +377,7 @@ delta_eta_jj(_.*)?:
   divide_by_bin_width: False
 
 
-Zepperfield_Var:
+Zeppenfeld_Var:
   x_bins: "100|0.:2."
   x_rebin: [ 0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0 ]
   x_title: "Z($\\mu\\mu$, jj)"

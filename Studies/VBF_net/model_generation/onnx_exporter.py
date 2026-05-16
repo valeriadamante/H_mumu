@@ -51,4 +51,5 @@ def export_to_onnx(x_data, model, outname, device, renorm_mean, renorm_std):
         input_names=["x"],
         output_names=["y"],
         dynamic_axes={"x": [0], "y": [0]},
+        dynamo=False,
     )

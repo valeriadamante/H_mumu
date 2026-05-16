@@ -230,7 +230,7 @@ def VBFNetJetCollectionDef(df, max_jets=4):
     jet_vars = [
         "pt",
         "eta",
-        # "phi",
+        "phi",
         # "btagPNetB",
         # "btagPNetCvB",
         "btagPNetCvL",
@@ -343,8 +343,13 @@ def VBFJetSelection(df):
 
 def VBFJetMuonsObservables(df, mu_suff="ScaRe_FSR"):
     df = df.Define(
+<<<<<<< HEAD
         "Zepperfield_Var",
         f"if (HasVBF) return static_cast<float>((y_mumu_{mu_suff} - 0.5*(j1_y+j2_y))/std::abs(j1_y - j2_y)); return -10000.f;",
+=======
+        "Zeppenfeld_Var",
+        "if (HasVBF) return static_cast<float>((y_mumu - 0.5*(j1_y+j2_y))/std::abs(j1_y - j2_y)); return -10000.f;",
+>>>>>>> da7935acf7e0b2c7539a91a0a6b7fa7cef15417d
     )
     df = df.Define(
         "pT_all_sum",

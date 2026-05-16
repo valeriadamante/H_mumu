@@ -10,4 +10,5 @@ phys_model: TestModel
 variables:
   - DNN_NNOutput
   - VBFNet_NNOutput
+  - PostVBFNetDNN_NNOutput
   - mu1_pt

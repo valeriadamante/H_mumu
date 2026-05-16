@@ -124,10 +124,20 @@ def SaveVarsForNNInput(variables):
     ]
 
     mumu_jj_vars = [
+<<<<<<< HEAD
         "Zepperfield_Var", "R_pt", "pt_centrality",
         "minDeltaPhi", "minDeltaEta", "minDeltaEtaSigned",
     ]
 
+=======
+        "Zeppenfeld_Var",
+        "R_pt",
+        "pt_centrality",
+        "minDeltaPhi",
+        "minDeltaEta",
+        "minDeltaEtaSigned",
+    ]  # , "pT_all_sum","pT_jj_sum",
+>>>>>>> da7935acf7e0b2c7539a91a0a6b7fa7cef15417d
     softJets_vars = [
         "N_softJet", "SoftJet_energy", "SoftJet_Et",
         "SoftJet_HtCh_fraction", "SoftJet_HtNe_fraction",
