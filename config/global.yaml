@@ -31,16 +31,11 @@ signal_types:
 storeFatJets: False
 met_type: "PuppiMET"
 
-treeName: "Events"
 nEventsPerFile:
   data: 1000000
   signals: 1000000
   backgrounds: 1000000
 
-
-met_type: PuppiMET
-storeFatJets: false
-signal_types: [ggH, VBFH]
 channelSelection: [muMu]
 
 # =========================
@@ -100,7 +95,7 @@ muons:
   Iso_WP: Loose
   pt_for_TrgSFEvaluation: pt_noCorr  # should be ScaRe corrected, either pt or BSC pT according to what is the chi2
   extraFormat_for_triggerMatchingAndSF:
-    pt: "bsConstrainedPt" # to be fixed!! noCorr
+    pt: "bsConstrainedPt"
 
 categories:
   no_cuts: "true"
@@ -108,10 +103,10 @@ categories:
   OS_sel: "OS"
   jets_noHorn_cleanFromMu_sel: "JetTagSel"
 
-  mu1_pt_l30 : "mu1_{mu_pt_for_selection} < 30"
-  mu2_pt_l30 : "mu2_{mu_pt_for_selection} < 30"
-  mu1_pt_g20 : "mu1_{mu_pt_for_selection} > 20"
-  mu2_pt_g20 : "mu2_{mu_pt_for_selection} > 20"
+  mu1_pt_l30: "mu1_{mu_pt_for_selection} < 30"
+  mu2_pt_l30: "mu2_{mu_pt_for_selection} < 30"
+  mu1_pt_g20: "mu1_{mu_pt_for_selection} > 20"
+  mu2_pt_g20: "mu2_{mu_pt_for_selection} > 20"
   mu_pt_sel: "mu1_pt_g20 && mu2_pt_g20"
 
   base_sel: "trigger_sel && OS_sel && jets_noHorn_cleanFromMu_sel"
@@ -138,7 +133,9 @@ categories:
   baseline_chi2_lowPtTT: "baseline && (pt_lessthan30_and_TT) && chi2_sel"
   # baseline_thirdLepVeto_lowPtTT_chi2: "baseline && (pt_lessthan30_and_TT) && chi2_sel && vetoed_muons==0"
 
-  VBF_def: "HasVBF && j1_pt >= 35 && j2_pt >= 25"
+  # j1_outside_horn: "(abs(j1_eta) < 2.5 || abs(j1_eta) > 3 || j1_pt > 50)"
+  # j2_outside_horn: "(abs(j2_eta) < 2.5 || abs(j2_eta) > 3 || j2_pt > 50)"
+  VBF_def: "HasVBF && j1_pt >= 35 && j2_pt >= 25 && (abs(j1_eta) < 2.5 || abs(j1_eta) > 3 || j1_pt > 50) && (abs(j2_eta) < 2.5 || abs(j2_eta) > 3 || j2_pt > 50)"
 
   VBF: "baseline && VBF_def"
   ggF: "baseline && !(VBF_def)"
@@ -218,11 +215,10 @@ corrections:
     apply_jet_horns_fix: true
 
 
-
 # =========================
 # SCALES
 # =========================
-scales: [Up, Down]
+scales: [ Up, Down ]
 
 ApplyBweight: false
 
