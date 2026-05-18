@@ -36,13 +36,13 @@ nEventsPerFile:
   signals: 1000000
   backgrounds: 1000000
 
-channelSelection: [muMu]
+channelSelection: [ muMu ]
 
 # =========================
 # CHANNELS
 # =========================
 channels:
-  selection: [muMu]
+  selection: [ muMu ]
 
   definition:
     muMu: "true"
