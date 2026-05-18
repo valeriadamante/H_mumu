@@ -139,7 +139,10 @@ def addAllVariables(
         # defining each leg p4 for FindMatching from Muon_p4
 
         for suffix in ["p4_bsConstrainedPt", "p4_nano", "p4", f"p4_{syst_name}_nano"]:
-            if f"mu{leg_idx+1}_{suffix}" not in dfw.df.GetColumnNames() and f"Muon_{suffix}" in dfw.df.GetColumnNames():
+            if (
+                f"mu{leg_idx+1}_{suffix}" not in dfw.df.GetColumnNames()
+                and f"Muon_{suffix}" in dfw.df.GetColumnNames()
+            ):
                 dfw.df = dfw.df.Define(
                     f"mu{leg_idx+1}_{suffix}",
                     f"mu{leg_idx+1}_idx >= 0 ? Muon_{suffix}[mu{leg_idx+1}_idx] : LorentzVectorM(0.,0.,0.,0.)",

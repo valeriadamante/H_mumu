@@ -167,11 +167,11 @@ def JetCollectionDef(df, bTagAlgo, LooseWPValue, MediumWPValue, mu_suff="ScaRe_F
     # exclude completely the jets in Horn region
     df = df.Define(
         f"SelectedJet_p4",
-        f"Jet_p4[Jet_IsOutsideOfHornVetoRegion]",
+        f"Jet_p4[Jet_NoOverlapWithMuons]",
     )
     df = df.Define(
         f"SelectedJet_index",
-        f"Jet_idx[Jet_IsOutsideOfHornVetoRegion]",
+        f"Jet_idx[Jet_NoOverlapWithMuons]",
     )
 
     df = df.Define(f"N_SelectedJets", "SelectedJet_index.size()")
@@ -343,13 +343,8 @@ def VBFJetSelection(df):
 
 def VBFJetMuonsObservables(df, mu_suff="ScaRe_FSR"):
     df = df.Define(
-<<<<<<< HEAD
         "Zepperfield_Var",
         f"if (HasVBF) return static_cast<float>((y_mumu_{mu_suff} - 0.5*(j1_y+j2_y))/std::abs(j1_y - j2_y)); return -10000.f;",
-=======
-        "Zeppenfeld_Var",
-        "if (HasVBF) return static_cast<float>((y_mumu - 0.5*(j1_y+j2_y))/std::abs(j1_y - j2_y)); return -10000.f;",
->>>>>>> da7935acf7e0b2c7539a91a0a6b7fa7cef15417d
     )
     df = df.Define(
         "pT_all_sum",
