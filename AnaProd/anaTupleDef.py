@@ -27,8 +27,7 @@ def addAllVariables(
     dataset_cfg,
 ):
     #### baseline cuts (lepton selection + Jet Veto Map definition / application)
-    # dfw.Apply(AnaBaseline.LeptonsSelection)
-    dfw.Apply(AnaBaseline.LeptonsSelection_dev)
+    dfw.Apply(AnaBaseline.LeptonsSelection)
     dfw.Apply(Corrections.getGlobal().jet.getEnergyResolution)
     dfw.Apply(Corrections.getGlobal().btag.getWPid, "Jet")
     dfw.Apply(Corrections.getGlobal().JetVetoMap.GetJetVetoMap)
@@ -73,6 +72,7 @@ def addAllVariables(
                 default="-100000.f",
             )
         for var in ["pt", "eta", "phi", "mass"]:
+            # this should be BSC + ScaRe
             LegVar(
                 var,
                 f"Muon_p4[mu{leg_idx+1}_idx].{var}()",
@@ -80,13 +80,16 @@ def addAllVariables(
                 var_type="float",
                 default="-1000.f",
             )
+        # storing also this for double check
         LegVar(
             "pt_bsc_scare",
-            f"Muon_p4_Central.at(mu{leg_idx+1}_idx).Pt()",
+            f"Muon_p4_{syst_name}.at(mu{leg_idx+1}_idx).Pt()",
             var_cond=f"mu{leg_idx+1}_idx>=0",
             var_type="float",
             default="-100000.f",
         )
+
+        # prefer to store it just in case
         LegVar(
             "pt_nano",
             f"Muon_p4_nano.at(mu{leg_idx+1}_idx).Pt()",
@@ -96,27 +99,12 @@ def addAllVariables(
         )
         LegVar(
             "pt_nano_scare",
-            f"Muon_p4_Central_nano.at(mu{leg_idx+1}_idx).Pt()",
+            f"Muon_p4_{syst_name}_nano.at(mu{leg_idx+1}_idx).Pt()",
             var_cond=f"mu{leg_idx+1}_idx>=0",
             var_type="float",
             default="-100000.f",
         )
 
-
-        LegVar(
-            "pt_nano_scare_FSR",
-            f"Muon_p4_FSR_Central_nano.at(mu{leg_idx+1}_idx).Pt()",
-            var_cond=f"mu{leg_idx+1}_idx>=0",
-            var_type="float",
-            default="-100000.f",
-        )
-        LegVar(
-            "pt_bsc_scare_FSR",
-            f"Muon_p4_FSR_Central.at(mu{leg_idx+1}_idx).Pt()",
-            var_cond=f"mu{leg_idx+1}_idx>=0",
-            var_type="float",
-            default="-100000.f",
-        )
         if not isData:
             LegVar(
                 "gen_kind",
@@ -150,7 +138,7 @@ def addAllVariables(
 
         # defining each leg p4 for FindMatching from Muon_p4
 
-        for suffix in ["p4_bsConstrainedPt", "p4_nano","p4"]:
+        for suffix in ["p4_bsConstrainedPt", "p4_nano", "p4"]:
             if f"mu{leg_idx+1}_{suffix}" not in dfw.df.GetColumnNames():
                 dfw.df = dfw.df.Define(
                     f"mu{leg_idx+1}_{suffix}",
@@ -158,8 +146,8 @@ def addAllVariables(
                 )
 
     dfw.Apply(
-        AnaBaseline.LowerMassCut,
-        p4_cols=["p4_nano", "p4_bsConstrainedPt","p4"],
+        AnaBaseline.DiMuonMassCut,
+        p4_cols=["p4"],
         cut_value=50,
     )
 
@@ -168,10 +156,16 @@ def addAllVariables(
         "Jet", isData, global_params["nano_version"]
     ) + ["Jet_idx"]
     dfw.colToSave.extend(list(set(JetObservables)))
-    for jvar in ["pt"]:
-        jet_obs_name = f"v_ops::{var}(Jet_p4_nano)"
-        if f"{jet_obs_name}" in dfw.df.GetColumnNames():
+
+    # redefine JET observables which were changed during JES/JER application
+    for jvar in ["pt", "mass"]:
+        jet_obs_name = f"v_ops::{jvar}(Jet_p4_nano)"
+        if f"Jet_p4_nano" in dfw.df.GetColumnNames():
             dfw.DefineAndAppend(f"Jet_{jvar}_nano", jet_obs_name)
+        dfw.Redefine(f"Jet_{jvar}", f"v_ops::{jvar}(Jet_p4_{syst_name})")
+        dfw.Redefine(
+            "Jet_idx", f"ReorderObjects(v_ops::pt(Jet_p4_{syst_name}), Jet_idx)"
+        )
 
     #### LHE weights (special case) ####
     LHE_weights_special = GetObservablesCols(
@@ -182,7 +176,7 @@ def addAllVariables(
             dfw.DefineAndAppend(var[1], var[0])
 
     #### vars to store: BS, LHE, LHEPart,  ####
-    for obs_name in ["BeamSpot", "PV", "SoftActivityJet"]:
+    for obs_name in ["SoftActivityJet", "FsrPhoton"]:  # "BeamSpot", "PV",
         dfw.colToSave.extend(
             GetObservablesCols(obs_name, isData, global_params["nano_version"])
         )
@@ -197,6 +191,6 @@ def addAllVariables(
             lepton_legs,
             isData,
             applyTriggerFilter,
-            global_params['muons'].get("extraFormat_for_triggerMatchingAndSF", {}),
+            global_params["muons"].get("extraFormat_for_triggerMatchingAndSF", {}),
         )
         dfw.colToSave.extend(hltBranches)
