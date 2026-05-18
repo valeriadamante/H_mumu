@@ -125,7 +125,7 @@ def DefineWeightForHistograms(
     isCentral = uncName == "Central"
     muID_WP_for_SF = global_params["muons"].get("ID_WP", "Medium")
     muIso_WP_for_SF = global_params["muons"].get("Iso_WP", "Loose")
-    enable_trigger = False # "trigger" in corrections.to_apply.keys()
+    enable_trigger = False  # "trigger" in corrections.to_apply.keys()
     enable_ID = "mu" in corrections.to_apply.keys()
     total_weight_expression = (
         analysis.GetWeight(
