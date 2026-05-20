@@ -133,9 +133,6 @@ def GetAllMuonsObservablesNew(df):
         "cosTheta_CS": "static_cast<float>(std::get<0>(cosTheta_Phi_CS{suff}))",
         "phi_CS": "static_cast<float>(std::get<1>(cosTheta_Phi_CS{suff}))",
     }
-
-    print(df.GetColumnNames())
-
     for pt_suffix in [
         "_nano",
         "_bsConstrainedPt",
