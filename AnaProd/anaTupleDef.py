@@ -81,25 +81,44 @@ def addAllVariables(
                 default="-1000.f",
             )
         # storing also this for double check
-        LegVar(
-            "pt_bsc_scare",
-            f"Muon_p4_{syst_name}.at(mu{leg_idx+1}_idx).Pt()",
-            var_cond=f"mu{leg_idx+1}_idx>=0",
-            var_type="float",
-            default="-100000.f",
-        )
+        if f"Muon_p4_{syst_name}" in ddf.GetColumnNames():
+            LegVar(
+                "pt_bsc_scare",
+                f"Muon_p4_{syst_name}.at(mu{leg_idx+1}_idx).Pt()",
+                var_cond=f"mu{leg_idx+1}_idx>=0",
+                var_type="float",
+                default="-100000.f",
+            )
+        else:
+            LegVar(
+                "pt_bsc_scare",
+                f"Muon_p4_Central.at(mu{leg_idx+1}_idx).Pt()",
+                var_cond=f"mu{leg_idx+1}_idx>=0",
+                var_type="float",
+                default="-100000.f",
+            )
 
-        # prefer to store it just in case
+        if f"Muon_p4_{syst_name}_nano" in df.GetColumnNames():
+            LegVar(
+                "pt_nano_scare",
+                f"Muon_p4_{syst_name}.at(mu{leg_idx+1}_idx).Pt()",
+                var_cond=f"mu{leg_idx+1}_idx>=0",
+                var_type="float",
+                default="-100000.f",
+            )
+        else:
+            LegVar(
+                "pt_nano_scare",
+                f"Muon_p4_Central_nano.at(mu{leg_idx+1}_idx).Pt()",
+                var_cond=f"mu{leg_idx+1}_idx>=0",
+                var_type="float",
+                default="-100000.f",
+            )
+
+            # prefer to store it just in case
         LegVar(
             "pt_nano",
             f"Muon_p4_nano.at(mu{leg_idx+1}_idx).Pt()",
-            var_cond=f"mu{leg_idx+1}_idx>=0",
-            var_type="float",
-            default="-100000.f",
-        )
-        LegVar(
-            "pt_nano_scare",
-            f"Muon_p4_{syst_name}_nano.at(mu{leg_idx+1}_idx).Pt()",
             var_cond=f"mu{leg_idx+1}_idx>=0",
             var_type="float",
             default="-100000.f",

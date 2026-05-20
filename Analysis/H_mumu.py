@@ -54,6 +54,9 @@ def getChannelsRegionsAndCategoriesNames(global_params):
         custom_categories = global_params.get(custom_categories, [])
 
     categories = categories + custom_categories
+    categories_to_select = global_params.get("categories_to_select", [])
+    if not categories_to_select:
+        categories_to_select = categories
 
     custom_subcategories = global_params.get("custom_subcategories", [])
 
@@ -64,6 +67,7 @@ def getChannelsRegionsAndCategoriesNames(global_params):
     return {
         "channels": channels,
         "categories": categories,
+        "categories_to_select": categories_to_select,
         "subcategories": custom_subcategories,
         "regions": regions,
     }
@@ -82,6 +86,7 @@ def createKeyFilterDict(global_params, period):
     regions = reg_cat["regions"]
     categories = reg_cat["categories"]
     subcategories = reg_cat["subcategories"]
+    categories_to_select = reg_cat["categories_to_select"]
 
     triggers_dict = global_params["hist_triggers"]
 
@@ -92,7 +97,7 @@ def createKeyFilterDict(global_params, period):
 
         for reg_name, reg_cut in regions.items():
 
-            for cat in categories:
+            for cat in categories_to_select:
 
                 base = f"( {ch} && {triggers} && {reg_name} && {cat} )"
 
@@ -227,6 +232,8 @@ class DataFrameBuilderForHistograms(DataFrameBuilderBase):
         for reg_name, reg_cut in region_defs.items():
             self.df = self.df.Define(reg_name, reg_cut)
             self.colToSave.append(reg_name)
+        bigOR_string = " || ".join(reg for reg in self.ch_reg_cat_dict["regions"])
+        self.df = self.df.Filter(bigOR_string)
 
     def SignRegionDef(self):
 
@@ -251,11 +258,17 @@ class DataFrameBuilderForHistograms(DataFrameBuilderBase):
 
             self.df = self.df.Define(name, expr)
             self.colToSave.append(name)
+        bigOR_string = " || ".join(
+            cat for cat in self.ch_reg_cat_dict["categories_to_select"]
+        )
+        self.df = self.df.Filter(bigOR_string)
 
     def defineChannels(self):
         for ch in self.config["channels"]["selection"]:
             self.df = self.df.Define(ch, self.config["channels"]["definition"][ch])
             self.colToSave.append(ch)
+        bigOR_string = " || ".join(ch for ch in self.ch_reg_cat_dict["channels"])
+        self.df = self.df.Filter(bigOR_string)
 
     def __init__(
         self,
@@ -288,7 +301,7 @@ class DataFrameBuilderForHistograms(DataFrameBuilderBase):
 
 def PrepareDFBuilder(dfBuilder):
     dfBuilder.df = GetMuonP4Observables(dfBuilder.df)
-    print(dfBuilder.df.GetColumnNames())
+
     apply_muScaRe = "muScaRe" in dfBuilder.corrections.to_apply and (
         "HistTuple"
         in dfBuilder.config["corrections"].get("muScaRe", {}).get("stages", [])

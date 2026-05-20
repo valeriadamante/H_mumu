@@ -5,6 +5,7 @@
 anaTupleDef: AnaProd/anaTupleDef.py
 histTupleDef: Analysis/histTupleDef.py
 analysis_import: Analysis.H_mumu
+
 phys_model: BaseModel
 treeName: Events
 
@@ -97,11 +98,26 @@ muons:
   extraFormat_for_triggerMatchingAndSF:
     pt: "bsConstrainedPt"
 
+categories_to_select:
+  - no_cuts
+  - base_sel
+  - baseline
+  - baseline_chi2
+  - baseline_lowPtTT
+  - baseline_chi2_lowPtTT
+  - VBF_chi2
+  - VBF_lowPtTT
+  - VBF_chi2_lowPtTT
+  - ggF_chi2
+  - ggF_lowPtTT
+  - ggF_chi2_lowPtTT
+
 categories:
-  no_cuts: "true"
+  muon_pre_sel_check: "mu1_{mu_pt_for_selection} > 15 && abs(mu1_eta) < 2.4 && mu2_{mu_pt_for_selection} > 15 && abs(mu2_eta) < 2.4"
+  no_cuts: "muon_pre_sel_check"
+  OS_sel: "muon_pre_sel_check && OS"
   trigger_sel: "( HLT_singleMu && ( ( mu1_{mu_pt_for_selection} > {MuPtTh} && mu1_HasMatching_singleMu) || (mu2_{mu_pt_for_selection} > {MuPtTh} && mu2_HasMatching_singleMu) ) ) " # official
-  OS_sel: "OS"
-  jets_noHorn_cleanFromMu_sel: "JetTagSel"
+  jets_cleanFromMu_sel: "JetTagSel"
 
   mu1_pt_l30: "mu1_{mu_pt_for_selection} < 30"
   mu2_pt_l30: "mu2_{mu_pt_for_selection} < 30"
@@ -109,7 +125,7 @@ categories:
   mu2_pt_g20: "mu2_{mu_pt_for_selection} > 20"
   mu_pt_sel: "mu1_pt_g20 && mu2_pt_g20"
 
-  base_sel: "trigger_sel && OS_sel && jets_noHorn_cleanFromMu_sel"
+  base_sel: "trigger_sel && OS_sel && jets_cleanFromMu_sel"
 
   mu1_ML: "mu1_pfIsoId >= 2 && mu1_mediumId"
   mu1_LL: "mu1_pfIsoId >= 2 && mu1_looseId"
