@@ -278,7 +278,7 @@ class DataFrameBuilderForHistograms(DataFrameBuilderBase):
         corrections,
         isData=False,
         wantTriggerSFErrors=False,
-        colToSave=None,
+        colToSave=[],
         is_not_Cache=False,
     ):
 
@@ -301,14 +301,7 @@ class DataFrameBuilderForHistograms(DataFrameBuilderBase):
 
 def PrepareDFBuilder(dfBuilder):
     dfBuilder.df = GetMuonP4Observables(dfBuilder.df)
-
-    apply_muScaRe = "muScaRe" in dfBuilder.corrections.to_apply and (
-        "HistTuple"
-        in dfBuilder.config["corrections"].get("muScaRe", {}).get("stages", [])
-        or dfBuilder.config["corrections"].get("muScaRe", {}).get("stage", "")
-        == "HistTuple"
-    )
-    if apply_muScaRe:
+    if "muScaRe" in dfBuilder.corrections.to_apply:
         dfBuilder.df = dfBuilder.corrections.muScaRe.getP4VariationsForLegs(
             dfBuilder.df
         )

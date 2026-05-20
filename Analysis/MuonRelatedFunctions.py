@@ -161,14 +161,6 @@ def GetAllMuonsObservablesNew(df):
         for obs, expr in dimu_obs.items():
             if pt_suffix == "":
                 continue
-            # print(
-            #     expr.format(
-            #         dimu=p4_dimu,
-            #         mu1p4=p4_dimu_list[0],
-            #         mu2p4=p4_dimu_list[1],
-            #         suff=pt_suffix,
-            #     )
-            # )
             df = df.Define(
                 f"{obs}{pt_suffix}",
                 expr.format(

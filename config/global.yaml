@@ -212,12 +212,14 @@ corrections:
     extraFormat:
       pt: "bsConstrainedPt"
   muScaRe:
-    stages: [ AnaTuple, HistTuple ]
+    stages: [ AnaTuple, AnalysisCache, HistTuple ]
     scare_enabled:
       AnaTuple: true
+      AnalysisCache: false
       HistTuple: false
     fsr_enabled:
       AnaTuple: false
+      AnalysisCache: true
       HistTuple: true
     mu_pt_for_ScaReApplication: "bsConstrainedPt"
   lumi: { stage: AnaTuple }
