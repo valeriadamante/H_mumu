@@ -219,10 +219,7 @@ corrections:
     fsr_enabled:
       AnaTuple: false
       HistTuple: true
-
     mu_pt_for_ScaReApplication: "bsConstrainedPt"
-    apply_scare: true
-    apply_fsr_recovery: false
   lumi: { stage: AnaTuple }
   xs: { stage: AnaTuple }
   gen: { stage: AnaTuple }
