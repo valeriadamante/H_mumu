@@ -483,15 +483,18 @@ Other:
   color_mplhep: slateblue
   datasets: [ ]
 
+
 custom_CI_background:
   name: "CI -- Background"
   color: "kGreen-3"
-  datasets: [ ]
+  datasets:
+    - EWK_2Mu2J_MLL_105to160_herwig
 
 custom_CI_signal:
   name: "CI -- signals"
   color: "kAzure+10"
-  datasets: [ ]
+  datasets:
+    - VBFHto2Mu_m125_powheg
 
 custom_CI_data:
   name: "CI -- data"
