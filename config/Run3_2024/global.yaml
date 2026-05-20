@@ -13,13 +13,12 @@ corrections:
     stages: [ AnaTuple, AnalysisCache, HistTuple ]
     modes:
       AnaTuple: none
-      HistTuple: none
       AnalysisCache: none
+      HistTuple: none
     tagger: UParTAK4
     jetCollection: Jet
-    wantShape: False
   mu:
-    stage: AnaTuple
+    stage: HistTuple # AnaTuple
     columns:
       pfRelIso04_all: pfRelIso04_all
       tightId: tightId
@@ -27,21 +26,26 @@ corrections:
       highPtId: highPtId
       mediumId: mediumId
       looseId: looseId
-      p4: p4_bsConstrainedPt # p4_pt_nano
-    lowPt: False
+      p4: p4 # it is the final ScaRe corrected p4, either BSC or nano according to chi2 --> has to be modified with the non-corrected pT
+    lowPt: True
     midPt: True
     hiPt: False
   trigger:
-    stage: AnaTuple
+    stages: HistTuple # AnaTuple
     mode: SF
     extraFormat:
       pt: "bsConstrainedPt"
   muScaRe:
-    stage: AnaTuple # later it will become anaTuple.
-    # stage: HistTuple # later it will become anaTuple.
+    stages: [ AnaTuple, AnalysisCache, HistTuple ]
+    scare_enabled:
+      AnaTuple: true
+      AnalysisCache: false
+      HistTuple: false
+    fsr_enabled:
+      AnaTuple: false
+      AnalysisCache: true
+      HistTuple: true
     mu_pt_for_ScaReApplication: "bsConstrainedPt"
-    apply_scare: true
-    apply_fsr_recovery: true
   lumi: { stage: AnaTuple }
   xs: { stage: AnaTuple }
   gen: { stage: AnaTuple }
