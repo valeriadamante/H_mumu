@@ -118,18 +118,18 @@ def createKeyFilterDict(global_params, period):
 def SaveVarsForNNInput(variables):
 
     mumu_vars = [
-        "pt_mumu",
-        "y_mumu",
-        "eta_mumu",
-        "phi_mumu",
-        "m_mumu",
-        "dR_mumu",
-        "cosTheta_CS",
-        "mu1_pt_rel",
-        "mu2_pt_rel",
+        "pt_mumu_ScaRe_FSR",
+        "y_mumu_ScaRe_FSR",
+        "eta_mumu_ScaRe_FSR",
+        "phi_mumu_ScaRe_FSR",
+        "m_mumu_ScaRe_FSR",
+        "dR_mumu_ScaRe_FSR",
+        "cosTheta_CS_ScaRe_FSR",
+        "mu1_pt_rel_ScaRe_FSR",
+        "mu2_pt_rel_ScaRe_FSR",
         "mu1_eta",
         "mu2_eta",
-        "phi_CS",
+        "phi_CS_ScaRe_FSR",
     ]
 
     jj_vars = [

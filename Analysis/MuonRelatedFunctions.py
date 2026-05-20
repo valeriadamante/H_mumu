@@ -198,4 +198,11 @@ def GetAllMuonsObservablesNew(df):
                     suff=f"_{newsuff}",
                 ),
             )
+        df = df.Define(
+            f"mu1_pt_rel_{newsuff}", f"mu1_p4_{newsuff}.pt()/m_mumu_{newsuff}"
+        )
+        df = df.Define(
+            f"mu2_pt_rel_{newsuff}", f"mu2_p4_{newsuff}.pt()/m_mumu_{newsuff}"
+        )
+
     return df
