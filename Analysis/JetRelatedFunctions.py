@@ -343,7 +343,7 @@ def VBFJetSelection(df):
 
 def VBFJetMuonsObservables(df, mu_suff="ScaRe_FSR"):
     df = df.Define(
-        "Zepperfield_Var",
+        "Zeppenfeld_Var",
         f"if (HasVBF) return static_cast<float>((y_mumu_{mu_suff} - 0.5*(j1_y+j2_y))/std::abs(j1_y - j2_y)); return -10000.f;",
     )
     df = df.Define(
