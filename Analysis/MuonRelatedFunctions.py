@@ -206,21 +206,45 @@ def GetAllMuonsObservablesNew(df):
         )
 
     pt_variants = {
-        "_nano": {"pt_err_template": "mu{0}_ptErr/mu{0}_pt", "pt_name_template": "mu{0}_pt_nano"},
-        "_nano_scare": {"pt_err_template": "mu{0}_ptErr/mu{0}_pt", "pt_name_template": "mu{0}_pt_nano_scare"},
-        "_nano_scare_FSR": {"pt_err_template": "mu{0}_ptErr/mu{0}_pt", "pt_name_template": "mu{0}_pt_nano_scare_FSR"},
-        "_bsConstrainedPt": {"pt_err_template": "mu{0}_bsConstrainedPtErr/mu{0}_bsConstrainedPt", "pt_name_template": "mu{0}_bsConstrainedPt"},
-        "_bsc_scare": {"pt_err_template": "mu{0}_bsConstrainedPtErr/mu{0}_bsConstrainedPt", "pt_name_template": "mu{0}_pt_bsc_scare"},
-        "": {"pt_err_template": "mu{0}_bsConstrainedPtErr/mu{0}_bsConstrainedPt", "pt_name_template": "mu{0}_pt_bsc_scare"},
-        "_bsc_scare_FSR": {"pt_err_template": "mu{0}_bsConstrainedPtErr/mu{0}_bsConstrainedPt", "pt_name_template": "mu{0}_pt_bsc_scare_FSR"},
-    }
+        "_nano": {
+            "pt_err_template": "mu{0}_ptErr/mu{0}_pt",
+            "pt_name_template": "mu{0}_pt_nano",
+        },
+        "_nano_scare": {
+            "pt_err_template": "mu{0}_ptErr/mu{0}_pt",
+            "pt_name_template": "mu{0}_pt_nano_scare",
+        },
+        "_nano_scare_FSR": {
+            "pt_err_template": "mu{0}_ptErr/mu{0}_pt",
+            "pt_name_template": "mu{0}_pt_nano_scare_FSR",
+        },
+        "_bsConstrainedPt": {
+            "pt_err_template": "mu{0}_bsConstrainedPtErr/mu{0}_bsConstrainedPt",
+            "pt_name_template": "mu{0}_bsConstrainedPt",
+        },
+        "_bsc_scare": {
+            "pt_err_template": "mu{0}_bsConstrainedPtErr/mu{0}_bsConstrainedPt",
+            "pt_name_template": "mu{0}_pt_bsc_scare",
+        },
+        "": {
+            "pt_err_template": "mu{0}_bsConstrainedPtErr/mu{0}_bsConstrainedPt",
+            "pt_name_template": "mu{0}_pt_bsc_scare",
+        },
+        "_bsc_scare_FSR": {
+            "pt_err_template": "mu{0}_bsConstrainedPtErr/mu{0}_bsConstrainedPt",
+            "pt_name_template": "mu{0}_pt_bsc_scare_FSR",
+        },
+    }  # TO BE FIXED WITH THE SCARE UNC INCLUSION!! --> add friend ttree for scare
 
     for pt_suffix, pt_info in pT_variants.items():
         # Check if both muons have the required pT columns
         mu1_pt_name = pt_info["pt_name_template"].format(1)
         mu2_pt_name = pt_info["pt_name_template"].format(2)
 
-        if mu1_pt_name not in df.GetColumnNames() or mu2_pt_name not in df.GetColumnNames():
+        if (
+            mu1_pt_name not in df.GetColumnNames()
+            or mu2_pt_name not in df.GetColumnNames()
+        ):
             continue
 
         # Calculate relative pT errors for each muon
@@ -231,7 +255,9 @@ def GetAllMuonsObservablesNew(df):
         # Calculate m_mumu_resolution: sqrt(0.5*(sigma1^2 + sigma2^2))
         # According to the formula: Δm_μμ^rel = sqrt(1/2 * ((Δpt(u1)/pt(u1))^2 + (Δpt(u2)/pt(u2))^2))
         resolution_expr = f"sqrt(0.5*(pow(sigma_mu1_pt_rel{pt_suffix},2) + pow(sigma_mu2_pt_rel{pt_suffix},2)))"
-        resolution_name = f"m_mumu_resolution{pt_suffix}" if pt_suffix != "" else "m_mumu_resolution"
+        resolution_name = (
+            f"m_mumu_resolution{pt_suffix}" if pt_suffix != "" else "m_mumu_resolution"
+        )
         df = df.Define(resolution_name, resolution_expr)
 
     return df
