@@ -81,7 +81,7 @@ def addAllVariables(
                 default="-1000.f",
             )
         # storing also this for double check
-        if f"Muon_p4_{syst_name}" in df.GetColumnNames():
+        if f"Muon_p4_{syst_name}" in dfw.df.GetColumnNames():
             LegVar(
                 "pt_bsc_scare",
                 f"Muon_p4_{syst_name}.at(mu{leg_idx+1}_idx).Pt()",
@@ -98,7 +98,7 @@ def addAllVariables(
                 default="-100000.f",
             )
 
-        if f"Muon_p4_{syst_name}_nano" in df.GetColumnNames():
+        if f"Muon_p4_{syst_name}_nano" in dfw.df.GetColumnNames():
             LegVar(
                 "pt_nano_scare",
                 f"Muon_p4_{syst_name}.at(mu{leg_idx+1}_idx).Pt()",
