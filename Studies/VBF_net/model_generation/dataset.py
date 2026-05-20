@@ -23,7 +23,7 @@ class JetDataset(Dataset):
         self.pad_value = pad_value
         self.for_inference = for_inference
 
-        self.mumu_pt = self.df["pt_mumu"].values
+        self.mumu_pt = self.df["pt_mumu_ScaRe_FSR"].values
         self.pt = self.df["FilteredJet_pt"].values
         self.eta = self.df["FilteredJet_eta"].values
         self.phi = self.df["FilteredJet_phi"].values

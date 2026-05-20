@@ -1,7 +1,7 @@
 vars_to_save:
   Muon:
     - mu{}_eta
-    - mu{}_pt
+    - mu{}_pt_ScaRe_FSR
   # SoftJet:
   #   - Et # transverse energy
   #   - HtCh_fraction # hadronic transverse energy fraction from charged particles
@@ -24,14 +24,14 @@ vars_to_save:
     - Zeppenfeld_Var
     - pt_centrality
   MuPair:
-    - dR_mumu
-    - m_mumu
-    - eta_mumu
-    - cosTheta_CS
-    - phi_mumu
-    - pt_mumu
-    - y_mumu
-    - phi_CS
+    - dR_mumu_ScaRe_FSR
+    - m_mumu_ScaRe_FSR
+    - eta_mumu_ScaRe_FSR
+    - cosTheta_CS_ScaRe_FSR
+    - phi_mumu_ScaRe_FSR
+    - pt_mumu_ScaRe_FSR
+    - y_mumu_ScaRe_FSR
+    - phi_CS_ScaRe_FSR
   Global:
     - FullEventId
     # - luminosityBlock
