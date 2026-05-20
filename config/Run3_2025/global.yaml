@@ -18,6 +18,7 @@ corrections:
       HistTuple: none
     tagger: UParTAK4
     jetCollection: Jet
+    wantShape: False
   mu:
     stage: HistTuple # AnaTuple
     columns:
