@@ -13,28 +13,28 @@ abs_train_weight = false
 data_columns = [
     'VBFNet_Output',
     'mu1_eta',
-    'mu1_pt',
+    'mu1_pt_ScaRe_FSR',
     'mu2_eta',
-    'mu2_pt',
-    'dR_mumu',
-    'm_mumu',
-    'eta_mumu',
-    'cosTheta_CS',
-    'phi_mumu',
-    'pt_mumu',
-    'y_mumu',
-    'phi_CS',
-    'FilteredJet_pt_1', 
-    'FilteredJet_pt_2', 
+    'mu2_pt_ScaRe_FSR',
+    'dR_mumu_ScaRe_FSR',
+    'm_mumu_ScaRe_FSR',
+    'eta_mumu_ScaRe_FSR',
+    'cosTheta_CS_ScaRe_FSR',
+    'phi_mumu_ScaRe_FSR',
+    'pt_mumu_ScaRe_FSR',
+    'y_mumu_ScaRe_FSR',
+    'phi_CS_ScaRe_FSR',
+    'FilteredJet_pt_1',
+    'FilteredJet_pt_2',
     'FilteredJet_pt_3',
-    'FilteredJet_pt_4', 
-    'FilteredJet_eta_1', 
+    'FilteredJet_pt_4',
+    'FilteredJet_eta_1',
     'FilteredJet_eta_2',
-    'FilteredJet_eta_3', 
-    'FilteredJet_eta_4', 
-    'FilteredJet_phi_1', 
+    'FilteredJet_eta_3',
+    'FilteredJet_eta_4',
+    'FilteredJet_phi_1',
     'FilteredJet_phi_2',
-    'FilteredJet_phi_3', 
+    'FilteredJet_phi_3',
     'FilteredJet_phi_4',
     'SoftActivityJetHT',
     'SoftActivityJetHT2',
@@ -46,7 +46,7 @@ data_columns = [
 validation_size = 0.25
 k = 4
 
-[network]  
+[network]
 # Hidden layers only, input layer size pulled from the used columns
 layer_list = [64, 64, 32, 32]
 batch_renorm = false
