@@ -102,7 +102,7 @@ categories_to_select:
   - baseline
   - VBF
   - ggF
-  
+
 categories:
   muon_pre_sel_check: "mu1_{mu_pt_for_selection} > 15 && abs(mu1_eta) < 2.4 && mu2_{mu_pt_for_selection} > 15 && abs(mu2_eta) < 2.4"
   no_cuts: "muon_pre_sel_check"
