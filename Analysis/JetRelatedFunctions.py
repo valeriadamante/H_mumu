@@ -160,12 +160,12 @@ def JetCollectionDef(df, bTagAlgo, LooseWPValue, MediumWPValue, mu_suff="ScaRe_F
     df = df.Define(
         "Jet_IsOutsideOfHornVetoRegion",
         "( abs(v_ops::eta(Jet_p4)) < 2.5 || v_ops::pt(Jet_p4) > 50 ) ",
-    ) # questo va x era
+    )  # questo va x era
 
     df = df.Define(
         "goodJet",
         "Jet_NoOverlapWithMuons && Jet_IsOutsideOfHornVetoRegion",
-    ) # questo va x era
+    )  # questo va x era
     # exclude completely the jets in Horn region
     df = df.Define(
         f"SelectedJet_p4",
@@ -190,7 +190,7 @@ def JetCollectionDef(df, bTagAlgo, LooseWPValue, MediumWPValue, mu_suff="ScaRe_F
     )
     df = df.Define(
         "JetTagSel",
-        "Jet_p4[goodJet && Jet_btag_Veto_medium].size() < 1  && Jet_p4[goodJet && Jet_btag_Veto_loose].size() < 2 "
+        "Jet_p4[goodJet && Jet_btag_Veto_medium].size() < 1  && Jet_p4[goodJet && Jet_btag_Veto_loose].size() < 2 ",
     )
     return df
 
@@ -204,14 +204,15 @@ def JetObservablesDef(df):
     }
     for jet_idx, jet_type in jet_names.items():
         for jet_obs in ["pt", "eta", "phi", "rapidity"]:
+
             df = df.Define(
                 f"{jet_type}jet_{jet_obs}",
-                f"if (SelectedJet_index.size()>{jet_idx}) return static_cast<float>(v_ops::{jet_obs}(SelectedJet_p4)[SelectedJet_index[{jet_idx}]]); else return -1000.f;",
+                f"if (SelectedJet_index.size()>{jet_idx}) return static_cast<float>(v_ops::{jet_obs}(SelectedJet_p4)[{jet_idx}]); else return -1000.f;",
             )
         df = df.Define(
-                f"{jet_type}jet_p4",
-                f"if (SelectedJet_index.size()>{jet_idx}) return SelectedJet_p4.at(SelectedJet_index[{jet_idx}]); else return ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double>>(0.,0.,0.,0.);",
-            )
+            f"{jet_type}jet_p4",
+            f"if (SelectedJet_index.size()>{jet_idx}) return SelectedJet_p4.at({jet_idx}); else return ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double>>(0.,0.,0.,0.);",
+        )
     # define Jet HT:
     if "SelectedJet_pt" not in df.GetColumnNames():
         df = df.Define("SelectedJet_pt", "v_ops::pt(SelectedJet_p4)")
@@ -221,7 +222,7 @@ def JetObservablesDef(df):
     )
     # df.Display({"SelectedJets_HT"}).Print()
 
-    df = df.Define(f"delta_eta_ls", "std::abs(leadingjet_eta - subleadingjet_eta)")
+    df = df.Define(f"delta_eta_jj_ls", "std::abs(leadingjet_eta - subleadingjet_eta)")
     df = df.Define(f"m_jj_ls", "(leadingjet_p4+subleadingjet_p4).M()")
 
     return df
@@ -360,19 +361,31 @@ def VBFJetMuonsObservables(df, mu_suff="ScaRe_FSR"):
     )
     df = df.Define(
         "pT_all_sum",
-        f"if(HasVBF) return static_cast<float>(pT_sum ({{mu1_p4_{mu_suff}, mu2_p4_{mu_suff}, VBFJetCand.leg_p4[0], VBFJetCand.leg_p4[1]}})); return -10000.f;",
+        f"if(HasVBF) return static_cast<float>((mu1_p4_{mu_suff}+mu2_p4_{mu_suff}+VBFJetCand.leg_p4[0]+VBFJetCand.leg_p4[1]).Pt()); return -10000.f;",
+    )
+    df = df.Define(
+        "pT_single_sum",
+        f"if(HasVBF) return static_cast<float>(mu1_p4_{mu_suff}.Pt()+mu2_p4_{mu_suff}.Pt()+VBFJetCand.leg_p4[0].Pt()+VBFJetCand.leg_p4[1].Pt()); return -10000.f;",
     )
     df = df.Define(
         "R_pt",
-        f"if(HasVBF) return static_cast<float>((pT_all_sum)/(pt_mumu_{mu_suff} + j1_pt + j2_pt)); return -10000.f;",
+        f"if(HasVBF) return static_cast<float>(pT_all_sum/pT_single_sum); return -10000.f;",
     )
     df = df.Define(
         "pT_jj_sum",
-        "if(HasVBF) return static_cast<float>(pT_sum ({VBFJetCand.leg_p4[0], VBFJetCand.leg_p4[1]})); return -10000.f;",
+        f"if(HasVBF) return static_cast<float>((VBFJetCand.leg_p4[0]+VBFJetCand.leg_p4[1]).Pt()); return -10000.f;",
+    )
+    df = df.Define(
+        "pT_jj_diff",
+        f"if(HasVBF) return static_cast<float>((VBFJetCand.leg_p4[0]-VBFJetCand.leg_p4[1]).Pt()); return -10000.f;",
+    )
+    df = df.Define(
+        "pT_mumu_sum",
+        f"return static_cast<float>((mu1_p4_{mu_suff}+mu2_p4_{mu_suff}).Pt());",
     )
     df = df.Define(
         "pt_centrality",
-        f"if(HasVBF) return static_cast<float>(( (pt_mumu_{mu_suff}-0.5*(pT_jj_sum)) / pT_diff(VBFJetCand.leg_p4[0], VBFJetCand.leg_p4[1]) )); return -10000.f;",
+        f"if(HasVBF) return static_cast<float>(( (pT_mumu_sum-0.5*(pT_jj_sum)) / pT_jj_diff)); return -10000.f;",
     )
 
     df = df.Define(
