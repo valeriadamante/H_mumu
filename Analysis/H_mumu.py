@@ -232,8 +232,6 @@ class DataFrameBuilderForHistograms(DataFrameBuilderBase):
         for reg_name, reg_cut in region_defs.items():
             self.df = self.df.Define(reg_name, reg_cut)
             self.colToSave.append(reg_name)
-        bigOR_string = " || ".join(reg for reg in self.ch_reg_cat_dict["regions"])
-        self.df = self.df.Filter(bigOR_string)
 
     def SignRegionDef(self):
 
@@ -258,17 +256,11 @@ class DataFrameBuilderForHistograms(DataFrameBuilderBase):
 
             self.df = self.df.Define(name, expr)
             self.colToSave.append(name)
-        bigOR_string = " || ".join(
-            cat for cat in self.ch_reg_cat_dict["categories_to_select"]
-        )
-        self.df = self.df.Filter(bigOR_string)
 
     def defineChannels(self):
         for ch in self.config["channels"]["selection"]:
             self.df = self.df.Define(ch, self.config["channels"]["definition"][ch])
             self.colToSave.append(ch)
-        bigOR_string = " || ".join(ch for ch in self.ch_reg_cat_dict["channels"])
-        self.df = self.df.Filter(bigOR_string)
 
     def __init__(
         self,
