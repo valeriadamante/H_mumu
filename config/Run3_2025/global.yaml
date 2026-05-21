@@ -29,7 +29,7 @@ corrections:
       mediumId: mediumId
       looseId: looseId
       p4: p4 # it is the final ScaRe corrected p4, either BSC or nano according to chi2 --> has to be modified with the non-corrected pT
-    lowPt: True
+    lowPt: False
     midPt: True
     hiPt: False
   trigger:
