@@ -91,7 +91,7 @@ muons:
 # noCorr
 # ScaRe
 # ScaRe_FSR
-  pt_for_selection: pt_ScaRe_FSR 
+  pt_for_selection: pt_ScaRe_FSR
   ID_WP: Medium
   Iso_WP: Loose
   pt_for_TrgSFEvaluation: pt_noCorr
@@ -99,19 +99,10 @@ muons:
     pt: "bsConstrainedPt" # to fix
 
 categories_to_select:
-  - no_cuts
-  - base_sel
   - baseline
-  - baseline_chi2
-  - baseline_lowPtTT
-  - baseline_chi2_lowPtTT
-  - VBF_chi2
-  - VBF_lowPtTT
-  - VBF_chi2_lowPtTT
-  - ggF_chi2
-  - ggF_lowPtTT
-  - ggF_chi2_lowPtTT
-
+  - VBF
+  - ggF
+  
 categories:
   muon_pre_sel_check: "mu1_{mu_pt_for_selection} > 15 && abs(mu1_eta) < 2.4 && mu2_{mu_pt_for_selection} > 15 && abs(mu2_eta) < 2.4"
   no_cuts: "muon_pre_sel_check"

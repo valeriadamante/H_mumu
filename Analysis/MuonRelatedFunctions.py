@@ -122,32 +122,44 @@ def GetAllMuonsObservablesNew(df):
         "_nano": {
             "pt_err_template": "mu{0}_ptErr/mu{0}_pt",
             "pt_name_template": "mu{0}_pt_nano",
+            "has_scare": False,
         },
         "_nano_scare": {
             "pt_err_template": "mu{0}_ptErr/mu{0}_pt",
             "pt_name_template": "mu{0}_pt_nano_scare",
+            "has_scare": True,
+            "base_p4_suffix": "_nano",
         },
         "_nano_scare_FSR": {
             "pt_err_template": "mu{0}_ptErr/mu{0}_pt",
             "pt_name_template": "mu{0}_pt_nano_scare_FSR",
+            "has_scare": True,
+            "base_p4_suffix": "_FSR_nano",
         },
         "_bsConstrainedPt": {
             "pt_err_template": "mu{0}_bsConstrainedPtErr/mu{0}_bsConstrainedPt",
             "pt_name_template": "mu{0}_bsConstrainedPt",
+            "has_scare": False,
         },
         "_bsc_scare": {
             "pt_err_template": "mu{0}_bsConstrainedPtErr/mu{0}_bsConstrainedPt",
             "pt_name_template": "mu{0}_pt_bsc_scare",
+            "has_scare": True,
+            "base_p4_suffix": "_bsConstrainedPt",
         },
         "": {
             "pt_err_template": "mu{0}_bsConstrainedPtErr/mu{0}_bsConstrainedPt",
             "pt_name_template": "mu{0}_pt_bsc_scare",
+            "has_scare": True,
+            "base_p4_suffix": "_bsConstrainedPt",
         },
         "_bsc_scare_FSR": {
             "pt_err_template": "mu{0}_bsConstrainedPtErr/mu{0}_bsConstrainedPt",
             "pt_name_template": "mu{0}_pt_bsc_scare_FSR",
+            "has_scare": True,
+            "base_p4_suffix": "_FSR_bsConstrainedPt",
         },
-    }  # TO BE FIXED WITH THE SCARE UNC INCLUSION!! --> add friend ttree for scare
+    }
 
     for pt_suffix, pt_info in pt_variants.items():
         # Check if both muons have the required pT columns
@@ -165,9 +177,39 @@ def GetAllMuonsObservablesNew(df):
             sigma_expr = pt_info["pt_err_template"].format(mu_idx)
             df = df.Define(f"sigma_mu{mu_idx}_pt_rel{pt_suffix}", sigma_expr)
 
-        # Calculate m_mumu_resolution: sqrt(0.5*(sigma1^2 + sigma2^2))
-        # According to the formula: Δm_μμ^rel = sqrt(1/2 * ((Δpt(u1)/pt(u1))^2 + (Δpt(u2)/pt(u2))^2))
+        # Calculate m_mumu_resolution including ScaRe uncertainties
+        # Base resolution from pT errors: Δm_μμ^rel = sqrt(1/2 * ((Δpt(u1)/pt(u1))^2 + (Δpt(u2)/pt(u2))^2))
         resolution_expr = f"sqrt(0.5*(pow(sigma_mu1_pt_rel{pt_suffix},2) + pow(sigma_mu2_pt_rel{pt_suffix},2)))"
+
+        # Handle ScaRe uncertainties if present
+        if pt_info.get("has_scare", False):
+            base_p4_suffix = pt_info.get("base_p4_suffix", "")
+            # Check if ScaRe delta columns exist from friend trees
+            deltas_up_exist = all(
+                f"mu{mu_idx}_p4{base_p4_suffix}_ScaReUp_delta" in df.GetColumnNames()
+                for mu_idx in [1, 2]
+            )
+            deltas_down_exist = all(
+                f"mu{mu_idx}_p4{base_p4_suffix}_ScaReDown_delta" in df.GetColumnNames()
+                for mu_idx in [1, 2]
+            )
+
+            if deltas_up_exist and deltas_down_exist:
+                # Use deltas from friend trees
+                for mu_idx in [1, 2]:
+                    mu_pt_name = pt_info["pt_name_template"].format(mu_idx)
+                    scare_unc_name = f"sigma_mu{mu_idx}_pt_scare_rel{pt_suffix}"
+                    delta_up = f"mu{mu_idx}_p4{base_p4_suffix}_ScaReUp_delta"
+                    delta_down = f"mu{mu_idx}_p4{base_p4_suffix}_ScaReDown_delta"
+                    # Average of absolute deltas, relative to nominal pT
+                    df = df.Define(
+                        scare_unc_name,
+                        f"(abs({delta_up}) + abs({delta_down})) / 2.0 / {mu_pt_name}",
+                    )
+
+                # Add ScaRe uncertainties in quadrature to base resolution
+                resolution_expr = f"sqrt(0.5*(pow(sigma_mu1_pt_rel{pt_suffix},2) + pow(sigma_mu2_pt_rel{pt_suffix},2)) + 0.5*(pow(sigma_mu1_pt_scare_rel{pt_suffix},2) + pow(sigma_mu2_pt_scare_rel{pt_suffix},2)))"
+
         resolution_name = (
             f"m_mumu_resolution{pt_suffix}" if pt_suffix != "" else "m_mumu_resolution"
         )

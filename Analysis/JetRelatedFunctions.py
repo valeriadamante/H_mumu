@@ -145,16 +145,13 @@ def JetCollectionDef(df, bTagAlgo, LooseWPValue, MediumWPValue, mu_suff="ScaRe_F
     #### Jet PreSelection ####
     df = df.Define(
         "Jet_preSel",
-        f"""v_ops::pt(Jet_p4) > 20 && abs(v_ops::eta(Jet_p4))< 4.7 && (Jet_passJetIdTight) """,
+        f"""v_ops::pt(Jet_p4) > 25 && abs(v_ops::eta(Jet_p4))< 4.7 && (Jet_passJetIdTight) """,
     )
     # ed on “loose” selection: pT > 15 GeV and |η|<4.7 and passTightLepVetoId and (chEmEF + neEmEF) < 0.9)
     df = df.Define(
         "Jet_preSel_andDeadZoneVetoMap",
         "Jet_preSel && !Jet_vetoMap",
     )
-    df = df.Define(
-        "No_Jets_in_dead_Zone", "Jet_p4[Jet_preSel && Jet_vetoMap].size()==0"
-    )  # NO JETS IN DEAD ZONE
 
     df = df.Define(
         f"Jet_NoOverlapWithMuons",
@@ -162,21 +159,26 @@ def JetCollectionDef(df, bTagAlgo, LooseWPValue, MediumWPValue, mu_suff="ScaRe_F
     )
     df = df.Define(
         "Jet_IsOutsideOfHornVetoRegion",
-        "Jet_NoOverlapWithMuons && ( abs(v_ops::eta(Jet_p4)) < 2.5 || abs(v_ops::eta(Jet_p4)) > 3 || v_ops::pt(Jet_p4) > 50 ) ",
-    )
+        "( abs(v_ops::eta(Jet_p4)) < 2.5 || v_ops::pt(Jet_p4) > 50 ) ",
+    ) # questo va x era
+
+    df = df.Define(
+        "goodJet",
+        "Jet_NoOverlapWithMuons && Jet_IsOutsideOfHornVetoRegion",
+    ) # questo va x era
     # exclude completely the jets in Horn region
     df = df.Define(
         f"SelectedJet_p4",
-        f"Jet_p4[Jet_NoOverlapWithMuons]",
+        f"Jet_p4[goodJet]",
     )
     df = df.Define(
         f"SelectedJet_index",
-        f"Jet_idx[Jet_NoOverlapWithMuons]",
+        f"Jet_idx[goodJet]",
     )
 
     df = df.Define(f"N_SelectedJets", "SelectedJet_index.size()")
 
-    #### Final state definitions: removing bTagged jets - pNet ####
+    #### Final state definitions: removing bTagged jets ####
 
     df = df.Define(
         "Jet_btag_Veto_loose",
@@ -188,7 +190,7 @@ def JetCollectionDef(df, bTagAlgo, LooseWPValue, MediumWPValue, mu_suff="ScaRe_F
     )
     df = df.Define(
         "JetTagSel",
-        "Jet_p4[Jet_IsOutsideOfHornVetoRegion && Jet_btag_Veto_medium].size() < 1  && Jet_p4[Jet_IsOutsideOfHornVetoRegion && Jet_btag_Veto_loose].size() < 2 ",  # && No_Jets_in_dead_Zone",
+        "Jet_p4[goodJet && Jet_btag_Veto_medium].size() < 1  && Jet_p4[goodJet && Jet_btag_Veto_loose].size() < 2 "
     )
     return df
 
@@ -201,12 +203,14 @@ def JetObservablesDef(df):
         3: "fourth",
     }
     for jet_idx, jet_type in jet_names.items():
-        # for JetObservable in JetObservables:
-        #     df = df.Define(f"{jet_type}jet_{JetObservable}", "if (SelectedJet_index.size()>{jet_idx}) return static_cast<float>({JetObservable}.at(SelectedJet_index[{jet_idx}])); else return -1000.f;")
         for jet_obs in ["pt", "eta", "phi", "rapidity"]:
             df = df.Define(
                 f"{jet_type}jet_{jet_obs}",
-                f"if (SelectedJet_p4.size()>{jet_idx}) return static_cast<float>(v_ops::{jet_obs}(SelectedJet_p4)[{jet_idx}]); else return -1000.f;",
+                f"if (SelectedJet_index.size()>{jet_idx}) return static_cast<float>(v_ops::{jet_obs}(SelectedJet_p4)[SelectedJet_index[{jet_idx}]]); else return -1000.f;",
+            )
+        df = df.Define(
+                f"{jet_type}jet_p4",
+                f"if (SelectedJet_index.size()>{jet_idx}) return SelectedJet_p4.at(SelectedJet_index[{jet_idx}]); else return ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double>>(0.,0.,0.,0.);",
             )
     # define Jet HT:
     if "SelectedJet_pt" not in df.GetColumnNames():
@@ -216,6 +220,9 @@ def JetObservablesDef(df):
         "float SelectedJet_HT; for(size_t jet_idx = 0; jet_idx < SelectedJet_pt.size() ; jet_idx++){SelectedJet_HT+=SelectedJet_pt[jet_idx];} return SelectedJet_HT;",
     )
     # df.Display({"SelectedJets_HT"}).Print()
+
+    df = df.Define(f"delta_eta_ls", "std::abs(leadingjet_eta - subleadingjet_eta)")
+    df = df.Define(f"m_jj_ls", "(leadingjet_p4+subleadingjet_p4).M()")
 
     return df
 
@@ -251,7 +258,7 @@ def VBFNetJetCollectionDef(df, max_jets=4):
 
 
 def VBFJetSelection(df):
-    df = df.Define("VBFJetCand", "FindVBFJets(Jet_p4,Jet_NoOverlapWithMuons)")
+    df = df.Define("VBFJetCand", "FindVBFJets(Jet_p4, goodJet)")
     df = df.Define("HasVBF", "return static_cast<bool>(VBFJetCand.isVBF) ")
 
     df = df.Define(
@@ -261,6 +268,11 @@ def VBFJetSelection(df):
     df = df.Define(
         "delta_eta_jj",
         "if (HasVBF) return static_cast<float>(VBFJetCand.eta_separation); return -1000.f",
+    )
+
+    df = df.Define(
+        "abs_delta_eta_jj",
+        "if (HasVBF) return std::abs(delta_eta_jj); return -1000.f",
     )
     df = df.Define(
         "j1_idx",
