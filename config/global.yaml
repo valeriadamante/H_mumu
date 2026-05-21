@@ -54,11 +54,11 @@ channels:
 # =========================
 regions:
   MuMuMassRegions:
-    Z_sideband: "m_mumu_ScaRe > 70 && m_mumu_ScaRe < 110"
-    Signal_Fit: "m_mumu_ScaRe > 115 && m_mumu_ScaRe < 135"
-    H_sideband: "((m_mumu_ScaRe > 110 && m_mumu_ScaRe < 115) || (m_mumu_ScaRe > 135 && m_mumu_ScaRe < 150))"
-    Signal_ext: "m_mumu_ScaRe > 110 && m_mumu_ScaRe < 150"
-    mass_inclusive: "m_mumu_ScaRe > 60 && m_mumu_ScaRe < 150"
+    Z_sideband: "m_mumu_ScaRe_FSR > 70 && m_mumu_ScaRe_FSR < 110"
+    Signal_Fit: "m_mumu_ScaRe_FSR > 115 && m_mumu_ScaRe_FSR < 135"
+    H_sideband: "((m_mumu_ScaRe_FSR > 110 && m_mumu_ScaRe_FSR < 115) || (m_mumu_ScaRe_FSR > 135 && m_mumu_ScaRe_FSR < 150))"
+    Signal_ext: "m_mumu_ScaRe_FSR > 110 && m_mumu_ScaRe_FSR < 150"
+    mass_inclusive: "m_mumu_ScaRe_FSR > 60 && m_mumu_ScaRe_FSR < 150"
 
 # =========================
 # TRIGGERS
@@ -91,12 +91,12 @@ muons:
 # noCorr
 # ScaRe
 # ScaRe_FSR
-  pt_for_selection: pt_ScaRe
+  pt_for_selection: pt_ScaRe_FSR 
   ID_WP: Medium
   Iso_WP: Loose
-  pt_for_TrgSFEvaluation: pt_noCorr  # should be ScaRe corrected, either pt or BSC pT according to what is the chi2
+  pt_for_TrgSFEvaluation: pt_noCorr
   extraFormat_for_triggerMatchingAndSF:
-    pt: "bsConstrainedPt"
+    pt: "bsConstrainedPt" # to fix
 
 categories_to_select:
   - no_cuts
