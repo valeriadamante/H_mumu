@@ -456,8 +456,29 @@ minDeltaPhi:
   max_y_sf: 2.
   divide_by_bin_width: False
 
+SoftActivityJetHT:
+  x_bins: "2000|0:1000"
+  x_rebin: [ 26.25, 31.5, 36.75, 42.0, 47.25, 52.5, 57.75, 63.0, 68.25, 73.5, 78.75, 84.0, 89.25, 94.5, 99.75, 105.0, 110.25, 115.5, 120.75, 126.0, 131.25, 136.5, 141.75, 147.0, 152.25, 157.5, 162.75, 168.0, 173.25, 178.5, 183.75, 189.0, 194.25, 199.5 ]
+  x_title: "SoftActivityJetHT"
+  y_title: "$\\frac{Events}{bin width} \\left(\\frac{1}{GeV}\\right)$"
+  # y_title: Events
+  use_log_y: False
+  max_y_sf: 2.
+  # use_log_y: True
+  # max_y_sf: 20.2
+  divide_by_bin_width: True
+  # divide_by_bin_width: False
 
-  SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning_N(_.*)?:
+nSoftActivityJet(_.*)?:
+  x_bins: "12|-1:10"
+  x_rebin: [-1., 0., 1., 2., 3.,4.,5.,6.,7.,8.,9.,10]
+  x_title: "nSoftActivityJet"
+  y_title: Events
+  use_log_y: False
+  max_y_sf: 2.
+  divide_by_bin_width: False
+
+SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning_N(_.*)?:
   x_bins: "12|-1:10"
   x_rebin: [-1., 0., 1., 2., 3.,4.,5.,6.,7.,8.,9.,10]
   x_title: "SoftJetCleanedAndEtaActivity - N "
