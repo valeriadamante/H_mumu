@@ -346,7 +346,7 @@ VBFjets_phi:
 
 ########## jj system BEGIN ##########
 m_jj(_.*)?:
-  x_bins: "1000|0:1000"
+  x_bins: "1000|0:2000"
   x_rebin: [ 400.0, 410.0, 420.0, 430.0, 440.0, 450.0, 460.0, 470.0, 480.0, 490.0, 500.0, 510.0, 520.0, 530.0, 540.0, 550.0, 560.0, 570.0, 580.0, 590.0, 600.0, 610.0, 620.0, 630.0, 640.0, 650.0, 660.0, 670.0, 680.0, 690.0, 700.0, 710.0, 720.0, 730.0, 740.0, 750.0, 760.0, 770.0, 780.0, 790.0, 800.0, 810.0, 820.0, 830.0, 840.0, 850.0, 860.0, 870.0, 880.0, 890.0, 900.0, 910.0, 920.0, 930.0, 940.0, 950.0, 960.0, 970.0, 980.0, 990.0, 1000.0 ]
   x_title: m(jj) (GeV)
   # y_title: Events
@@ -445,3 +445,49 @@ minDeltaPhi:
   use_log_y: False
   max_y_sf: 2.
   divide_by_bin_width: False
+
+
+  SoftJetCleanedActivity_N(_.*)?:
+  x_bins: "12|-1:10"
+  x_rebin: [-1., 0., 1., 2., 3.,4.,5.,6.,7.,8.,9.,10]
+  x_title: "SoftJetCleanedActivity - N "
+  y_title: Events
+  use_log_y: False
+  max_y_sf: 2.
+  divide_by_bin_width: False
+
+
+  SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning_N(_.*)?:
+  x_bins: "12|-1:10"
+  x_rebin: [-1., 0., 1., 2., 3.,4.,5.,6.,7.,8.,9.,10]
+  x_title: "SoftJetCleanedAndEtaActivity - N "
+  y_title: Events
+  use_log_y: False
+  max_y_sf: 2.
+  divide_by_bin_width: False
+
+SoftJetCleanedActivity_ptSum:
+  x_bins: "2000|0:1000"
+  x_rebin: [ 26.25, 31.5, 36.75, 42.0, 47.25, 52.5, 57.75, 63.0, 68.25, 73.5, 78.75, 84.0, 89.25, 94.5, 99.75, 105.0, 110.25, 115.5, 120.75, 126.0, 131.25, 136.5, 141.75, 147.0, 152.25, 157.5, 162.75, 168.0, 173.25, 178.5, 183.75, 189.0, 194.25, 199.5 ]
+  x_title: "SoftJetCleanedActivity_ptSum"
+  y_title: "$\\frac{Events}{bin width} \\left(\\frac{1}{GeV}\\right)$"
+  # y_title: Events
+  use_log_y: False
+  max_y_sf: 2.
+  # use_log_y: True
+  # max_y_sf: 20.2
+  divide_by_bin_width: True
+  # divide_by_bin_width: False
+
+SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning_ptSum:
+  x_bins: "2000|0:1000"
+  x_rebin: [ 26.25, 31.5, 36.75, 42.0, 47.25, 52.5, 57.75, 63.0, 68.25, 73.5, 78.75, 84.0, 89.25, 94.5, 99.75, 105.0, 110.25, 115.5, 120.75, 126.0, 131.25, 136.5, 141.75, 147.0, 152.25, 157.5, 162.75, 168.0, 173.25, 178.5, 183.75, 189.0, 194.25, 199.5 ]
+  x_title: "SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning_ptSum"
+  y_title: "$\\frac{Events}{bin width} \\left(\\frac{1}{GeV}\\right)$"
+  # y_title: Events
+  use_log_y: False
+  max_y_sf: 2.
+  # use_log_y: True
+  # max_y_sf: 20.2
+  divide_by_bin_width: True
+  # divide_by_bin_width: False
