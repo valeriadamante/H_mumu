@@ -385,20 +385,32 @@ def SoftJetCollectionCleaningInVBF(df, mu_suff="ScaRe_FSR"):
 
     df = df.Define(
         "SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning",
-        "SoftJetCleanedActivity_eta < std::max(j1_eta, j2_eta) && SoftJetCleanedActivity_eta > std::min(j1_eta, j2_eta)",
+        f"""
+        ROOT::VecOps::RVec<bool> out;
+        out.reserve(SoftJetCleanedActivity_eta.size());
+
+        for (size_t i = 0; i < SoftJetCleanedActivity_eta.size(); ++i)
+        {{
+            bool pass = SoftJetCleanedActivity_eta[i] < std::max(j1_eta, j2_eta) && SoftJetCleanedActivity_eta[i] > std::min(j1_eta, j2_eta);
+
+            out.push_back(pass);
+        }}
+
+        return out;
+        """,
     )
 
     df = df.Define(
         f"SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning_pt",
-        "v_ops::pt(SoftActivityJet_p4[SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning])",
+        "SoftJetCleanedActivity_pt[SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning]",
     )
     df = df.Define(
         f"SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning_eta",
-        "v_ops::eta(SoftActivityJet_p4[SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning])",
+        "SoftJetCleanedActivity_eta[SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning]",
     )
     df = df.Define(
         f"SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning_N",
-        "SoftActivityJet_p4[SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning].size()",
+        "SoftJetCleanedActivity_N[SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning].size()",
     )
     df = df.Define(
         f"SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning_ptSum",
