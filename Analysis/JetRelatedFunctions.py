@@ -410,7 +410,7 @@ def SoftJetCollectionCleaningInVBF(df, mu_suff="ScaRe_FSR"):
     )
     df = df.Define(
         f"SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning_N",
-        "SoftJetCleanedActivity_N[SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning].size()",
+        "SoftJetCleanedActivity_eta[SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning].size()",
     )
     df = df.Define(
         f"SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning_ptSum",
