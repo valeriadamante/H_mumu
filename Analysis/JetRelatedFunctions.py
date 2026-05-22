@@ -85,54 +85,6 @@ JetObservables = [
 JetObservablesMC = ["hadronFlavour", "partonFlavour", "genJetIdx"]
 
 
-def GetSoftJets(df):
-    df = df.Define(
-        "SoftJet_def_vtx", "(Jet_svIdx1 < 0 && Jet_svIdx2< 0 ) "
-    )  # no secondary vertex associated
-    df = df.Define("SoftJet_def_pt", " (Jet_pt>2) ")  # pT > 2 GeV
-    df = df.Define(
-        "SoftJet_def_muon",
-        "(Jet_idx != mu1_jetIdx && Jet_idx != mu2_jetIdx)",
-    )  # TMP PATCH. For next round it will be changed to the commented one in next line --> the muon index of the jets (because there can be muons associated to jets) has to be different than the signal muons (i.e. those coming from H decay)
-    # df = df.Define(
-    #     "SoftJet_def_muon",
-    #     "(Jet_muonIdx1 != mu1_index && Jet_muonIdx2 != mu2_index && Jet_muonIdx2 != mu1_index && Jet_muonIdx2 != mu2_index)",
-    # )  # mu1_idx and mu2_idx are not present in the current anaTuples, but need to be introduced for next round . The idx is the index in the original muon collection as well as Jet_muonIdx()
-
-    df = df.Define(
-        "SoftJet_def_VBF",
-        " (HasVBF && Jet_idx != j1_idx && Jet_idx != j2_idx) ",
-    )  # if it is a VBF event, the soft jets are not the VBF jets
-    df = df.Define("SoftJet_def_noVBF", " (!(HasVBF)) ")
-
-    df = df.Define(
-        "SoftJet_def",
-        "SoftJet_def_vtx && SoftJet_def_pt && SoftJet_def_muon && (SoftJet_def_VBF || SoftJet_def_noVBF )",
-    )
-
-    df = df.Define("N_softJet", "Jet_p4[SoftJet_def].size()")
-    df = df.Define("SoftJet_energy", "v_ops::energy(Jet_p4[SoftJet_def])")
-    df = df.Define("SoftJet_Et", "v_ops::Et(Jet_p4[SoftJet_def])")
-    df = df.Define("SoftJet_HtCh_fraction", "Jet_chHEF[SoftJet_def]")
-    df = df.Define("SoftJet_HtNe_fraction", "Jet_neHEF[SoftJet_def]")
-    if "Jet_hfHEF" in df.GetColumnNames():
-        df = df.Define("SoftJet_HtHF_fraction", "Jet_hfHEF[SoftJet_def]")
-    for var in JetObservables:
-        if f"SoftJet_{var}" not in df.GetColumnNames():
-            if (
-                f"SoftJet_{var}" not in df.GetColumnNames()
-                and f"Jet_{var}" in df.GetColumnNames()
-            ):
-                df = df.Define(f"SoftJet_{var}", f"Jet_{var}[SoftJet_def]")
-    for var in JetObservablesMC:
-        if (
-            f"SoftJet_{var}" not in df.GetColumnNames()
-            and f"Jet_{var}" in df.GetColumnNames()
-        ):
-            df = df.Define(f"SoftJet_{var}", f"Jet_{var}[SoftJet_def]")
-    return df
-
-
 def JetCollectionDef(df, bTagAlgo, LooseWPValue, MediumWPValue, mu_suff="ScaRe_FSR"):
     if "Jet_idx" not in df.GetColumnNames():
         print("Jet_idx not in df.GetColumnNames")
@@ -155,8 +107,14 @@ def JetCollectionDef(df, bTagAlgo, LooseWPValue, MediumWPValue, mu_suff="ScaRe_F
 
     df = df.Define(
         f"Jet_NoOverlapWithMuons",
-        f"RemoveOverlaps(Jet_p4, Jet_preSel_andDeadZoneVetoMap, {{mu1_p4_{mu_suff}, mu2_p4_{mu_suff}}}, 0.4)",
+        f"RemoveOverlaps(Jet_p4, Jet_preSel_andDeadZoneVetoMap, {{{{mu1_p4_{mu_suff}, mu2_p4_{mu_suff}}}}}, 2, 0.4)",
     )
+
+    df = df.Define(
+        "Jet_IsInsideHornVetoRegion",
+        "( abs(v_ops::eta(Jet_p4)) > 2.5 && v_ops::pt(Jet_p4) < 50 ) ",
+    )  # questo va x era
+
     df = df.Define(
         "Jet_IsOutsideOfHornVetoRegion",
         "( abs(v_ops::eta(Jet_p4)) < 2.5 || v_ops::pt(Jet_p4) > 50 ) ",
@@ -164,7 +122,7 @@ def JetCollectionDef(df, bTagAlgo, LooseWPValue, MediumWPValue, mu_suff="ScaRe_F
 
     df = df.Define(
         "goodJet",
-        "Jet_NoOverlapWithMuons && Jet_IsOutsideOfHornVetoRegion",
+        "Jet_NoOverlapWithMuons && !Jet_IsInsideHornVetoRegion",
     )  # questo va x era
     # exclude completely the jets in Horn region
     df = df.Define(
@@ -352,6 +310,52 @@ def VBFJetSelection(df):
             )
 
     return df
+
+
+def SoftJetCollectionCleaningInVBF(df, mu_suff="ScaRe_FSR"):
+    if "SoftActivityJet_idx" not in df.GetColumnNames():
+        print("SoftActivityJet_idx not in df.GetColumnNames")
+        df = df.Define(
+            f"SoftActivityJet_idx", f"CreateIndexes(SoftActivityJet_pt.size())"
+        )
+    if f"SoftActivityJet_mass" not in df.GetColumnNames():
+        df = df.Define(
+            f"SoftActivityJet_mass",
+            "RVecF SoftActivityJet_mass(SoftActivityJet_idx.size,0.); return SoftActivityJet_mass;",
+        )
+    df = df.Define(
+        f"SoftActivityJet_p4",
+        f"GetP4(SoftActivityJet_pt, SoftActivityJet_eta, SoftActivityJet_phi, SoftActivityJet_mass, SoftActivityJet_idx)",
+    )
+
+    df = df.Define(
+        f"SoftJetJet_NoOverlapWithMuons",
+    )
+    df = df.Define(
+        f"SoftJetJet_NoOverlapWithMuons",
+        f"RemoveOverlaps(Jet_p4, Jet_preSel_andDeadZoneVetoMap, {{{{mu1_p4_{mu_suff}, mu2_p4_{mu_suff}, VBFJetCand.leg_p4[0], VBFJetCand.leg_p4[1]}}}}, 4, 0.4)",
+    )
+    df = df.Define(
+        f"SoftJetCleanedActivity_pt",
+        "v_ops::pt(SoftActivityJet_p4[SoftJetJet_NoOverlapWithMuons])",
+    )
+    df = df.Define(
+        f"SoftJetCleanedActivity_eta",
+        "v_ops::eta(SoftActivityJet_p4[SoftJetJet_NoOverlapWithMuons])",
+    )
+    df = df.Define(
+        f"SoftJetCleanedActivity_N",
+        "SoftActivityJet_p4[SoftJetJet_NoOverlapWithMuons].size()",
+    )
+    df = df.Define(
+        f"SoftJetCleanedActivity_ptSum",
+        "float sum=0.; for(size_t sj_idx=0; sj_idx<SoftJetCleanedActivity_pt.size();sj_idx++){{sum+=SoftJetCleanedActivity_pt[sj_idx];}} return sum;",
+    )
+
+    df = df.Define(
+        "SoftJetJet_NoOverlapWithMuonsAndEtaCleaning",
+        "SoftJetJet_NoOverlapWithMuons && SoftJetCleanedActivity_eta < std::max(j1_eta, j2_eta) && SoftJetCleanedActivity_eta > std::min(j1_eta, j2_eta)",
+    )
 
 
 def VBFJetMuonsObservables(df, mu_suff="ScaRe_FSR"):

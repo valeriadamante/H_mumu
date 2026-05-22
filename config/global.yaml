@@ -60,6 +60,10 @@ regions:
     Signal_ext: "m_mumu_ScaRe_FSR > 110 && m_mumu_ScaRe_FSR < 150"
     mass_inclusive: "m_mumu_ScaRe_FSR > 60 && m_mumu_ScaRe_FSR < 150"
 
+
+
+
+
 # =========================
 # TRIGGERS
 # =========================
@@ -142,7 +146,7 @@ categories:
 
   # j1_outside_horn: "(abs(j1_eta) < 2.5 || abs(j1_eta) > 3 || j1_pt > 50)"
   # j2_outside_horn: "(abs(j2_eta) < 2.5 || abs(j2_eta) > 3 || j2_pt > 50)"
-  VBF_def: "HasVBF && j1_pt >= 35 && j2_pt >= 25 && (abs(j1_eta) < 2.5 || abs(j1_eta) > 3 || j1_pt > 50) && (abs(j2_eta) < 2.5 || abs(j2_eta) > 3 || j2_pt > 50)"
+  VBF_def: "HasVBF && j1_pt >= 35 && j2_pt >= 25"
 
   VBF: "baseline && VBF_def"
   ggF: "baseline && !(VBF_def)"

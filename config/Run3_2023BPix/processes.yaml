@@ -16,9 +16,6 @@ DYto2L:
 
 DYto2L_jet_binned:
   processors: *DY_processors_allFlavors
-  corrections:
-    Vpt:
-      type: DY
   datasets:
     - DYto2L_M_50_0J_amcatnloFXFX
     - DYto2L_M_50_1J_amcatnloFXFX
@@ -26,9 +23,6 @@ DYto2L_jet_binned:
 
 DYto2L_PtBinned:
   processors: *DY_processors_allFlavors
-  corrections:
-    Vpt:
-      type: DY
   datasets:
     - DYto2L_M_50_PTLL_40to100_1J_amcatnloFXFX
     - DYto2L_M_50_PTLL_100to200_1J_amcatnloFXFX
@@ -43,10 +37,6 @@ DYto2L_PtBinned:
 
 DYto2L_InclusivePlusBinned:
   processors: *DY_processors_allFlavors
-  corrections:
-    Vpt:
-      type: DY
-      stages: [ 'AnalysisCache', 'HistTuple' ]
   datasets:
     - DYto2L_M_50_amcatnloFXFX
     - DYto2L_M_50_0J_amcatnloFXFX
@@ -67,9 +57,6 @@ DYto2L_InclusivePlusBinned:
 DY_M_10to50:
   name: "DY M10to50"
   color: "kAzure+10"
-  corrections:
-    Vpt:
-      type: DY
   datasets:
     - DYto2L_M_10to50_amcatnloFXFX
     # - DYto2E_M_10to50_amcatnloFXFX
@@ -78,9 +65,6 @@ DY_M_10to50:
 
 DYto2E_M_50:
   processors: *DY_processors_singleFlavor
-  corrections:
-    Vpt:
-      type: DY
   datasets:
     # - DYto2E_M_50_amcatnloFXFX
     # - DYto2E_M_50_amcatnloFXFX_ext1
@@ -100,9 +84,6 @@ DYto2E_M_50:
 
 DYto2Mu_M_50:
   processors: *DY_processors_singleFlavor
-  corrections:
-    Vpt:
-      type: DY
   datasets:
     # - DYto2Mu_M_50_amcatnloFXFX
     # - DYto2Mu_M_50_amcatnloFXFX_ext1
@@ -122,9 +103,6 @@ DYto2Mu_M_50:
 
 DYto2Tau_M_50:
   processors: *DY_processors_singleFlavor
-  corrections:
-    Vpt:
-      type: DY
   datasets:
     - DYto2Tau_M_50_0J_amcatnloFXFX
     - DYto2Tau_M_50_1J_amcatnloFXFX
