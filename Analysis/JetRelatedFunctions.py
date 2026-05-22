@@ -321,7 +321,7 @@ def SoftJetCollectionCleaningInVBF(df, mu_suff="ScaRe_FSR"):
     if f"SoftActivityJet_mass" not in df.GetColumnNames():
         df = df.Define(
             f"SoftActivityJet_mass",
-            "RVecF SoftActivityJet_mass(SoftActivityJet_idx.size,0.); return SoftActivityJet_mass;",
+            "RVecF SoftActivityJet_mass(SoftActivityJet_idx.size(),0.); return SoftActivityJet_mass;",
         )
     df = df.Define(
         f"SoftActivityJet_p4",
@@ -369,7 +369,7 @@ def SoftJetCollectionCleaningInVBF(df, mu_suff="ScaRe_FSR"):
         f"SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning_ptSum",
         "float sum=0.; for(size_t sj_idx=0; sj_idx<SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning_pt.size();sj_idx++){{sum+=SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning_pt[sj_idx];}} return sum;",
     )
-    return df 
+    return df
 
 def VBFJetMuonsObservables(df, mu_suff="ScaRe_FSR"):
     df = df.Define(
