@@ -120,7 +120,7 @@ categories:
   mu2_pt_g20: "mu2_{mu_pt_for_selection} > 20"
   mu_pt_sel: "mu1_pt_g20 && mu2_pt_g20"
 
-  base_sel: "trigger_sel && OS_sel && jets_cleanFromMu_sel"
+  base_sel: "mu_pt_sel && trigger_sel && OS_sel && jets_cleanFromMu_sel"
 
   mu1_ML: "mu1_pfIsoId >= 2 && mu1_mediumId"
   mu1_LL: "mu1_pfIsoId >= 2 && mu1_looseId"

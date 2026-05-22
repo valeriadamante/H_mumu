@@ -447,7 +447,7 @@ minDeltaPhi:
   divide_by_bin_width: False
 
 
-  SoftJetCleanedActivity_N(_.*)?:
+SoftJetCleanedActivity_N:
   x_bins: "12|-1:10"
   x_rebin: [-1., 0., 1., 2., 3.,4.,5.,6.,7.,8.,9.,10]
   x_title: "SoftJetCleanedActivity - N "
@@ -469,7 +469,7 @@ SoftActivityJetHT:
   divide_by_bin_width: True
   # divide_by_bin_width: False
 
-nSoftActivityJet(_.*)?:
+nSoftActivityJet:
   x_bins: "12|-1:10"
   x_rebin: [-1., 0., 1., 2., 3.,4.,5.,6.,7.,8.,9.,10]
   x_title: "nSoftActivityJet"
@@ -478,7 +478,7 @@ nSoftActivityJet(_.*)?:
   max_y_sf: 2.
   divide_by_bin_width: False
 
-SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning_N(_.*)?:
+SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning_N:
   x_bins: "12|-1:10"
   x_rebin: [-1., 0., 1., 2., 3.,4.,5.,6.,7.,8.,9.,10]
   x_title: "SoftJetCleanedAndEtaActivity - N "
