@@ -327,10 +327,14 @@ def SoftJetCollectionCleaningInVBF(df, mu_suff="ScaRe_FSR"):
         f"SoftActivityJet_p4",
         f"GetP4(SoftActivityJet_pt, SoftActivityJet_eta, SoftActivityJet_phi, SoftActivityJet_mass, SoftActivityJet_idx)",
     )
+    df = df.Define(
+        f"SoftActivityJet_pt_gt0",
+        f"SoftActivityJet_pt>0",
+    )
 
     df = df.Define(
         f"SoftJetActivity_NoOverlapWithMuons",
-        f"RemoveOverlaps(Jet_p4, Jet_preSel_andDeadZoneVetoMap, {{{{mu1_p4_{mu_suff}, mu2_p4_{mu_suff}, VBFJetCand.leg_p4[0], VBFJetCand.leg_p4[1]}}}}, 4, 0.4)",
+        f"RemoveOverlaps(SoftActivityJet_p4, SoftActivityJet_pt_gt0, {{{{mu1_p4_{mu_suff}, mu2_p4_{mu_suff}, VBFJetCand.leg_p4[0], VBFJetCand.leg_p4[1]}}}}, 4, 0.4)",
     )
     df = df.Define(
         f"SoftJetCleanedActivity_pt",
@@ -351,7 +355,7 @@ def SoftJetCollectionCleaningInVBF(df, mu_suff="ScaRe_FSR"):
 
     df = df.Define(
         "SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning",
-        "SoftJetActivity_NoOverlapWithMuons && SoftActivityJet_eta < std::max(j1_eta, j2_eta) && SoftActivityJet_eta > std::min(j1_eta, j2_eta)",
+        "SoftJetCleanedActivity_eta < std::max(j1_eta, j2_eta) && SoftJetCleanedActivity_eta > std::min(j1_eta, j2_eta)",
     )
 
     df = df.Define(
