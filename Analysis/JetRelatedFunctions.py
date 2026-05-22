@@ -104,10 +104,24 @@ def JetCollectionDef(df, bTagAlgo, LooseWPValue, MediumWPValue, mu_suff="ScaRe_F
         "Jet_preSel_andDeadZoneVetoMap",
         "Jet_preSel && !Jet_vetoMap",
     )
-
     df = df.Define(
-        f"Jet_NoOverlapWithMuons",
-        f"RemoveOverlaps(Jet_p4, Jet_preSel_andDeadZoneVetoMap, {{{{mu1_p4_{mu_suff}, mu2_p4_{mu_suff}}}}}, 2, 0.4)",
+        "Jet_NoOverlapWithMuons",
+        f"""
+        ROOT::VecOps::RVec<bool> out;
+        out.reserve(Jet_p4.size());
+
+        for (size_t i = 0; i < Jet_p4.size(); ++i)
+        {{
+            bool pass = Jet_preSel[i] &&
+                        !Jet_vetoMap[i] &&
+                        ROOT::Math::VectorUtil::DeltaR(Jet_p4[i], mu1_p4_{mu_suff}) > 0.4 &&
+                        ROOT::Math::VectorUtil::DeltaR(Jet_p4[i], mu2_p4_{mu_suff}) > 0.4;
+
+            out.push_back(pass);
+        }}
+
+        return out;
+        """,
     )
 
     df = df.Define(
@@ -331,22 +345,52 @@ def SoftJetCollectionCleaningInVBF(df, mu_suff="ScaRe_FSR"):
         f"SoftActivityJet_pt_gt0",
         f"SoftActivityJet_pt>0",
     )
+    df = df.Define(
+        "SoftJetActivity_NoOverlapWithMuonsAndVBFJets",
+        f"""
+        ROOT::VecOps::Map(
+            ROOT::VecOps::Range(SoftActivityJet_p4.size()),
+            [&](const auto i) {{
+                return ROOT::Math::VectorUtil::DeltaR(SoftActivityJet_p4[i], mu1_p4_{mu_suff}) > 0.4 &&
+                    ROOT::Math::VectorUtil::DeltaR(SoftActivityJet_p4[i], mu2_p4_{mu_suff}) > 0.4 &&
+                    ROOT::Math::VectorUtil::DeltaR(SoftActivityJet_p4[i], VBFJetCand.leg_p4[0]) > 0.4 &&
+                    ROOT::Math::VectorUtil::DeltaR(SoftActivityJet_p4[i], VBFJetCand.leg_p4[1]) > 0.4;
+            }}
+        )
+        """,
+    )
 
     df = df.Define(
-        f"SoftJetActivity_NoOverlapWithMuons",
-        f"RemoveOverlaps(SoftActivityJet_p4, SoftActivityJet_pt_gt0, {{{{mu1_p4_{mu_suff}, mu2_p4_{mu_suff}, VBFJetCand.leg_p4[0], VBFJetCand.leg_p4[1]}}}}, 4, 0.4)",
+        "SoftJetActivity_NoOverlapWithMuonsAndVBFJets",
+        f"""
+        ROOT::VecOps::RVec<bool> out;
+        out.reserve(SoftActivityJet_p4.size());
+
+        for (size_t i = 0; i < SoftActivityJet_p4.size(); ++i)
+        {{
+            bool pass = ROOT::Math::VectorUtil::DeltaR(SoftActivityJet_p4[i], mu1_p4_{mu_suff}) > 0.4 &&
+                    ROOT::Math::VectorUtil::DeltaR(SoftActivityJet_p4[i], mu2_p4_{mu_suff}) > 0.4 &&
+                    ROOT::Math::VectorUtil::DeltaR(SoftActivityJet_p4[i], VBFJetCand.leg_p4[0]) > 0.4 &&
+                    ROOT::Math::VectorUtil::DeltaR(SoftActivityJet_p4[i], VBFJetCand.leg_p4[1]) > 0.4;
+
+            out.push_back(pass);
+        }}
+
+        return out;
+        """,
     )
+
     df = df.Define(
         f"SoftJetCleanedActivity_pt",
-        "v_ops::pt(SoftActivityJet_p4[SoftJetActivity_NoOverlapWithMuons])",
+        "v_ops::pt(SoftActivityJet_p4[SoftJetActivity_NoOverlapWithMuonsAndVBFJets])",
     )
     df = df.Define(
         f"SoftJetCleanedActivity_eta",
-        "v_ops::eta(SoftActivityJet_p4[SoftJetActivity_NoOverlapWithMuons])",
+        "v_ops::eta(SoftActivityJet_p4[SoftJetActivity_NoOverlapWithMuonsAndVBFJets])",
     )
     df = df.Define(
         f"SoftJetCleanedActivity_N",
-        "SoftActivityJet_p4[SoftJetActivity_NoOverlapWithMuons].size()",
+        "SoftActivityJet_p4[SoftJetActivity_NoOverlapWithMuonsAndVBFJets].size()",
     )
     df = df.Define(
         f"SoftJetCleanedActivity_ptSum",
@@ -413,7 +457,7 @@ def VBFJetMuonsObservables(df, mu_suff="ScaRe_FSR"):
 
     df = df.Define(
         "minDeltaPhi",
-        "if(HasVBF) return static_cast<float>(std::min(ROOT::Math::VectorUtil::DeltaPhi( (mu1_p4+mu2_p4), VBFJetCand.leg_p4[0]), ROOT::Math::VectorUtil::DeltaPhi((mu1_p4+mu2_p4), VBFJetCand.leg_p4[1]) ) )  ; return -10000.f;",
+        f"if(HasVBF) return static_cast<float>(std::min(ROOT::Math::VectorUtil::DeltaPhi( (mu1_p4_{mu_suff}+mu2_p4_{mu_suff}), VBFJetCand.leg_p4[0]), ROOT::Math::VectorUtil::DeltaPhi((mu1_p4_{mu_suff}+mu2_p4_{mu_suff}), VBFJetCand.leg_p4[1]) ) )  ; return -10000.f;",
     )
     df = df.Define(
         "minDeltaEta",
