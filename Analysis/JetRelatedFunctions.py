@@ -351,7 +351,7 @@ def SoftJetCollectionCleaningInVBF(df, mu_suff="ScaRe_FSR"):
 
     df = df.Define(
         "SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning",
-        "SoftJetActivity_NoOverlapWithMuons && SoftJetCleanedActivity_eta < std::max(j1_eta, j2_eta) && SoftJetCleanedActivity_eta > std::min(j1_eta, j2_eta)",
+        "SoftJetActivity_NoOverlapWithMuons && SoftActivityJet_eta < std::max(j1_eta, j2_eta) && SoftActivityJet_eta > std::min(j1_eta, j2_eta)",
     )
 
     df = df.Define(
