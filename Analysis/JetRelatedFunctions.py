@@ -330,9 +330,6 @@ def SoftJetCollectionCleaningInVBF(df, mu_suff="ScaRe_FSR"):
 
     df = df.Define(
         f"SoftJetActivity_NoOverlapWithMuons",
-    )
-    df = df.Define(
-        f"SoftJetActivity_NoOverlapWithMuons",
         f"RemoveOverlaps(Jet_p4, Jet_preSel_andDeadZoneVetoMap, {{{{mu1_p4_{mu_suff}, mu2_p4_{mu_suff}, VBFJetCand.leg_p4[0], VBFJetCand.leg_p4[1]}}}}, 4, 0.4)",
     )
     df = df.Define(
