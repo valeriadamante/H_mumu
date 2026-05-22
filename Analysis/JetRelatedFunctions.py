@@ -345,20 +345,6 @@ def SoftJetCollectionCleaningInVBF(df, mu_suff="ScaRe_FSR"):
         f"SoftActivityJet_pt_gt0",
         f"SoftActivityJet_pt>0",
     )
-    df = df.Define(
-        "SoftJetActivity_NoOverlapWithMuonsAndVBFJets",
-        f"""
-        ROOT::VecOps::Map(
-            ROOT::VecOps::Range(SoftActivityJet_p4.size()),
-            [&](const auto i) {{
-                return ROOT::Math::VectorUtil::DeltaR(SoftActivityJet_p4[i], mu1_p4_{mu_suff}) > 0.4 &&
-                    ROOT::Math::VectorUtil::DeltaR(SoftActivityJet_p4[i], mu2_p4_{mu_suff}) > 0.4 &&
-                    ROOT::Math::VectorUtil::DeltaR(SoftActivityJet_p4[i], VBFJetCand.leg_p4[0]) > 0.4 &&
-                    ROOT::Math::VectorUtil::DeltaR(SoftActivityJet_p4[i], VBFJetCand.leg_p4[1]) > 0.4;
-            }}
-        )
-        """,
-    )
 
     df = df.Define(
         "SoftJetActivity_NoOverlapWithMuonsAndVBFJets",
