@@ -329,23 +329,23 @@ def SoftJetCollectionCleaningInVBF(df, mu_suff="ScaRe_FSR"):
     )
 
     df = df.Define(
-        f"SoftJetJet_NoOverlapWithMuons",
+        f"SoftJetActivity_NoOverlapWithMuons",
     )
     df = df.Define(
-        f"SoftJetJet_NoOverlapWithMuons",
+        f"SoftJetActivity_NoOverlapWithMuons",
         f"RemoveOverlaps(Jet_p4, Jet_preSel_andDeadZoneVetoMap, {{{{mu1_p4_{mu_suff}, mu2_p4_{mu_suff}, VBFJetCand.leg_p4[0], VBFJetCand.leg_p4[1]}}}}, 4, 0.4)",
     )
     df = df.Define(
         f"SoftJetCleanedActivity_pt",
-        "v_ops::pt(SoftActivityJet_p4[SoftJetJet_NoOverlapWithMuons])",
+        "v_ops::pt(SoftActivityJet_p4[SoftJetActivity_NoOverlapWithMuons])",
     )
     df = df.Define(
         f"SoftJetCleanedActivity_eta",
-        "v_ops::eta(SoftActivityJet_p4[SoftJetJet_NoOverlapWithMuons])",
+        "v_ops::eta(SoftActivityJet_p4[SoftJetActivity_NoOverlapWithMuons])",
     )
     df = df.Define(
         f"SoftJetCleanedActivity_N",
-        "SoftActivityJet_p4[SoftJetJet_NoOverlapWithMuons].size()",
+        "SoftActivityJet_p4[SoftJetActivity_NoOverlapWithMuons].size()",
     )
     df = df.Define(
         f"SoftJetCleanedActivity_ptSum",
@@ -353,10 +353,23 @@ def SoftJetCollectionCleaningInVBF(df, mu_suff="ScaRe_FSR"):
     )
 
     df = df.Define(
-        "SoftJetJet_NoOverlapWithMuonsAndEtaCleaning",
-        "SoftJetJet_NoOverlapWithMuons && SoftJetCleanedActivity_eta < std::max(j1_eta, j2_eta) && SoftJetCleanedActivity_eta > std::min(j1_eta, j2_eta)",
+        "SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning",
+        "SoftJetActivity_NoOverlapWithMuons && SoftJetCleanedActivity_eta < std::max(j1_eta, j2_eta) && SoftJetCleanedActivity_eta > std::min(j1_eta, j2_eta)",
     )
 
+    df = df.Define(
+        f"SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning_eta",
+        "v_ops::eta(SoftActivityJet_p4[SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning])",
+    )
+    df = df.Define(
+        f"SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning_N",
+        "SoftActivityJet_p4[SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning].size()",
+    )
+    df = df.Define(
+        f"SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning_ptSum",
+        "float sum=0.; for(size_t sj_idx=0; sj_idx<SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning_pt.size();sj_idx++){{sum+=SoftJetActivity_NoOverlapWithMuonsAndEtaCleaning_pt[sj_idx];}} return sum;",
+    )
+    return df 
 
 def VBFJetMuonsObservables(df, mu_suff="ScaRe_FSR"):
     df = df.Define(

@@ -311,6 +311,7 @@ def PrepareDFBuilder(dfBuilder):
     )
     dfBuilder.df = JetObservablesDef(dfBuilder.df)
     dfBuilder.df = VBFJetSelection(dfBuilder.df)
+    dfBuilder.df = SoftJetCollectionCleaningInVBF(dfBuilder.df)
     dfBuilder.df = VBFJetMuonsObservables(dfBuilder.df)
 
     dfBuilder.defineRegions()
